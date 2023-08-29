@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InputActivity">
+    <RelativeLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/shape"
+            android:paddingTop="0dp">
+        </ImageView>
+
+        <ImageView
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_alignParentStart="true"
+
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="-98dp"
+            android:background="@drawable/parcelpal_horiz"
+            android:paddingTop="0dp"></ImageView>
+
+        <TextClock
+            android:id="@+id/dateClock"
+            android:layout_width="242dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="38dp"
+            android:layout_marginEnd="16dp"
+            android:format12Hour="dd-MMM-yyyy:hh:mm:ss a"
+            android:textColor="@color/white"
+            android:textSize="20dp">
+
+        </TextClock>
+
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></RelativeLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_below="@+id/layoutHeader"
+
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="-5dp"
+        android:layout_marginTop="-59dp"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/lightblueshape"
+        android:paddingTop="0dp"></ImageView>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="440dp"
+        android:layout_below="@+id/layoutHeader"
+
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="-103dp"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/lightblueshape"
+        android:paddingTop="0dp"></ImageView>
+
+
+
+    <ImageView
+        android:id="@+id/bgButtonInputCheck"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="544dp"
+        android:layout_marginBottom="105dp"
+        android:background="@drawable/buttonbgshape"
+        android:paddingTop="0dp"></ImageView>
+
+    <ImageView
+        android:id="@+id/scanicon"
+        android:layout_width="126dp"
+        android:layout_height="115dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="590dp"
+        android:layout_marginBottom="163dp"
+        android:background="@drawable/input_icon"
+        android:backgroundTint="@color/white"
+        android:paddingTop="0dp"></ImageView>
+
+    <TextView
+        android:id="@+id/txtInputs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="570dp"
+        android:layout_marginBottom="118dp"
+        android:paddingTop="0dp"
+        android:text="CHECK PARCEL"
+        android:textColor="@color/white"
+        android:textSize="20dp"></TextView>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="100dp"
+        android:textSize="20dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:text="COMMON PARCEL BARCODES GUIDE" />
+
+    <ImageView
+        android:id="@+id/lazadaicon"
+        android:layout_width="120dp"
+        android:layout_height="30dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="50dp"
+        android:layout_marginBottom="290dp"
+        android:background="@drawable/lazadaicon"
+
+        android:paddingTop="0dp"></ImageView>
+    <ImageView
+        android:id="@+id/Lazadaparcel"
+        android:layout_width="196dp"
+        android:layout_height="285dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="22dp"
+        android:background="@drawable/lazadaparcel"
+        android:paddingTop="0dp"></ImageView>
+
+    <ImageView
+        android:id="@+id/shopeeicon"
+        android:layout_toRightOf="@+id/lazadaicon"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="120dp"
+        android:layout_marginBottom="290dp"
+        android:background="@drawable/shopeeicon"
+
+        android:paddingTop="0dp"></ImageView>
+
+    <ImageView
+        android:id="@+id/shopeeparcel"
+        android:layout_width="194dp"
+        android:layout_height="252dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="33dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="37dp"
+        android:layout_toRightOf="@+id/Lazadaparcel"
+        android:background="@drawable/shopeeparcel"
+        android:paddingTop="0dp"></ImageView>
+
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="205dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="17dp"
+        android:layout_marginBottom="38dp"
+        app:srcCompat="@drawable/roundshape" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="213dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="239dp"
+        android:layout_marginBottom="28dp"
+        app:srcCompat="@drawable/roundshape" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="225dp"
+        android:layout_height="61dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="281dp"
+        app:srcCompat="@drawable/ic_baseline_subdirectory_arrow_left_24" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="225dp"
+        android:layout_height="81dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="62dp"
+        android:layout_marginBottom="-10dp"
+        app:srcCompat="@drawable/ic_baseline_subdirectory_arrow_right_24" />
+
+    <TextView
+        android:id="@+id/texttrack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+
+
+        android:layout_marginStart="211dp"
+
+        android:layout_marginBottom="11dp"
+        android:text="SCAN THE TRACKING ID"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        />
+
+    <EditText
+
+        android:id="@+id/etTracking"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="55dp"
+        android:layout_marginBottom="50dp"
+        android:textAlignment="center"
+        android:background="@drawable/edit_text_border"
+        android:hint="Input Tracking ID here"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="5dp"
+        android:textColorHint="#EFEFEF"
+        android:textSize="20dp"
+        android:backgroundTint="@color/white"
+        android:inputType="text"
+        android:maxLength="50"
+        android:maxLines="1"
+        android:padding="8dp" />
+</RelativeLayout>
+
+

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ReceiveParcel">
+    <RelativeLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:background="@drawable/shape"
+                    android:paddingTop="0dp">
+                </ImageView>
+
+                <ImageView
+                    android:layout_width="300dp"
+                    android:layout_height="300dp"
+                    android:layout_alignParentStart="true"
+
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="-98dp"
+                    android:background="@drawable/parcelpal_horiz"
+                    android:paddingTop="0dp"></ImageView>
+
+                <TextClock
+                    android:id="@+id/dateClock"
+                    android:layout_width="242dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="38dp"
+                    android:layout_marginEnd="16dp"
+                    android:format12Hour="dd-MMM-yyyy:hh:mm:ss a"
+                    android:textColor="@color/white"
+                    android:textSize="20dp">
+
+                </TextClock>
+
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></RelativeLayout>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
+                android:layout_below="@+id/layoutHeader"
+
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="-5dp"
+                android:layout_marginTop="-59dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/lightblueshape"
+                android:paddingTop="0dp"></ImageView>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="440dp"
+                android:layout_below="@+id/layoutHeader"
+
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="-103dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/lightblueshape"
+                android:paddingTop="0dp"></ImageView>
+
+
+            <pl.droidsonroids.gif.GifImageView
+                android:layout_width="409dp"
+                android:layout_height="381dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="-37dp"
+                android:src="@drawable/placeparcel" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="100dp"
+                android:textSize="20dp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:text="PLEASE PLACE PARCEL ON COMPARTMENT" />
+
+</RelativeLayout>
+
+
+
+    <!--        <ImageView-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="100dp"-->
+    <!--            android:background="@drawable/shape"-->
+    <!--            android:paddingTop="0dp">-->
+    <!--        </ImageView>-->
+
+    <!--        <ImageView-->
+    <!--            android:layout_width="300dp"-->
+    <!--            android:layout_height="300dp"-->
+    <!--            android:layout_alignParentStart="true"-->
+
+    <!--            android:layout_alignParentTop="true"-->
+    <!--            android:layout_marginStart="0dp"-->
+    <!--            android:layout_marginTop="-98dp"-->
+    <!--            android:background="@drawable/parcelpal_horiz"-->
+    <!--            android:paddingTop="0dp"></ImageView>-->
+
+    <!--        <TextClock-->
+    <!--            android:id="@+id/dateClock"-->
+    <!--            android:layout_width="242dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_alignParentTop="true"-->
+    <!--            android:layout_alignParentEnd="true"-->
+    <!--            android:layout_marginTop="38dp"-->
+    <!--            android:layout_marginEnd="16dp"-->
+    <!--            android:format12Hour="dd-MMM-yyyy:hh:mm:ss a"-->
+    <!--            android:textColor="@color/white"-->
+    <!--            android:textSize="20dp">-->
+
+    <!--        </TextClock>-->
+
+
+    <!--    </RelativeLayout>-->
+    <!--    <RelativeLayout-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"></RelativeLayout>-->
+    <!--    <ImageView-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="350dp"-->
+    <!--        android:layout_below="@+id/layoutHeader"-->
+
+    <!--        android:layout_alignParentStart="true"-->
+    <!--        android:layout_alignParentBottom="true"-->
+    <!--        android:layout_centerVertical="true"-->
+    <!--        android:layout_marginStart="-5dp"-->
+    <!--        android:layout_marginTop="-59dp"-->
+    <!--        android:layout_marginBottom="0dp"-->
+    <!--        android:background="@drawable/lightblueshape"-->
+    <!--        android:paddingTop="0dp"></ImageView>-->
+
+    <!--    <ImageView-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="440dp"-->
+    <!--        android:layout_below="@+id/layoutHeader"-->
+
+    <!--        android:layout_alignParentStart="true"-->
+    <!--        android:layout_alignParentBottom="true"-->
+    <!--        android:layout_centerVertical="true"-->
+    <!--        android:layout_marginStart="0dp"-->
+    <!--        android:layout_marginTop="-103dp"-->
+    <!--        android:layout_marginBottom="0dp"-->
+    <!--        android:background="@drawable/lightblueshape"-->
+    <!--        android:paddingTop="0dp"></ImageView>-->
+
+
+    <!--    <pl.droidsonroids.gif.GifImageView-->
+    <!--        android:layout_width="409dp"-->
+    <!--        android:layout_height="381dp"-->
+    <!--        android:layout_alignParentBottom="true"-->
+    <!--        android:layout_centerHorizontal="true"-->
+    <!--        android:layout_marginBottom="-37dp"-->
+    <!--        android:src="@drawable/placeparcel" />-->
+
+    <!--    <TextView-->
+    <!--        android:id="@+id/textView"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="50dp"-->
+    <!--        android:layout_marginTop="100dp"-->
+    <!--        android:textSize="20dp"-->
+    <!--        android:textColor="@color/white"-->
+    <!--        android:textStyle="bold"-->
+    <!--        android:text="PLEASE PLACE PARCEL ON COMPARTMENT" />-->

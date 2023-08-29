@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <RelativeLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/shape"
+            android:paddingTop="0dp">
+        </ImageView>
+
+        <ImageView
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_alignParentStart="true"
+
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="-98dp"
+            android:background="@drawable/parcelpal_horiz"
+            android:paddingTop="0dp"></ImageView>
+
+        <TextClock
+            android:id="@+id/dateClock"
+            android:layout_width="242dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="38dp"
+            android:layout_marginEnd="14dp"
+            android:format12Hour="dd-MMM-yyyy:hh:mm:ss a"
+            android:textColor="@color/white"
+            android:textSize="20dp">
+
+        </TextClock>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+
+
+    </RelativeLayout>
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="440dp"
+        android:layout_below="@+id/layoutHeader"
+
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="-103dp"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/lightblueshape"
+        android:paddingTop="0dp"></ImageView>
+
+    <ImageView
+        android:id="@+id/bgButtonScan"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="117dp"
+        android:layout_marginBottom="79dp"
+        android:background="@drawable/buttonbgshape"
+        android:paddingTop="0dp"></ImageView>
+
+
+    <ImageView
+        android:id="@+id/scanicon"
+        android:layout_width="126dp"
+        android:layout_height="115dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="155dp"
+        android:layout_marginBottom="137dp"
+        android:background="@drawable/scan_icon"
+        android:backgroundTint="@color/white"
+        android:paddingTop="0dp"></ImageView>
+
+    <ImageView
+        android:id="@+id/bgButtonInput"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="207dp"
+        android:layout_marginLeft="123dp"
+        android:layout_marginBottom="77dp"
+        android:layout_toRightOf="@+id/bgButtonScan"
+        android:background="@drawable/buttonbgshape"
+        android:paddingTop="0dp"></ImageView>
+
+    <TextView
+        android:id="@+id/txtScan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="153dp"
+        android:layout_marginBottom="90dp"
+        android:paddingTop="0dp"
+        android:text="SCAN PARCEL"
+        android:textColor="@color/white"
+        android:textSize="20dp"></TextView>
+
+    <TextView
+        android:id="@+id/txtInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="240dp"
+        android:layout_marginLeft="152dp"
+        android:layout_marginRight="117dp"
+        android:layout_marginBottom="89dp"
+        android:layout_toRightOf="@+id/bgButtonScan"
+        android:paddingTop="0dp"
+        android:text="INPUT PARCEL"
+        android:textColor="@color/white"
+        android:textSize="20dp"></TextView>
+
+    <ImageView
+        android:id="@+id/inputicon"
+        android:layout_width="143dp"
+        android:layout_height="129dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="250dp"
+        android:layout_marginLeft="160dp"
+        android:layout_marginRight="117dp"
+        android:layout_marginBottom="137dp"
+        android:layout_toRightOf="@+id/bgButtonScan"
+        android:background="@drawable/input_icon"
+        android:backgroundTint="@color/white"
+        android:paddingTop="0dp"></ImageView>
+
+    <Button
+        android:id="@+id/Bluetooth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="375dp"
+        android:layout_marginBottom="44dp"
+        android:text="Bluetooth" />
+
+    <Button
+        android:id="@+id/Bluetoothclass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="296dp"
+        android:layout_marginBottom="25dp"
+        android:text="CLASSBT" />
+
+    <Button
+        android:id="@+id/SMSButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="-17dp"
+        android:layout_marginEnd="392dp"
+        android:layout_marginBottom="159dp"
+        android:text="SMSButton" />
+
+
+</RelativeLayout>
