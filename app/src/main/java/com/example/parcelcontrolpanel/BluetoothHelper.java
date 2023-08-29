@@ -36,7 +36,7 @@ import java.util.UUID;
 //THIS WORKS BUT DOES NOT CHECK THE CONNECTION AND RETRY CONTINUOUS AND PAIRS
 public class BluetoothHelper {
     private Context context;
-
+//ISSUE WITH PIN ENTERING AUTO
     private static final String TAG = "BluetoothHelper";
     private static final int CONNECTING_STATUS = 1;
     private static final int MESSAGE_READ = 2;
@@ -147,36 +147,36 @@ public class BluetoothHelper {
         this.connectCallback = callback;
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
-
-        if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-            // Pair with the device
-            //use this to register the hc05 without manually inputting the pin
-            registerPairingRequestReceiver();
-
-            if (device.getBondState() == BluetoothDevice.BOND_BONDING) {
-                try {
-                    registerPairingRequestReceiver();
-
-//                    String pin = "1234"; // Replace with your desired PIN
-//                    byte[] pinBytes = pin.getBytes();
-//                    Method setPinMethod = device.getClass().getMethod("setPin", byte[].class);
-//                    setPinMethod.invoke(device, pinBytes);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    Method createBondMethod = device.getClass().getMethod("createBond");
-                    createBondMethod.invoke(device);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
+//
+//        if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+//            // Pair with the device
+//            //use this to register the hc05 without manually inputting the pin
+//            registerPairingRequestReceiver();
+//
+//            if (device.getBondState() == BluetoothDevice.BOND_BONDING) {
+//                try {
+//                    registerPairingRequestReceiver();
+//
+////                    String pin = "1234"; // Replace with your desired PIN
+////                    byte[] pinBytes = pin.getBytes();
+////                    Method setPinMethod = device.getClass().getMethod("setPin", byte[].class);
+////                    setPinMethod.invoke(device, pinBytes);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            } else {
+//                try {
+//                    Method createBondMethod = device.getClass().getMethod("createBond");
+//                    createBondMethod.invoke(device);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        } else {
             // Device is already paired, proceed with connection
             createConnectThread = new CreateConnectThread(device);
             createConnectThread.start();
-        }
+//        }
     }
     public interface ConnectCallback {
         void onConnected();

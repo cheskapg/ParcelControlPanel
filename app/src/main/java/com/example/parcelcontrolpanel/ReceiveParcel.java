@@ -37,23 +37,24 @@ public class ReceiveParcel extends AppCompatActivity {
         Intent intent = getIntent();
 
         sampleInputData = intent.getExtras().getString("trackingID");
-//        bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
-//            @Override
-//            public void onConnected() {
-//                getTracking();
-//                //WAIT FOR SENSOR TO OKAY AND PARCEL DROPPED
-//                //IF DROPPED NA AND SENSOR GOOD IDENTIFY PAYMENT METHOD
-//                //PROCEED TO NEXT ACTIVITY - MOBILE PAYMENT - THANK YOU IF PREPAID - COD RELEASE PAYMENT
-//                //IN APPSCRIPT MAKE AN IF VARIABLE - DROPPED SEND TO APPSCRIPT AND SEND DIFFERENT TEXT "DROPPED OR SECURED PARCEL"
-//
-//            }
-//
-//            @Override
-//            public void onFailure() {
-//                // Dismiss the progress dialog and show an error message
-//                Toast.makeText(ReceiveParcel.this, "Failed to connect", Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        //if not connected reconnect
+        bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
+            @Override
+            public void onConnected() {
+                getTracking();
+                //WAIT FOR SENSOR TO OKAY AND PARCEL DROPPED
+                //IF DROPPED NA AND SENSOR GOOD IDENTIFY PAYMENT METHOD
+                //PROCEED TO NEXT ACTIVITY - MOBILE PAYMENT - THANK YOU IF PREPAID - COD RELEASE PAYMENT
+                //IN APPSCRIPT MAKE AN IF VARIABLE - DROPPED SEND TO APPSCRIPT AND SEND DIFFERENT TEXT "DROPPED OR SECURED PARCEL"
+
+            }
+
+            @Override
+            public void onFailure() {
+                // Dismiss the progress dialog and show an error message
+                Toast.makeText(ReceiveParcel.this, "Failed to connect", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 //        if sensor senses parcel inside -> proceed to CHECKREQUEST mobile wallet if mobile payment if not -> cod release money -> if prepaid thank you
 //        if () {
