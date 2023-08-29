@@ -98,6 +98,7 @@ public class InputActivity extends AppCompatActivity {
             public void onFailure() {
                 // Dismiss the progress dialog and show an error message
                 progressDialog.dismiss();
+                bluetoothHelper.disconnect();
                 Toast.makeText(InputActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
             }
         });

@@ -34,28 +34,26 @@ public class ReceiveParcel extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive_parcel);
-        Intent intent = getIntent();
-
-        sampleInputData = intent.getExtras().getString("trackingID");
+        getTracking();
         //if not connected reconnect
-        bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
-            @Override
-            public void onConnected() {
-                getTracking();
-                //WAIT FOR SENSOR TO OKAY AND PARCEL DROPPED
-                //IF DROPPED NA AND SENSOR GOOD IDENTIFY PAYMENT METHOD
-                //PROCEED TO NEXT ACTIVITY - MOBILE PAYMENT - THANK YOU IF PREPAID - COD RELEASE PAYMENT
-                //IN APPSCRIPT MAKE AN IF VARIABLE - DROPPED SEND TO APPSCRIPT AND SEND DIFFERENT TEXT "DROPPED OR SECURED PARCEL"
-
-            }
-
-            @Override
-            public void onFailure() {
-                // Dismiss the progress dialog and show an error message
-                Toast.makeText(ReceiveParcel.this, "Failed to connect", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+//        bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
+//            @Override
+//            public void onConnected() {
+//                getTracking();
+//
+//
+//            }
+//
+//            @Override
+//            public void onFailure() {
+//                // Dismiss the progress dialog and show an error message
+//                Toast.makeText(ReceiveParcel.this, "Failed to connect", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//WAIT FOR SENSOR TO OKAY AND PARCEL DROPPED
+        //IF DROPPED NA AND SENSOR GOOD IDENTIFY PAYMENT METHOD
+        //PROCEED TO NEXT ACTIVITY - MOBILE PAYMENT - THANK YOU IF PREPAID - COD RELEASE PAYMENT
+        //IN APPSCRIPT MAKE AN IF VARIABLE - DROPPED SEND TO APPSCRIPT AND SEND DIFFERENT TEXT "DROPPED OR SECURED PARCEL"
 //        if sensor senses parcel inside -> proceed to CHECKREQUEST mobile wallet if mobile payment if not -> cod release money -> if prepaid thank you
 //        if () {
 //
@@ -69,7 +67,7 @@ public class ReceiveParcel extends AppCompatActivity {
     private String getTracking() {
         Intent intent = getIntent();
         sampleInputData = intent.getStringExtra("trackingID");
-        Toast myToast = Toast.makeText(ReceiveParcel.this, sampleInputData, Toast.LENGTH_LONG);
+        Toast myToast = Toast.makeText(ReceiveParcel.this, "received "+sampleInputData, Toast.LENGTH_LONG);
         myToast.show();
         return sampleInputData;
     }
