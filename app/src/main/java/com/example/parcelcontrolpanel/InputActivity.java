@@ -53,8 +53,6 @@ public class InputActivity extends AppCompatActivity {
     Context context = this;
 
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
-    BluetoothGATTHelp bluetoothHelperGatt = new BluetoothGATTHelp(context);
-
     BluetoothHelper bluetoothHelper = new BluetoothHelper(context, "HC-05", "00:22:12:00:3C:EA");
 //    BluetoothHelper bluetoothHelper = new BluetoothHelper();
 
@@ -74,10 +72,10 @@ public class InputActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         String status = bluetoothHelper.getStatus();
         Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
-//        progressDialog = new ProgressDialog(this);
-//        progressDialog.setMessage("Connecting...");
-//        progressDialog.setCancelable(false);
-//        progressDialog.show();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Connecting...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
 //         Show the progress dialog
 //        progressDialog = new ProgressDialog(this);
@@ -87,38 +85,22 @@ public class InputActivity extends AppCompatActivity {
 
         // Connect to the Bluetooth device
         // Connect to the Bluetooth device
-
-//        MAINNNNNNNNNNNNNNNNNNNNNN
-        bluetoothHelperGatt.connectToDevice(new BluetoothGATTHelp.ConnectCallback() {
+        bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
             @Override
             public void onConnected() {
-                // Connected to the Arduino, perform any necessary setup or logic
-                // For example, toggle the LED on
-//                bluetoothHelperGatt.toggleLED(true);
+                // Dismiss the progress dialog when connected
+                progressDialog.dismiss();
+
+                // Continue with other logic or UI updates
             }
 
             @Override
-            public void onFailure(String message) {
-                // Connection failed, handle the failure
-                Toast.makeText(context, "Failed to connect: " + message, Toast.LENGTH_SHORT).show();
+            public void onFailure() {
+                // Dismiss the progress dialog and show an error message
+                progressDialog.dismiss();
+                Toast.makeText(InputActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
             }
         });
-//        bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
-//            @Override
-//            public void onConnected() {
-//                // Dismiss the progress dialog when connected
-//                progressDialog.dismiss();
-//
-//                // Continue with other logic or UI updates
-//            }
-//
-//            @Override
-//            public void onFailure() {
-//                // Dismiss the progress dialog and show an error message
-//                progressDialog.dismiss();
-//                Toast.makeText(InputActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
-//            }
-//        });
 
 
 
