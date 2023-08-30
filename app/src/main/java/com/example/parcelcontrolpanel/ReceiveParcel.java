@@ -35,6 +35,8 @@ public class ReceiveParcel extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive_parcel);
         getTracking();
+        ReceiveParcel.CheckRequest checkRequestTask = new CheckRequest();
+        checkRequestTask.execute(sampleInputData);
         //if not connected reconnect
 //        bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
 //            @Override
@@ -69,6 +71,7 @@ public class ReceiveParcel extends AppCompatActivity {
         sampleInputData = intent.getStringExtra("trackingID");
         Toast myToast = Toast.makeText(ReceiveParcel.this, "received "+sampleInputData, Toast.LENGTH_LONG);
         myToast.show();
+
         return sampleInputData;
     }
 //    public void getPhoneNumber() {
@@ -93,89 +96,101 @@ public class ReceiveParcel extends AppCompatActivity {
 //            }
 //        });
 //    }
-//        public class CheckRequest extends AsyncTask<String, Void, String> {
-//
-//            protected void onPreExecute() {
-//            }
-//
-//            protected String doInBackground(String... arg0) {
-//
-//                try {
-//
-//                    // Enter script URL Here
-//                    String baseUrl = "https://script.google.com/macros/s/AKfycby3qyrW69TzJvcqtbMI0vu0HE-HgmH5yBiWOAgajcJPoHuC4JXE8UxxD8VrOzzNPUPD/exec";
-//                    String action = "checkQRParcel";
-//                    String trackingId = sampleInputData;
-//
-//
-//                    // Construct the URL with the parameters
-//                    String urlString;
-//                    urlString = baseUrl + "?action=" + action + "&trackingId=" + trackingId;
-//                    URL url = new URL(urlString);
-//
-//                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//                    conn.setReadTimeout(30000 /* milliseconds */);
-//                    conn.setConnectTimeout(30000 /* milliseconds */);
-//                    conn.setRequestMethod("GET");
-////                conn.setDoInput(true);
-////                conn.setDoOutput(true);
-//
-//                    int responseCode = conn.getResponseCode();
-//
-//                    if (responseCode == HttpsURLConnection.HTTP_OK) {
-//                        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//                        StringBuffer sb = new StringBuffer("");
-//                        String line = "";
-//                        while ((line = in.readLine()) != null) {
-//                            sb.append(line);
-//                            break;
-//                        }
-//
-//                        in.close();
-//                        return sb.toString();
-//                    } else {
-//                        return new String("false : " + responseCode);
-//                    }
-//                } catch (Exception e) {
-//                    return new String("Exception: " + e.getMessage());
-//                }
-//
-//            }
-//
-//            @Override
-//            protected void onPostExecute(String result) {
-//                int dur = 1000000;
+        public class CheckRequest extends AsyncTask<String, Void, String> {
+
+            protected void onPreExecute() {
+            }
+
+            protected String doInBackground(String... arg0) {
+
+                try {
+
+                    // Enter script URL Here
+                    String baseUrl = "https://script.google.com/macros/s/AKfycbyqMBMw5LlgQpMj4jQFMy_agAxRxVO30y0W0Qi6z-eMiXdaD-CxyM-a9pQSGyqgo2_Y/exec";
+                    String action = "checkQRParcel";
+                    String trackingId = sampleInputData;
+
+
+                    // Construct the URL with the parameters
+                    String urlString;
+                    urlString = baseUrl + "?action=" + action + "&trackingId=" + trackingId;
+                    URL url = new URL(urlString);
+
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(30000 /* milliseconds */);
+                    conn.setConnectTimeout(30000 /* milliseconds */);
+                    conn.setRequestMethod("GET");
+//                conn.setDoInput(true);
+//                conn.setDoOutput(true);
+
+                    int responseCode = conn.getResponseCode();
+
+                    if (responseCode == HttpsURLConnection.HTTP_OK) {
+                        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                        StringBuffer sb = new StringBuffer("");
+                        String line = "";
+                        while ((line = in.readLine()) != null) {
+                            sb.append(line);
+                            break;
+                        }
+
+                        in.close();
+                        return sb.toString();
+                    } else {
+                        return new String("false : " + responseCode);
+                    }
+                } catch (Exception e) {
+                    return new String("Exception: " + e.getMessage());
+                }
+
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                int dur = 1000000;
 //                getPhoneNumber();
-//
-//
-//                Toast.makeText(getApplicationContext(), "Checking Tracking ID", Toast.LENGTH_LONG).show();
-////            Log.i("Info", urlString);
-//
-//
-//                if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is Mobile Wallet")) {
-//                    // Tracking ID exists and payment method is Mobile Wallet
-//
-//
-//
-//                } else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is not Mobile Wallet")) {
-//
-//
-//
-//                } else {
-////                    loading.dismiss();
-//                    // Tracking ID does not exist or error occurred
-//                    Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
-//                    Toast.makeText(getApplicationContext(), "PLEASE TRY AGAIN", Toast.LENGTH_LONG).show();
-//                }
-//
-//                Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
-//
-//
-//                // now by putExtra method put the value in key, value pair key is
-//                // tracingID by this key we will receive the value, and put the string
-//
-//            }
-//        }
+
+
+                Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+//            Log.i("Info", urlString);
+
+                //IF SENSOR HAS SENSED PARCEL IS READY DROPPED
+                if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is Mobile Wallet")) {
+                    // Tracking ID exists and payment method is Mobile Wallet
+                    Intent intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
+                    intent.putExtra("trackingID", sampleInputData);
+                    startActivity(intent);
+
+
+                } else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is not Mobile Wallet")) {
+
+                    Intent intent = new Intent(ReceiveParcel.this, SuccessActivity.class);
+                    intent.putExtra("trackingID", sampleInputData);
+                    startActivity(intent);
+
+
+                    //COD
+                } else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is COD")) {
+                    //RELEASE MONEY ACTIVITY
+                    Intent intent = new Intent(ReceiveParcel.this, CashOnDeliveryActivity.class);
+                    intent.putExtra("trackingID", sampleInputData);
+                    startActivity(intent);
+
+                } else {
+//                    loading.dismiss();
+                    // Tracking ID does not exist or error occurred
+                    Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "PLEASE TRY AGAIN", Toast.LENGTH_LONG).show();
+                }
+
+                Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+
+
+                // now by putExtra method put the value in key, value pair key is
+                // tracingID by this key we will receive the value, and put the string
+
+            }
+        }
 
     }
 

@@ -57,6 +57,20 @@
         android:theme="@style/AppTheme.Splash"
         tools:targetApi="31">
         <activity
+            android:name=".CashOnDeliveryActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".SuccessActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".BluetoothClassTest"
             android:exported="false">
             <meta-data
