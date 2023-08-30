@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -18,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     ImageView ScanButton, InputButton;
     TextClock dateClock;
-    Button Bluetooth,SMSButton, btclass;
+    Button Bluetooth,SMSButton, btclass, ExitApp, wifi;
 //    BluetoothHelper bluetoothHelper = new BluetoothHelper("HC-05", "00:22:12:00:3C:EA");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Bluetooth = (Button) findViewById(R.id.Bluetooth);
         SMSButton = (Button) findViewById(R.id.SMSButton);
+        ExitApp = (Button) findViewById(R.id.exitApp);
+        wifi = (Button) findViewById(R.id.WifiSetup);
         btclass = (Button) findViewById(R.id.Bluetoothclass);
 
         dateClock = (TextClock) findViewById(R.id.dateClock);
@@ -78,6 +81,23 @@ public class MainActivity extends AppCompatActivity {
                 Intent toBT = new Intent(MainActivity.this, BluetoothMain.class);
                 startActivity(toBT);
 
+            }
+        });
+        ExitApp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finishAndRemoveTask();
+
+
+            }
+        });
+        wifi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent openWirelessSettings = new Intent(MainActivity.this, WifiActivity.class);
+
+                startActivity(openWirelessSettings);
             }
         });
     }

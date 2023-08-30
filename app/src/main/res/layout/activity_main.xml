@@ -180,5 +180,30 @@
         android:layout_marginBottom="159dp"
         android:text="SMSButton" />
 
+    <Button
+        android:id="@+id/exitApp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="27dp"
+        android:layout_marginEnd="387dp"
+        android:layout_marginBottom="89dp"
+        android:text="Exit" />
+
+    <Button
+        android:id="@+id/WifiSetup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="-30dp"
+        android:layout_marginEnd="392dp"
+        android:layout_marginBottom="159dp"
+        android:text="Setup Wifi" />
+
 
 </RelativeLayout>
