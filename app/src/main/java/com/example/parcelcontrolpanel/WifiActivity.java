@@ -21,6 +21,7 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiNetworkSpecifier;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -41,13 +42,11 @@ public class WifiActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifi);
 
+
         wifiListView = findViewById(R.id.wifiListView);
-
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
         wifiNetworkAdapter = new WifiNetworkAdapter(WifiActivity.this, new ArrayList<>());
         wifiListView.setAdapter(wifiNetworkAdapter);
-
         wifiListView.setOnItemClickListener((parent, view, position, id) -> {
             ScanResult wifiNetwork = wifiNetworkAdapter.getItem(position);
             connectToWifi(wifiNetwork);
@@ -59,7 +58,11 @@ public class WifiActivity extends AppCompatActivity {
 
         scanWifiNetworks();
     }
-
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
     private void scanWifiNetworks() {
         if (ActivityCompat.checkSelfPermission(WifiActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(WifiActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
@@ -147,8 +150,13 @@ public class WifiActivity extends AppCompatActivity {
                     super.onAvailable(network);
                     // Network is available, perform any necessary operations
                     Toast.makeText(WifiActivity.this, "Connected to WiFi network: " + wifiNetwork.SSID, Toast.LENGTH_SHORT).show();
+                    Intent backHome = new Intent(WifiActivity.this, MainActivity.class);
+
+                    startActivity(backHome);
                     // You can use the network object for further network-related operations
                 }
+
+
             };
 
             connectivityManager.requestNetwork(requestBuilder.build(), networkCallback);

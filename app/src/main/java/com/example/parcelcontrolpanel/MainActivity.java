@@ -2,7 +2,10 @@ package com.example.parcelcontrolpanel;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -38,19 +41,33 @@ public class MainActivity extends AppCompatActivity {
         ScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (isNetworkAvailable()){
 
                 Intent moveToScanActivity = new Intent(MainActivity.this, ScanActivity.class);
                 startActivity(moveToScanActivity);
+                }
+                else{
+
+                    Intent openWirelessSettings = new Intent(MainActivity.this, WifiActivity.class);
+
+                    startActivity(openWirelessSettings);
+                }
 
             }
         });
         InputButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(isNetworkAvailable()){
+                    Intent moveToInpActivity = new Intent(MainActivity.this, InputActivity.class);
+                    startActivity(moveToInpActivity);
+                }
+                else{
 
-                Intent moveToInpActivity = new Intent(MainActivity.this, InputActivity.class);
-                startActivity(moveToInpActivity);
+                    Intent openWirelessSettings = new Intent(MainActivity.this, WifiActivity.class);
 
+                    startActivity(openWirelessSettings);
+                }
             }
         });
 
@@ -100,5 +117,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(openWirelessSettings);
             }
         });
+
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
