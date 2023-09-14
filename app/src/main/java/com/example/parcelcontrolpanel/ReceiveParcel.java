@@ -29,14 +29,15 @@ public class ReceiveParcel extends AppCompatActivity {
     String sampleInputData;
     String phoneNo;
     BluetoothHelper bluetoothHelper = new BluetoothHelper(context, "HC-05", "00:22:12:00:3C:EA");
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive_parcel);
-        getTracking();
-        ReceiveParcel.CheckRequest checkRequestTask = new CheckRequest();
-        checkRequestTask.execute(sampleInputData);
+        String readMessage = bluetoothHelper.getReadMessage();
+        Toast.makeText(ReceiveParcel.this, readMessage , Toast.LENGTH_SHORT).show();        //only do this after arduino sensor confirms it has parcel inside
+//        getTracking();
+//        ReceiveParcel.CheckRequest checkRequestTask = new CheckRequest();
+//        checkRequestTask.execute(sampleInputData);
         //if not connected reconnect
 //        bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
 //            @Override

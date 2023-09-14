@@ -114,7 +114,10 @@ public class ScanActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 bluetoothHelper.disconnect();
                 Toast.makeText(ScanActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
-            }
+
+                Intent intent = new Intent(ScanActivity.this, MainActivity.class);
+
+                startActivity(intent);            }
         });
 
 
@@ -207,7 +210,7 @@ public class ScanActivity extends AppCompatActivity {
 
             try {
                 // Enter script URL Here
-                String baseUrl = "https://script.google.com/macros/s/AKfycbx_bmjmMy994I_gjG32ZIhrNYwBqAMdY8hjpLp-fvgWQSq7tgq9eiDxjGLBZec9Vyh0/exec";
+                String baseUrl = "https://script.google.com/macros/s/AKfycby3qyrW69TzJvcqtbMI0vu0HE-HgmH5yBiWOAgajcJPoHuC4JXE8UxxD8VrOzzNPUPD/exec";
                 String action = "checkQRParcel";
                 String trackingId = scannedData;
                 sampleScannedData = scannedData;

@@ -49,6 +49,8 @@ public class BluetoothHelper {
     private final String BLE_PIN = "1234";
     private ConnectCallback connectCallback;
 
+    public String readArduino;
+
     private String deviceName;
     private String deviceAddress;
 //    public BluetoothHelper(String deviceName, String deviceAddress) {
@@ -204,6 +206,8 @@ public class BluetoothHelper {
         if (createConnectThread != null) {
             createConnectThread.cancel();
         }
+        createConnectThread.cancel();
+
     }
     public void reconnectToDevice() {
         if (!isConnected) {
@@ -301,7 +305,10 @@ public class BluetoothHelper {
             isConnected = false;
         }
     }
-
+    public String getReadMessage() {
+        String readMessage = readArduino;
+        return readMessage;
+    }
     private class ConnectedThread extends Thread {
         private BluetoothSocket mmSocket;
         private InputStream mmInStream;
@@ -325,6 +332,7 @@ public class BluetoothHelper {
             mmOutStream = tmpOut;
         }
 
+//GET DATA FROM ARDUINO MSG---------------------------------------------------------
         public void run() {
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes = 0; // bytes returned from read()
@@ -339,7 +347,8 @@ public class BluetoothHelper {
                     String readMessage;
                     if (buffer[bytes] == '\n') {
                         readMessage = new String(buffer, 0, bytes);
-                        Log.e("Arduino Message", readMessage);
+                        Log.e("ARDUINO Message", readMessage);
+                        readArduino = readMessage;
                         handler.obtainMessage(MESSAGE_READ, readMessage).sendToTarget();
                         bytes = 0;
                     } else {
@@ -351,7 +360,6 @@ public class BluetoothHelper {
                 }
             }
         }
-
         /* Call this from the main activity to send data to the remote device */
         public void write(String input) {
             byte[] bytes = input.getBytes(); //converts entered String into bytes
@@ -373,6 +381,32 @@ public class BluetoothHelper {
 }
 
 
+//1. Create a method in the Bluetooth helper class to return the value of `readMessage`:
+//
+//        java
+//        public String getReadMessage() {
+//            return readMessage;
+//        }
+//2. In your other activities, create an instance of the Bluetooth helper class and call the `getReadMessage()` method to retrieve the value:
+//
+//        java
+//        BluetoothHelper bluetoothHelper = new BluetoothHelper();
+//        String readMessage = bluetoothHelper.getReadMessage();
+//        Make sure to replace `BluetoothHelper` with the actual class name of your Bluetooth helper class.
+//
+//                3. If you want to access the `readMessage` value from multiple activities, you can make the `getReadMessage()` method static, so you don't need to create an instance of the Bluetooth helper class:
+//
+//        java
+//        public static String getReadMessage() {
+//            return readMessage;
+//        }
+//        Then, in your other activities, you can directly call the `getReadMessage()` method without creating an instance:
+//
+//        java
+//        String readMessage = BluetoothHelper.getReadMessage();
+//        Remember to replace `BluetoothHelper` with the actual class name of your Bluetooth helper class.
+//
+//        By following these steps, you can call the `getReadMessage()` method from any activity and retrieve the value of the `readMessage` string that was received from the Arduino.
 
 
 
