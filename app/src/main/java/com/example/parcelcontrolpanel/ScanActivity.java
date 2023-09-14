@@ -1,5 +1,6 @@
 package com.example.parcelcontrolpanel;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
@@ -47,14 +48,16 @@ import javax.net.ssl.HttpsURLConnection;
 public class ScanActivity extends AppCompatActivity {
     String scannedData;
     String checkData;
+    Context context = this;
+
     String urlString;
     String sampleScannedData;
-
+    BluetoothHelper bluetoothHelper = new BluetoothHelper(context, "HC-05", "00:22:12:00:3C:EA");
     private BarcodeDetector barcodeDetector;
     String getParcelId, getPaymentId;
-    Context context;
     int brightness;
     String phoneNo;
+    private ProgressDialog progressDialog;
 
     boolean scanbuttonClicked, checkbuttonClicked;
     ImageView scanBtn, checkBtn;
@@ -63,6 +66,12 @@ public class ScanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
         final Activity activity =this;
+        String status = bluetoothHelper.getStatus();
+        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Connecting...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
         //barcode
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.System.canWrite(this)) {
@@ -89,6 +98,25 @@ public class ScanActivity extends AppCompatActivity {
             Toast.makeText(this, "Could not set up the barcode detector", Toast.LENGTH_SHORT).show();
             return;
         }
+        // Connect to the Bluetooth device
+        bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
+            @Override
+            public void onConnected() {
+                // Dismiss the progress dialog when connected
+                progressDialog.dismiss();
+
+                // Continue with other logic or UI updates
+            }
+
+            @Override
+            public void onFailure() {
+                // Dismiss the progress dialog and show an error message
+                progressDialog.dismiss();
+                bluetoothHelper.disconnect();
+                Toast.makeText(ScanActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
 //        scanBtn.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -226,15 +254,18 @@ public class ScanActivity extends AppCompatActivity {
 
             Toast.makeText(getApplicationContext(), sampleScannedData,Toast.LENGTH_LONG).show();
             if(result.equals("Tracking ID exists: " + sampleScannedData + " and payment method is Mobile Wallet")){
+                bluetoothHelper.toggleLEDOn(); // unlock door solenoid change value according to arduino variable for pins
 
 
-                    Intent intent = new Intent(ScanActivity.this, ReceiveParcel.class);
+                Intent intent = new Intent(ScanActivity.this, ReceiveParcel.class);
                 intent.putExtra("trackingID", sampleScannedData);
                 // start the Intent
                 startActivity(intent);
 
                 }
            else if(result.equals("Tracking ID exists: " + sampleScannedData + " but payment method is not Mobile Wallet")) {
+                bluetoothHelper.toggleLEDOn(); // unlock door solenoid change value according to arduino variable for pins
+
                 Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
                 startActivity(moveToPlaceParcel);
             }

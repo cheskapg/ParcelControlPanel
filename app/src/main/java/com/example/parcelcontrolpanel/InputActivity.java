@@ -233,6 +233,7 @@ public class InputActivity extends AppCompatActivity {
 
                 bluetoothHelper.toggleLEDOn(); // unlock door solenoid change value according to arduino variable for pins
                 Toast.makeText(getApplicationContext(), "LED ON - DOOR UNLOCKED", Toast.LENGTH_LONG).show();
+
             } else if(result.equals("Tracking ID exists: " + sampleInputData + " but payment method is not Mobile Wallet")) {
                 // Tracking ID exists but payment method is not Mobile Wallet
                 loading.dismiss();
