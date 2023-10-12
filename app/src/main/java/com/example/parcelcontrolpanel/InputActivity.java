@@ -41,9 +41,11 @@ import javax.net.ssl.HttpsURLConnection;
 
 import android.telephony.SmsManager;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -54,28 +56,29 @@ public class InputActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
     BluetoothHelper bluetoothHelper = new BluetoothHelper(context, "HC-05", "00:22:12:00:3C:EA");
-//    BluetoothHelper bluetoothHelper = new BluetoothHelper();
-
+    //    BluetoothHelper bluetoothHelper = new BluetoothHelper();
+    public String compNum;
     String inputData;
     String checkData;
     String urlString;
     String sampleInputData;
-   String getParcelId, getPaymentId;
+    String getParcelId, getPaymentId;
     ImageView checkBtn;
     ProgressDialog loading;
     EditText inputTrackingET;
     private ProgressDialog progressDialog;
 
     String phoneNo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String status = bluetoothHelper.getStatus();
-        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Connecting...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+//        String status = bluetoothHelper.getStatus();
+//        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
+//        progressDialog = new ProgressDialog(this);
+//        progressDialog.setMessage("Connecting...");
+//        progressDialog.setCancelable(false);
+//        progressDialog.show();
 
 //         Show the progress dialog
 //        progressDialog = new ProgressDialog(this);
@@ -85,24 +88,23 @@ public class InputActivity extends AppCompatActivity {
 
         // Connect to the Bluetooth device
         // Connect to the Bluetooth device
-        bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
-            @Override
-            public void onConnected() {
-                // Dismiss the progress dialog when connected
-                progressDialog.dismiss();
-
-                // Continue with other logic or UI updates
-            }
-
-            @Override
-            public void onFailure() {
-                // Dismiss the progress dialog and show an error message
+//        bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
+//            @Override
+//            public void onConnected() {
+//                // Dismiss the progress dialog when connected
 //                progressDialog.dismiss();
-//                bluetoothHelper.disconnect();
-//                Toast.makeText(InputActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+//
+//                // Continue with other logic or UI updates
+//            }
+//
+//            @Override
+//            public void onFailure() {
+//                // Dismiss the progress dialog and show an error message
+////                progressDialog.dismiss();
+////                bluetoothHelper.disconnect();
+////                Toast.makeText(InputActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
 
         setContentView(R.layout.activity_input);
@@ -133,11 +135,13 @@ public class InputActivity extends AppCompatActivity {
         });
 
     }
+
     private String getTracking() {
         return sampleInputData;
     }
-    public void getPhoneNumber(){
-        String url = String.format("https://script.google.com/macros/s/AKfycbz0HTpS_z0h5CeN0mgcCrSWh4DXtwzz3oT5hN10QO7nGUQmuy2tc0xDXTtiHIkrysZo/exec?action=getPhoneNumberByTracking&trackingId=%s", getTracking());
+
+    public void getPhoneNumber() {
+        String url = String.format("https://script.google.com/macros/s/AKfycbw4a8z6clbdTthJcMCJRahBJE3DH7IBSyA1OO9qovz_uj9z3RBw_h3LBslwvgeLhHzL/exec?action=getPhoneNumberByTracking&trackingId=%s", getTracking());
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -145,8 +149,8 @@ public class InputActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         // Handle the response (file URL)
                         phoneNo = response;
-                        Toast.makeText(getApplicationContext(),"Phone:" +phoneNo, Toast.LENGTH_SHORT).show();
-                        SMSHandler.sendSMSMessage(InputActivity.this, phoneNo, "ParcelPal SMS Notification: Parcel-"+sampleInputData + " Scanned and Attempting Delivery");
+                        Toast.makeText(getApplicationContext(), "Phone:" + phoneNo, Toast.LENGTH_SHORT).show();
+                        SMSHandler.sendSMSMessage(InputActivity.this, phoneNo, "ParcelPal SMS Notification: Parcel-" + sampleInputData + " Scanned and Attempting Delivery");
 
                         loading.dismiss();
 
@@ -156,7 +160,7 @@ public class InputActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 // Handle the error
-                Toast.makeText(getApplicationContext(),"Error" + phoneNo, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error" + phoneNo, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -165,17 +169,18 @@ public class InputActivity extends AppCompatActivity {
         queue.add(stringRequest);
 
     }
-    public class CheckRequest extends AsyncTask<String, Void, String>
-    {
 
-        protected void onPreExecute(){}
+    public class CheckRequest extends AsyncTask<String, Void, String> {
+
+        protected void onPreExecute() {
+        }
 
         protected String doInBackground(String... arg0) {
 
             try {
 
                 // Enter script URL Here
-                String baseUrl = "https://script.google.com/macros/s/AKfycby3qyrW69TzJvcqtbMI0vu0HE-HgmH5yBiWOAgajcJPoHuC4JXE8UxxD8VrOzzNPUPD/exec";
+                String baseUrl = "https://script.google.com/macros/s/AKfycbycoJM-I4YdT2oMwlI8ZZY8a9HkqrH1N36Aux_Zqcc6MqG6dPnLiL00QODfjk_ESfEK/exec";
                 String action = "checkQRParcel";
                 String trackingId = inputData;
 
@@ -212,20 +217,21 @@ public class InputActivity extends AppCompatActivity {
             }
 
         }
+
         @Override
         protected void onPostExecute(String result) {
             int dur = 1000000;
             getPhoneNumber();
 
-            Toast.makeText(getApplicationContext(), "Checking Tracking ID",Toast.LENGTH_LONG).show();
-//            Log.i("Info", urlString);
+            Toast.makeText(getApplicationContext(), "Checking Tracking ID", Toast.LENGTH_LONG).show();
+            Log.i("Info", result);
 
-            Toast.makeText(getApplicationContext(), sampleInputData,Toast.LENGTH_LONG).show();
-            if(result.equals("Tracking ID exists: " + sampleInputData + " and payment method is Mobile Wallet")){
+            Toast.makeText(getApplicationContext(), sampleInputData, Toast.LENGTH_LONG).show();
+            if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is Mobile Wallet")) {
                 // Tracking ID exists and payment method is Mobile Wallet
-
-                SendRequest sendRequestTask = new SendRequest();
-                sendRequestTask.execute(inputData);
+//
+//                SendRequest sendRequestTask = new SendRequest();
+//                sendRequestTask.execute(inputData);
                 loading.dismiss();
                 Intent intent = new Intent(InputActivity.this, ReceiveParcel.class);
                 intent.putExtra("trackingID", sampleInputData);
@@ -234,46 +240,53 @@ public class InputActivity extends AppCompatActivity {
                 bluetoothHelper.mobileTrigger(); // unlock door solenoid change value according to arduino variable for pins
                 Toast.makeText(getApplicationContext(), "LED ON - DOOR UNLOCKED", Toast.LENGTH_LONG).show();
 
-            } else if(result.equals("Tracking ID exists: " + sampleInputData + " but payment method is not Mobile Wallet")) {
+            } else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is not Mobile Wallet")) {
                 // Tracking ID exists but payment method is not Mobile Wallet
                 loading.dismiss();
-                SendRequest sendRequestTask = new SendRequest();
-                sendRequestTask.execute(inputData);
+//                SendRequest sendRequestTask = new SendRequest();
+//                sendRequestTask.execute(inputData);
 
                 Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
                 moveToPlaceParcel.putExtra("trackingID", sampleInputData);
 
                 startActivity(moveToPlaceParcel);
-                bluetoothHelper.prepaidTrigger(); // unlock door solenoid change value according to arduino variable for pins
-                String readMessage = bluetoothHelper.getReadMessage();
-                Toast.makeText(InputActivity.this, "READ ARDUINO inp "+readMessage , Toast.LENGTH_SHORT).show();
-//                bluetoothHelper.disconnect();
-
-            }
-            else if(result.equals("Tracking ID exists: " + sampleInputData + " but payment method is COD")) {
-                // Tracking ID exists but payment method is COD
-                loading.dismiss();
-                SendRequest sendRequestTask = new SendRequest();
-                sendRequestTask.execute(inputData);
-
-                Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
-                moveToPlaceParcel.putExtra("trackingID", sampleInputData);
-
-                startActivity(moveToPlaceParcel);
-
-                bluetoothHelper.prepaidTrigger(); // unlock door solenoid change value according to arduino variable for pins
+//                bluetoothHelper.prepaidTrigger(); // unlock door solenoid change value according to arduino variable for pins
                 String readMessage = bluetoothHelper.getReadMessage();
                 Toast.makeText(InputActivity.this, "READ ARDUINO inp " + readMessage, Toast.LENGTH_SHORT).show();
 //                bluetoothHelper.disconnect();
-            }
-            else {
+
+            } else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is COD")) {
+                // Tracking ID exists but payment method is COD
+                loading.dismiss();
+                getCompartmentNum(sampleInputData);
+
+                Log.i("COMPNUM", "comp" + compNum);
+
+
+
+                if (compNum.equals("1")) {
+                    Toast.makeText(InputActivity.this, "COMPARTMENT IS 1", Toast.LENGTH_SHORT).show();
+                }
+                if (compNum.equals("2")) {
+                    Toast.makeText(InputActivity.this, "COMPARTMENT IS 2", Toast.LENGTH_SHORT).show();
+                }
+
+//                bluetoothHelper.prepaidTrigger();
+                // unlock door solenoid change value according to arduino variable for pins
+                String readMessage = bluetoothHelper.getReadMessage();
+                Toast.makeText(InputActivity.this, "READ ARDUINO inp " + compNum, Toast.LENGTH_SHORT).show();
+//                bluetoothHelper.disconnect();
+                Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
+                moveToPlaceParcel.putExtra("trackingID", sampleInputData);
+                startActivity(moveToPlaceParcel);
+            } else {
                 loading.dismiss();
                 // Tracking ID does not exist or error occurred
                 Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
                 Toast.makeText(getApplicationContext(), "PLEASE TRY AGAIN", Toast.LENGTH_LONG).show();
             }
 
-            Toast.makeText(getApplicationContext(), result,Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
 //                bluetoothHelper.disconnect();
 
 
@@ -283,90 +296,92 @@ public class InputActivity extends AppCompatActivity {
         }
     }
 
-//addqr table testing
-    public class SendRequest extends AsyncTask<String, Void, String> {
 
-        protected String doInBackground(String... arg0) {
-            try {
-                // Enter script URL Here
-                URL url = new URL("https://script.google.com/macros/s/AKfycbwsaC5SjNgbXN9K29GmI15DwDFIbKUwbWDYHYP5NmzNMH1MXLmZcL-aTPlx8NaL1Zrw/exec");
+////addqr table testing
+//    public class SendRequest extends AsyncTask<String, Void, String> {
+//
+//        protected String doInBackground(String... arg0) {
+//            try {
+//                // Enter script URL Here
+//                URL url = new URL("https://script.google.com/macros/s/AKfycbwsaC5SjNgbXN9K29GmI15DwDFIbKUwbWDYHYP5NmzNMH1MXLmZcL-aTPlx8NaL1Zrw/exec");
+//
+//                JSONObject postDataParams = new JSONObject();
+//
+//                // Passing input data as parameter
+//                postDataParams.put("action", "addQrItem");
+//                postDataParams.put("sdata", inputData);
+//
+//                Log.e("params", postDataParams.toString());
+//
+//                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//                conn.setReadTimeout(30000 /* milliseconds */);
+//                conn.setConnectTimeout(30000 /* milliseconds */);
+//                conn.setRequestMethod("GET");
+//                conn.setDoInput(true);
+//                conn.setDoOutput(true);
+//
+//                OutputStream os = conn.getOutputStream();
+//                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+//                writer.write(getPostDataString(postDataParams));
+//
+//                writer.flush();
+//                writer.close();
+//                os.close();
+//
+//                int responseCode = conn.getResponseCode();
+//
+//                if (responseCode == HttpURLConnection.HTTP_OK) {
+//                    InputStream inputStream = conn.getInputStream();
+//                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+//                    BufferedReader reader = new BufferedReader(inputStreamReader);
+//
+//                    String response = reader.readLine();
+//
+//                    reader.close();
+//                    inputStreamReader.close();
+//                    inputStream.close();
+//                    return response;
+//                } else {
+//                    return "false : " + responseCode;
+//                }
+//            } catch (Exception e) {
+//                return "Exception: " + e.getMessage();
+//            }
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+//
+//
+//        }
+//    }
 
-                JSONObject postDataParams = new JSONObject();
+//    public String getPostDataString(JSONObject params) throws Exception {
+//
+//        StringBuilder result = new StringBuilder();
+//        boolean first = true;
+//
+//        Iterator<String> itr = params.keys();
+//
+//        while(itr.hasNext()){
+//
+//            String key= itr.next();
+//            Object value = params.get(key);
+//
+//            if (first)
+//                first = false;
+//            else
+//                result.append("&");
+//
+//            result.append(URLEncoder.encode(key, "UTF-8"));
+//            result.append("=");
+//            result.append(URLEncoder.encode(value.toString(), "UTF-8"));
+//
+//        }
+//        return result.toString();
+//    }
 
-                // Passing input data as parameter
-                postDataParams.put("action", "addQrItem");
-                postDataParams.put("sdata", inputData);
-
-                Log.e("params", postDataParams.toString());
-
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(30000 /* milliseconds */);
-                conn.setConnectTimeout(30000 /* milliseconds */);
-                conn.setRequestMethod("GET");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(getPostDataString(postDataParams));
-
-                writer.flush();
-                writer.close();
-                os.close();
-
-                int responseCode = conn.getResponseCode();
-
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    InputStream inputStream = conn.getInputStream();
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                    BufferedReader reader = new BufferedReader(inputStreamReader);
-
-                    String response = reader.readLine();
-
-                    reader.close();
-                    inputStreamReader.close();
-                    inputStream.close();
-                    return response;
-                } else {
-                    return "false : " + responseCode;
-                }
-            } catch (Exception e) {
-                return "Exception: " + e.getMessage();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
-
-
-        }
-    }
-
-    public String getPostDataString(JSONObject params) throws Exception {
-
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-
-        Iterator<String> itr = params.keys();
-
-        while(itr.hasNext()){
-
-            String key= itr.next();
-            Object value = params.get(key);
-
-            if (first)
-                first = false;
-            else
-                result.append("&");
-
-            result.append(URLEncoder.encode(key, "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(value.toString(), "UTF-8"));
-
-        }
-        return result.toString();
-    }
     public void onBackPressed() {
         // Terminate Bluetooth Connection and close app
 
@@ -376,7 +391,38 @@ public class InputActivity extends AppCompatActivity {
         a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(a);
     }
+    private void getCompartmentNum(String tracking) {
+        inputData = tracking;
+        Log.d("GETtrack",inputData + "input track");
+        String url = String.format("https://script.google.com/macros/s/AKfycbycoJM-I4YdT2oMwlI8ZZY8a9HkqrH1N36Aux_Zqcc6MqG6dPnLiL00QODfjk_ESfEK/exec?action=getCompNum&trackingId=%s", inputData);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("compNum",compNum + "gecomprrespone");
 
+                        compNum = "1";
+                        Toast myToast = Toast.makeText(InputActivity.this, response, Toast.LENGTH_LONG);
+                        myToast.show();
+                        Log.d("compNum",compNum + "gecomprrespone");
+
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle error response                }
+                    }
+
+                }
+        );
+        int socketTimeOut = 50000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(stringRequest);
+    }
 
 //    protected void sendSMSMessage() {
 //        phoneNo = "0"; //get from db according to user
