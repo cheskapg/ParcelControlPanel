@@ -42,7 +42,7 @@ public class BluetoothClassTest extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                bluetoothHelper.toggleLEDOn();
+                bluetoothHelper.codComp1Trigger();
             }
         });
 

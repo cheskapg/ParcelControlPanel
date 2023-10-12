@@ -184,14 +184,44 @@ public class BluetoothHelper {
         void onConnected();
         void onFailure();
     }
-    public void toggleLEDOn() {
+    public void codComp1Trigger() {
 
         if (connectedThread != null) {
-            connectedThread.write("1");
+            connectedThread.write("A");
         }
         else{
             reconnectToDevice();
-            connectedThread.write("1");
+            connectedThread.write("A");
+        }
+    }
+    public void codComp2Trigger() {
+
+        if (connectedThread != null) {
+            connectedThread.write("B");
+        }
+        else{
+            reconnectToDevice();
+            connectedThread.write("B");
+        }
+    }
+    public void prepaidTrigger() {
+
+        if (connectedThread != null) {
+            connectedThread.write("C");
+        }
+        else{
+            reconnectToDevice();
+            connectedThread.write("C");
+        }
+    }
+    public void mobileTrigger() {
+
+        if (connectedThread != null) {
+            connectedThread.write("D");
+        }
+        else{
+            reconnectToDevice();
+            connectedThread.write("D");
         }
     }
 
@@ -206,7 +236,6 @@ public class BluetoothHelper {
         if (createConnectThread != null) {
             createConnectThread.cancel();
         }
-        createConnectThread.cancel();
 
     }
     public void reconnectToDevice() {

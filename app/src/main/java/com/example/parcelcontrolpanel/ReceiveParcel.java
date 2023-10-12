@@ -34,7 +34,7 @@ public class ReceiveParcel extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive_parcel);
         String readMessage = bluetoothHelper.getReadMessage();
-        Toast.makeText(ReceiveParcel.this, readMessage , Toast.LENGTH_SHORT).show();        //only do this after arduino sensor confirms it has parcel inside
+        Toast.makeText(ReceiveParcel.this, "READ ARDUINO "+readMessage , Toast.LENGTH_SHORT).show();        //only do this after arduino sensor confirms it has parcel inside
 //        getTracking();
 //        ReceiveParcel.CheckRequest checkRequestTask = new CheckRequest();
 //        checkRequestTask.execute(sampleInputData);

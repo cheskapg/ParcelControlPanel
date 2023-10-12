@@ -97,9 +97,9 @@ public class InputActivity extends AppCompatActivity {
             @Override
             public void onFailure() {
                 // Dismiss the progress dialog and show an error message
-                progressDialog.dismiss();
-                bluetoothHelper.disconnect();
-                Toast.makeText(InputActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
+//                progressDialog.dismiss();
+//                bluetoothHelper.disconnect();
+//                Toast.makeText(InputActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -231,7 +231,7 @@ public class InputActivity extends AppCompatActivity {
                 intent.putExtra("trackingID", sampleInputData);
                 startActivity(intent);
 
-                bluetoothHelper.toggleLEDOn(); // unlock door solenoid change value according to arduino variable for pins
+                bluetoothHelper.mobileTrigger(); // unlock door solenoid change value according to arduino variable for pins
                 Toast.makeText(getApplicationContext(), "LED ON - DOOR UNLOCKED", Toast.LENGTH_LONG).show();
 
             } else if(result.equals("Tracking ID exists: " + sampleInputData + " but payment method is not Mobile Wallet")) {
@@ -244,10 +244,29 @@ public class InputActivity extends AppCompatActivity {
                 moveToPlaceParcel.putExtra("trackingID", sampleInputData);
 
                 startActivity(moveToPlaceParcel);
-                bluetoothHelper.toggleLEDOn(); // unlock door solenoid change value according to arduino variable for pins
-                Toast.makeText(getApplicationContext(), "LED ON - DOOR UNLOCKED", Toast.LENGTH_LONG).show();                bluetoothHelper.disconnect();
+                bluetoothHelper.prepaidTrigger(); // unlock door solenoid change value according to arduino variable for pins
+                String readMessage = bluetoothHelper.getReadMessage();
+                Toast.makeText(InputActivity.this, "READ ARDUINO inp "+readMessage , Toast.LENGTH_SHORT).show();
+//                bluetoothHelper.disconnect();
 
-            } else {
+            }
+            else if(result.equals("Tracking ID exists: " + sampleInputData + " but payment method is COD")) {
+                // Tracking ID exists but payment method is COD
+                loading.dismiss();
+                SendRequest sendRequestTask = new SendRequest();
+                sendRequestTask.execute(inputData);
+
+                Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
+                moveToPlaceParcel.putExtra("trackingID", sampleInputData);
+
+                startActivity(moveToPlaceParcel);
+
+                bluetoothHelper.prepaidTrigger(); // unlock door solenoid change value according to arduino variable for pins
+                String readMessage = bluetoothHelper.getReadMessage();
+                Toast.makeText(InputActivity.this, "READ ARDUINO inp " + readMessage, Toast.LENGTH_SHORT).show();
+//                bluetoothHelper.disconnect();
+            }
+            else {
                 loading.dismiss();
                 // Tracking ID does not exist or error occurred
                 Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
@@ -351,7 +370,7 @@ public class InputActivity extends AppCompatActivity {
     public void onBackPressed() {
         // Terminate Bluetooth Connection and close app
 
-            bluetoothHelper.disconnect();
+//            bluetoothHelper.disconnect();
                 Intent a = new Intent(InputActivity.this, MainActivity.class);
         a.addCategory(Intent.CATEGORY_HOME);
         a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

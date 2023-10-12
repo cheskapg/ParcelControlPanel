@@ -112,7 +112,7 @@ public class ScanActivity extends AppCompatActivity {
             public void onFailure() {
                 // Dismiss the progress dialog and show an error message
                 progressDialog.dismiss();
-                bluetoothHelper.disconnect();
+//                bluetoothHelper.disconnect();
                 Toast.makeText(ScanActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(ScanActivity.this, MainActivity.class);
@@ -257,7 +257,7 @@ public class ScanActivity extends AppCompatActivity {
 
             Toast.makeText(getApplicationContext(), sampleScannedData,Toast.LENGTH_LONG).show();
             if(result.equals("Tracking ID exists: " + sampleScannedData + " and payment method is Mobile Wallet")){
-                bluetoothHelper.toggleLEDOn(); // unlock door solenoid change value according to arduino variable for pins
+                bluetoothHelper.mobileTrigger(); // unlock door solenoid change value according to arduino variable for pins
 
 
                 Intent intent = new Intent(ScanActivity.this, ReceiveParcel.class);
@@ -267,7 +267,7 @@ public class ScanActivity extends AppCompatActivity {
 
                 }
            else if(result.equals("Tracking ID exists: " + sampleScannedData + " but payment method is not Mobile Wallet")) {
-                bluetoothHelper.toggleLEDOn(); // unlock door solenoid change value according to arduino variable for pins
+                bluetoothHelper.prepaidTrigger(); // unlock door solenoid change value according to arduino variable for pins
 
                 Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
                 startActivity(moveToPlaceParcel);
