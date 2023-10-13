@@ -56,7 +56,7 @@ public class InputActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
     BluetoothHelper bluetoothHelper = new BluetoothHelper(context, "HC-05", "00:22:12:00:3C:EA");
-    //    BluetoothHelper bluetoothHelper = new BluetoothHelper();
+//        BluetoothHelper bluetoothHelper = new BluetoothHelper();
     public String compNum;
     String inputData;
     String checkData;
@@ -73,39 +73,37 @@ public class InputActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        String status = bluetoothHelper.getStatus();
-//        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
-//        progressDialog = new ProgressDialog(this);
-//        progressDialog.setMessage("Connecting...");
-//        progressDialog.setCancelable(false);
-//        progressDialog.show();
+        String status = bluetoothHelper.getStatus();
+        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Connecting...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
 //         Show the progress dialog
-//        progressDialog = new ProgressDialog(this);
-//        progressDialog.setMessage("Connecting...");
-//        progressDialog.setCancelable(false);
-//        progressDialog.show();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Connecting...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
         // Connect to the Bluetooth device
         // Connect to the Bluetooth device
-//        bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
-//            @Override
-//            public void onConnected() {
+        bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
+            @Override
+            public void onConnected() {
 //                // Dismiss the progress dialog when connected
-//                progressDialog.dismiss();
+                progressDialog.dismiss();
 //
-//                // Continue with other logic or UI updates
-//            }
+            }
 //
-//            @Override
-//            public void onFailure() {
+            @Override
+            public void onFailure() {
 //                // Dismiss the progress dialog and show an error message
-////                progressDialog.dismiss();
-////                bluetoothHelper.disconnect();
-////                Toast.makeText(InputActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
+                progressDialog.dismiss();
+                bluetoothHelper.disconnect();
+                Toast.makeText(InputActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         setContentView(R.layout.activity_input);
         checkBtn = (ImageView) findViewById(R.id.bgButtonInputCheck);
@@ -245,7 +243,7 @@ public class InputActivity extends AppCompatActivity {
             else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is not Mobile Wallet")) {
                 // Tracking ID exists but payment method is not Mobile Wallet
                 //uncomment to enable bluetooth command
-                //bluetoothHelper.prepaidTrigger();
+                bluetoothHelper.prepaidTrigger();
 
                 loading.dismiss();
 
