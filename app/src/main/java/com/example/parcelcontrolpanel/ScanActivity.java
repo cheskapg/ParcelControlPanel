@@ -19,9 +19,11 @@ import android.widget.Toast;
 //import com.google.android.gms.samples.vision.barcodereader.ui.camera.CameraSource;
 //import com.google.android.gms.samples.vision.barcodereader.ui.camera.CameraSourcePreview;
 //import com.google.android.gms.samples.vision.barcodereader.ui.camera.GraphicOverlay;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -58,6 +60,7 @@ public class ScanActivity extends AppCompatActivity {
     int brightness;
     String phoneNo;
     private ProgressDialog progressDialog;
+    public String compNum;
 
     boolean scanbuttonClicked, checkbuttonClicked;
     ImageView scanBtn, checkBtn;
@@ -83,7 +86,7 @@ public class ScanActivity extends AppCompatActivity {
 //        scanBtn = (Button)findViewById(R.id.dat);
         checkBtn = findViewById(R.id.bgButtonScan);
 
-        scanbuttonClicked =false;
+//        scanbuttonClicked =false;
         checkbuttonClicked=false;
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.ALL_FORMATS)
@@ -157,10 +160,10 @@ public class ScanActivity extends AppCompatActivity {
         if(result!=null) {
             scannedData = result.getContents();
             if (scannedData != null) {
-                if(scanbuttonClicked) {
-                    // Here we need to handle scanned data...
-                    new SendRequest().execute();
-                }
+//                if(scanbuttonClicked) {
+//                    // Here we need to handle scanned data...
+//                    new SendRequest().execute();
+//                }
                 if(checkbuttonClicked){
                     new CheckRequest().execute();
                 }
@@ -183,7 +186,7 @@ public class ScanActivity extends AppCompatActivity {
                         // Handle the response (file URL)
                         phoneNo = response;
                         Toast.makeText(getApplicationContext(),"Phone:" +phoneNo, Toast.LENGTH_SHORT).show();
-                        SMSHandler.sendSMSMessage(ScanActivity.this, phoneNo, "ParcelPal SMS Notification: Parcel-"+sampleScannedData + " Scanned and Attempting Delivery");
+                        SMSHandler.sendSMSMessage(ScanActivity.this, phoneNo, "ParcelPal SMS Notification: Parcel-"+ sampleScannedData +" Scanned and Attempting Delivery");
 
 
 
@@ -209,8 +212,10 @@ public class ScanActivity extends AppCompatActivity {
         protected String doInBackground(String... arg0) {
 
             try {
+                getCompartmentNum(scannedData);
+
                 // Enter script URL Here
-                String baseUrl = "https://script.google.com/macros/s/AKfycby3qyrW69TzJvcqtbMI0vu0HE-HgmH5yBiWOAgajcJPoHuC4JXE8UxxD8VrOzzNPUPD/exec";
+                String baseUrl = "https://script.google.com/macros/s/AKfycbycoJM-I4YdT2oMwlI8ZZY8a9HkqrH1N36Aux_Zqcc6MqG6dPnLiL00QODfjk_ESfEK/exec";
                 String action = "checkQRParcel";
                 String trackingId = scannedData;
                 sampleScannedData = scannedData;
@@ -256,27 +261,60 @@ public class ScanActivity extends AppCompatActivity {
             Log.i("Info", urlString);
 
             Toast.makeText(getApplicationContext(), sampleScannedData,Toast.LENGTH_LONG).show();
-            if(result.equals("Tracking ID exists: " + sampleScannedData + " and payment method is Mobile Wallet")){
-                bluetoothHelper.mobileTrigger(); // unlock door solenoid change value according to arduino variable for pins
 
+
+            if (result.equals("Tracking ID exists: " + sampleScannedData + " and payment method is Mobile Wallet")) {
+                // Tracking ID exists and payment method is Mobile Wallet
+//                bluetoothHelper.mobileTrigger();
+                // unlock door and wait for mobile payment screen
 
                 Intent intent = new Intent(ScanActivity.this, ReceiveParcel.class);
                 intent.putExtra("trackingID", sampleScannedData);
-                // start the Intent
                 startActivity(intent);
 
-                }
-           else if(result.equals("Tracking ID exists: " + sampleScannedData + " but payment method is not Mobile Wallet")) {
-                bluetoothHelper.prepaidTrigger(); // unlock door solenoid change value according to arduino variable for pins
+                Toast.makeText(getApplicationContext(), "Mobile Payment Parcel", Toast.LENGTH_LONG).show();
+
+            }
+            else if (result.equals("Tracking ID exists: " + sampleScannedData + " but payment method is not Mobile Wallet")) {
+                // Tracking ID exists but payment method is not Mobile Wallet
+                //uncomment to enable bluetooth command
+                //bluetoothHelper.prepaidTrigger();
 
                 Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
+                moveToPlaceParcel.putExtra("trackingID", sampleScannedData);
+
                 startActivity(moveToPlaceParcel);
-            }
-           else{
-                Toast.makeText(getApplicationContext(), result,Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), "PLEASE TRY AGAIN",Toast.LENGTH_LONG).show();
+
+
+                String readMessage = bluetoothHelper.getReadMessage();
+                Toast.makeText(ScanActivity.this, "READ ARDUINO NOT mobile " + readMessage, Toast.LENGTH_SHORT).show();
 
             }
+            else if (result.equals("Tracking ID exists: " + sampleScannedData + " but payment method is COD")) {
+                // Tracking ID exists but payment method is COD
+
+                Log.i("COMPNUM", "comp" + compNum);
+
+
+                // unlock door solenoid change value according to arduino variable for pins
+                if (compNum.equals("1")) {
+//                    bluetoothHelper.codComp1Trigger();
+                    Toast.makeText(ScanActivity.this, "COMPARTMENT IS 1", Toast.LENGTH_SHORT).show();
+                }
+                if (compNum.equals("2")) {
+//                    bluetoothHelper.codComp2Trigger();
+                    Toast.makeText(ScanActivity.this, "COMPARTMENT IS 2", Toast.LENGTH_SHORT).show();
+                }
+                Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
+                moveToPlaceParcel.putExtra("trackingID", sampleScannedData);
+                startActivity(moveToPlaceParcel);
+            }
+
+            else {
+                // Tracking ID does not exist or error occurred
+                Toast.makeText(getApplicationContext(), "PLEASE TRY AGAIN", Toast.LENGTH_LONG).show();
+            }
+
 
            Toast.makeText(getApplicationContext(), result,Toast.LENGTH_LONG).show();
 
@@ -286,107 +324,138 @@ public class ScanActivity extends AppCompatActivity {
 
         }
     }
+    private void getCompartmentNum(String tracking) {
+        String trackingId = tracking;
+        Log.d("TRACKING",trackingId + "input track");
 
+        String url = String.format("https://script.google.com/macros/s/AKfycbycoJM-I4YdT2oMwlI8ZZY8a9HkqrH1N36Aux_Zqcc6MqG6dPnLiL00QODfjk_ESfEK/exec?action=getCompNum&trackingId=%s", trackingId);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
 
-    public class SendRequest extends AsyncTask<String, Void, String>
-    {
+                        compNum = response;
+                        Toast myToast = Toast.makeText(ScanActivity.this, response, Toast.LENGTH_LONG);
+                        myToast.show();
+                        Log.d("compNum",compNum + "gecomprrespone");
 
-
-        protected void onPreExecute(){}
-
-        protected String doInBackground(String... arg0) {
-
-            try{
-
-                //Enter script URL Here
-                URL url = new URL("https://script.google.com/macros/s/AKfycbwsaC5SjNgbXN9K29GmI15DwDFIbKUwbWDYHYP5NmzNMH1MXLmZcL-aTPlx8NaL1Zrw/exec");
-
-                JSONObject postDataParams = new JSONObject();
-
-                //int i;
-                //for(i=1;i<=70;i++)
-                //    String usn = Integer.toString(i);
-                //Passing scanned code as parameter
-                postDataParams.put("action","addQrItem");
-
-                postDataParams.put("sdata",scannedData);
-
-
-                Log.e("params",postDataParams.toString());
-
-                HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-                conn.setReadTimeout(30000 /* milliseconds */);
-                conn.setConnectTimeout(30000 /* milliseconds */);
-                conn.setRequestMethod("GET");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
-                writer.write(getPostDataString(postDataParams));
-
-                writer.flush();
-                writer.close();
-                os.close();
-
-                int responseCode=conn.getResponseCode();
-
-                if (responseCode == HttpsURLConnection.HTTP_OK) {
-
-                    BufferedReader in=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    StringBuffer sb = new StringBuffer("");
-                    String line="";
-
-                    while((line = in.readLine()) != null) {
-
-                        sb.append(line);
-                        break;
                     }
 
-                    in.close();
-                    return sb.toString();
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle error response                }
+                    }
 
                 }
-                else {
-                    return new String("false : "+responseCode);
-                }
-            }
-            catch(Exception e){
-                return new String("Exception: " + e.getMessage());
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Toast.makeText(getApplicationContext(), result,
-                    Toast.LENGTH_LONG).show();
-
-        }
+        );
+        int socketTimeOut = 50000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(stringRequest);
     }
 
-    public String getPostDataString(JSONObject params) throws Exception {
+//    public class SendRequest extends AsyncTask<String, Void, String>
+//    {
+//
+//
+//        protected void onPreExecute(){}
+//
+//        protected String doInBackground(String... arg0) {
+//
+//            try{
+//
+//                //Enter script URL Here
+//                URL url = new URL("https://script.google.com/macros/s/AKfycbwsaC5SjNgbXN9K29GmI15DwDFIbKUwbWDYHYP5NmzNMH1MXLmZcL-aTPlx8NaL1Zrw/exec");
+//
+//                JSONObject postDataParams = new JSONObject();
+//
+//                //int i;
+//                //for(i=1;i<=70;i++)
+//                //    String usn = Integer.toString(i);
+//                //Passing scanned code as parameter
+//                postDataParams.put("action","addQrItem");
+//
+//                postDataParams.put("sdata",scannedData);
+//
+//
+//                Log.e("params",postDataParams.toString());
+//
+//                HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+//                conn.setReadTimeout(30000 /* milliseconds */);
+//                conn.setConnectTimeout(30000 /* milliseconds */);
+//                conn.setRequestMethod("GET");
+//                conn.setDoInput(true);
+//                conn.setDoOutput(true);
+//
+//                OutputStream os = conn.getOutputStream();
+//                BufferedWriter writer = new BufferedWriter(
+//                        new OutputStreamWriter(os, "UTF-8"));
+//                writer.write(getPostDataString(postDataParams));
+//
+//                writer.flush();
+//                writer.close();
+//                os.close();
+//
+//                int responseCode=conn.getResponseCode();
+//
+//                if (responseCode == HttpsURLConnection.HTTP_OK) {
+//
+//                    BufferedReader in=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//                    StringBuffer sb = new StringBuffer("");
+//                    String line="";
+//
+//                    while((line = in.readLine()) != null) {
+//
+//                        sb.append(line);
+//                        break;
+//                    }
+//
+//                    in.close();
+//                    return sb.toString();
+//
+//                }
+//                else {
+//                    return new String("false : "+responseCode);
+//                }
+//            }
+//            catch(Exception e){
+//                return new String("Exception: " + e.getMessage());
+//            }
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            Toast.makeText(getApplicationContext(), result,
+//                    Toast.LENGTH_LONG).show();
+//
+//        }
+//    }
 
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-
-        Iterator<String> itr = params.keys();
-
-        while(itr.hasNext()){
-
-            String key= itr.next();
-            Object value = params.get(key);
-
-            if (first)
-                first = false;
-            else
-                result.append("&");
-
-            result.append(URLEncoder.encode(key, "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(value.toString(), "UTF-8"));
-
-        }
-        return result.toString();
-    }
+//    public String getPostDataString(JSONObject params) throws Exception {
+//
+//        StringBuilder result = new StringBuilder();
+//        boolean first = true;
+//
+//        Iterator<String> itr = params.keys();
+//
+//        while(itr.hasNext()){
+//
+//            String key= itr.next();
+//            Object value = params.get(key);
+//
+//            if (first)
+//                first = false;
+//            else
+//                result.append("&");
+//
+//            result.append(URLEncoder.encode(key, "UTF-8"));
+//            result.append("=");
+//            result.append(URLEncoder.encode(value.toString(), "UTF-8"));
+//
+//        }
+//        return result.toString();
+//    }
 }

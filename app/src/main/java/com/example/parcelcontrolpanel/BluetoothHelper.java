@@ -36,7 +36,7 @@ import java.util.UUID;
 //THIS WORKS BUT DOES NOT CHECK THE CONNECTION AND RETRY CONTINUOUS AND PAIRS
 public class BluetoothHelper {
     private Context context;
-//ISSUE WITH PIN ENTERING AUTO
+    //ISSUE WITH PIN ENTERING AUTO
     private static final String TAG = "BluetoothHelper";
     private static final int CONNECTING_STATUS = 1;
     private static final int MESSAGE_READ = 2;
@@ -73,13 +73,14 @@ public class BluetoothHelper {
     public void registerPairingRequestReceiver() {
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
         intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
-         context.registerReceiver(broadcastReceiver, intentFilter);
+        context.registerReceiver(broadcastReceiver, intentFilter);
     }
 
     public void unregisterPairingRequestReceiver() {
         context.unregisterReceiver(broadcastReceiver);
     }
-    public BluetoothHelper( Context context, String deviceName, String deviceAddress) {
+
+    public BluetoothHelper(Context context, String deviceName, String deviceAddress) {
         this.context = context;
 
         this.deviceName = deviceName;
@@ -114,6 +115,7 @@ public class BluetoothHelper {
             }
         };
     }
+
     public String getStatus() {
         return Status;
     }
@@ -175,51 +177,53 @@ public class BluetoothHelper {
 //                }
 //            }
 //        } else {
-            // Device is already paired, proceed with connection
-            createConnectThread = new CreateConnectThread(device);
-            createConnectThread.start();
+        // Device is already paired, proceed with connection
+        createConnectThread = new CreateConnectThread(device);
+        createConnectThread.start();
 //        }
     }
+
     public interface ConnectCallback {
         void onConnected();
+
         void onFailure();
     }
+
     public void codComp1Trigger() {
 
         if (connectedThread != null) {
             connectedThread.write("A");
-        }
-        else{
+        } else {
             reconnectToDevice();
             connectedThread.write("A");
         }
     }
+
     public void codComp2Trigger() {
 
         if (connectedThread != null) {
             connectedThread.write("B");
-        }
-        else{
+        } else {
             reconnectToDevice();
             connectedThread.write("B");
         }
     }
+
     public void prepaidTrigger() {
 
         if (connectedThread != null) {
             connectedThread.write("C");
-        }
-        else{
+        } else {
             reconnectToDevice();
             connectedThread.write("C");
         }
     }
+
     public void mobileTrigger() {
 
         if (connectedThread != null) {
             connectedThread.write("D");
-        }
-        else{
+        } else {
             reconnectToDevice();
             connectedThread.write("D");
         }
@@ -238,6 +242,7 @@ public class BluetoothHelper {
         }
 
     }
+
     public void reconnectToDevice() {
         if (!isConnected) {
             connectToDevice(new BluetoothHelper.ConnectCallback() {
@@ -334,10 +339,12 @@ public class BluetoothHelper {
             isConnected = false;
         }
     }
+
     public String getReadMessage() {
         String readMessage = readArduino;
         return readMessage;
     }
+
     private class ConnectedThread extends Thread {
         private BluetoothSocket mmSocket;
         private InputStream mmInStream;
@@ -361,27 +368,26 @@ public class BluetoothHelper {
             mmOutStream = tmpOut;
         }
 
-//GET DATA FROM ARDUINO MSG---------------------------------------------------------
+        //GET DATA FROM ARDUINO MSG---------------------------------------------------------
         public void run() {
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes = 0; // bytes returned from read()
             // Keep listening to the InputStream until an exception occurs
             while (true) {
                 try {
-                    /*
-                    Read from the InputStream from Arduino until termination character is reached.
-                    Then send the whole String message to GUI Handler.
-                     */
-                    buffer[bytes] = (byte) mmInStream.read();
-                    String readMessage;
-                    if (buffer[bytes] == '\n') {
-                        readMessage = new String(buffer, 0, bytes);
-                        Log.e("ARDUINO Message", readMessage);
-                        readArduino = readMessage;
-                        handler.obtainMessage(MESSAGE_READ, readMessage).sendToTarget();
-                        bytes = 0;
-                    } else {
-                        bytes++;
+                    int data = mmInStream.read(); // Read a byte from the InputStream
+
+                    if (data != -1) {
+                        buffer[bytes] = (byte) data;
+                        if (buffer[bytes] == '\n') {
+                            String readMessage = new String(buffer, 0, bytes);
+                            Log.e("ARDUINO Message", readMessage);
+                            readArduino = readMessage;
+                            handler.obtainMessage(MESSAGE_READ, readMessage).sendToTarget();
+                            bytes = 0;
+                        } else {
+                            bytes++;
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -389,6 +395,7 @@ public class BluetoothHelper {
                 }
             }
         }
+
         /* Call this from the main activity to send data to the remote device */
         public void write(String input) {
             byte[] bytes = input.getBytes(); //converts entered String into bytes
@@ -436,18 +443,6 @@ public class BluetoothHelper {
 //        Remember to replace `BluetoothHelper` with the actual class name of your Bluetooth helper class.
 //
 //        By following these steps, you can call the `getReadMessage()` method from any activity and retrieve the value of the `readMessage` string that was received from the Arduino.
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //TRIAL CONTINUOUS CONNECT

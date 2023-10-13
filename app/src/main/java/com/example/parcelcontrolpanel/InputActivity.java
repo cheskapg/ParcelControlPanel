@@ -178,6 +178,7 @@ public class InputActivity extends AppCompatActivity {
         protected String doInBackground(String... arg0) {
 
             try {
+                getCompartmentNum(inputData);
 
                 // Enter script URL Here
                 String baseUrl = "https://script.google.com/macros/s/AKfycbycoJM-I4YdT2oMwlI8ZZY8a9HkqrH1N36Aux_Zqcc6MqG6dPnLiL00QODfjk_ESfEK/exec";
@@ -227,59 +228,59 @@ public class InputActivity extends AppCompatActivity {
             Log.i("Info", result);
 
             Toast.makeText(getApplicationContext(), sampleInputData, Toast.LENGTH_LONG).show();
+
             if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is Mobile Wallet")) {
                 // Tracking ID exists and payment method is Mobile Wallet
-//
-//                SendRequest sendRequestTask = new SendRequest();
-//                sendRequestTask.execute(inputData);
+                bluetoothHelper.mobileTrigger();
+                // unlock door and wait for mobile payment screen
+
                 loading.dismiss();
                 Intent intent = new Intent(InputActivity.this, ReceiveParcel.class);
                 intent.putExtra("trackingID", sampleInputData);
                 startActivity(intent);
 
-                bluetoothHelper.mobileTrigger(); // unlock door solenoid change value according to arduino variable for pins
-                Toast.makeText(getApplicationContext(), "LED ON - DOOR UNLOCKED", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Mobile Payment Parcel", Toast.LENGTH_LONG).show();
 
-            } else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is not Mobile Wallet")) {
+            }
+            else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is not Mobile Wallet")) {
                 // Tracking ID exists but payment method is not Mobile Wallet
+                //uncomment to enable bluetooth command
+                //bluetoothHelper.prepaidTrigger();
+
                 loading.dismiss();
-//                SendRequest sendRequestTask = new SendRequest();
-//                sendRequestTask.execute(inputData);
 
                 Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
                 moveToPlaceParcel.putExtra("trackingID", sampleInputData);
 
                 startActivity(moveToPlaceParcel);
-//                bluetoothHelper.prepaidTrigger(); // unlock door solenoid change value according to arduino variable for pins
-                String readMessage = bluetoothHelper.getReadMessage();
-                Toast.makeText(InputActivity.this, "READ ARDUINO inp " + readMessage, Toast.LENGTH_SHORT).show();
-//                bluetoothHelper.disconnect();
 
-            } else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is COD")) {
+
+                String readMessage = bluetoothHelper.getReadMessage();
+                Toast.makeText(InputActivity.this, "READ ARDUINO NOT mobile " + readMessage, Toast.LENGTH_SHORT).show();
+
+            }
+            else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is COD")) {
                 // Tracking ID exists but payment method is COD
                 loading.dismiss();
-                getCompartmentNum(sampleInputData);
 
                 Log.i("COMPNUM", "comp" + compNum);
 
 
-
+                // unlock door solenoid change value according to arduino variable for pins
                 if (compNum.equals("1")) {
+                    bluetoothHelper.codComp1Trigger();
                     Toast.makeText(InputActivity.this, "COMPARTMENT IS 1", Toast.LENGTH_SHORT).show();
                 }
                 if (compNum.equals("2")) {
+                    bluetoothHelper.codComp2Trigger();
                     Toast.makeText(InputActivity.this, "COMPARTMENT IS 2", Toast.LENGTH_SHORT).show();
                 }
-
-//                bluetoothHelper.prepaidTrigger();
-                // unlock door solenoid change value according to arduino variable for pins
-                String readMessage = bluetoothHelper.getReadMessage();
-                Toast.makeText(InputActivity.this, "READ ARDUINO inp " + compNum, Toast.LENGTH_SHORT).show();
-//                bluetoothHelper.disconnect();
                 Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
                 moveToPlaceParcel.putExtra("trackingID", sampleInputData);
                 startActivity(moveToPlaceParcel);
-            } else {
+            }
+
+            else {
                 loading.dismiss();
                 // Tracking ID does not exist or error occurred
                 Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
@@ -287,11 +288,10 @@ public class InputActivity extends AppCompatActivity {
             }
 
             Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
-//                bluetoothHelper.disconnect();
 
 
             // now by putExtra method put the value in key, value pair key is
-            // tracingID by this key we will receive the value, and put the string
+            // tracKingID by this key we will receive the value, and put the string
 
         }
     }
@@ -356,7 +356,6 @@ public class InputActivity extends AppCompatActivity {
 //
 //        }
 //    }
-
 //    public String getPostDataString(JSONObject params) throws Exception {
 //
 //        StringBuilder result = new StringBuilder();
@@ -386,22 +385,22 @@ public class InputActivity extends AppCompatActivity {
         // Terminate Bluetooth Connection and close app
 
 //            bluetoothHelper.disconnect();
-                Intent a = new Intent(InputActivity.this, MainActivity.class);
+        Intent a = new Intent(InputActivity.this, MainActivity.class);
         a.addCategory(Intent.CATEGORY_HOME);
         a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(a);
     }
     private void getCompartmentNum(String tracking) {
-        inputData = tracking;
-        Log.d("GETtrack",inputData + "input track");
-        String url = String.format("https://script.google.com/macros/s/AKfycbycoJM-I4YdT2oMwlI8ZZY8a9HkqrH1N36Aux_Zqcc6MqG6dPnLiL00QODfjk_ESfEK/exec?action=getCompNum&trackingId=%s", inputData);
+        String trackingId = tracking;
+        Log.d("TRACKING",inputData + "input track");
+
+        String url = String.format("https://script.google.com/macros/s/AKfycbycoJM-I4YdT2oMwlI8ZZY8a9HkqrH1N36Aux_Zqcc6MqG6dPnLiL00QODfjk_ESfEK/exec?action=getCompNum&trackingId=%s", trackingId);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("compNum",compNum + "gecomprrespone");
 
-                        compNum = "1";
+                        compNum = response;
                         Toast myToast = Toast.makeText(InputActivity.this, response, Toast.LENGTH_LONG);
                         myToast.show();
                         Log.d("compNum",compNum + "gecomprrespone");
