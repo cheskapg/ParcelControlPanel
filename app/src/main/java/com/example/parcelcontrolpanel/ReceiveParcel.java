@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -19,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.RecursiveAction;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -36,15 +38,20 @@ public class ReceiveParcel extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive_parcel);
         getTracking();
-
         String readMessage = bluetoothHelper.getReadMessage();
-
+        Log.d("arduinoOOOOO","CODE" + readMessage);
         Toast.makeText(ReceiveParcel.this, "READ ARDUINO " + readMessage, Toast.LENGTH_SHORT).show();
 
         //only do this after arduino sensor confirms it has parcel inside
-
-
-        if (readMessage.equals("Mobile")) {
+        if (readMessage == null) {
+            Log.d("arduinoOOOOO", "CODE" + readMessage);
+        } else if (readMessage.equals("Waiting")) {
+            while (readMessage.equals("Waiting")) {
+                // Keep waiting until the message is no longer "Waiting"
+                // Read the message again
+                readMessage= bluetoothHelper.getReadMessage();
+            }
+        } else if (readMessage.equals("Mobile")) {
             Intent intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
             intent.putExtra("trackingID", sampleInputData);
             startActivity(intent);
@@ -57,6 +64,24 @@ public class ReceiveParcel extends AppCompatActivity {
             intent.putExtra("trackingID", sampleInputData);
             startActivity(intent);
         }
+//
+//        if (readMessage.equals("Mobile")) {
+//            Intent intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
+//            intent.putExtra("trackingID", sampleInputData);
+//            startActivity(intent);
+//        } else if (readMessage.equals("AA")) {
+//            Intent intent = new Intent(ReceiveParcel.this, CashOnDeliveryActivity.class);
+//            intent.putExtra("trackingID", sampleInputData);
+//            startActivity(intent);
+//        } else if (readMessage.equals("BB")) {
+//            Intent intent = new Intent(ReceiveParcel.this, CashOnDeliveryActivity.class);
+//            intent.putExtra("trackingID", sampleInputData);
+//            startActivity(intent);
+//        }
+//        else if(readMessage.equals(null)){
+//            Log.d("arduinoOOOOO","CODE" + readMessage);
+//
+//        }
 //        ReceiveParcel.CheckRequest checkRequestTask = new CheckRequest();
 //        checkRequestTask.execute(sampleInputData);
         //if not connected reconnect

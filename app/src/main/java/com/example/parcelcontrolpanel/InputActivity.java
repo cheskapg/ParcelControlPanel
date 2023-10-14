@@ -75,10 +75,10 @@ public class InputActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         String status = bluetoothHelper.getStatus();
         Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Connecting...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+//        progressDialog = new ProgressDialog(this);
+//        progressDialog.setMessage("Connecting...");
+//        progressDialog.setCancelable(false);
+//        progressDialog.show();
 
 //         Show the progress dialog
         progressDialog = new ProgressDialog(this);
@@ -121,9 +121,12 @@ public class InputActivity extends AppCompatActivity {
                 } else {
                     sampleInputData = inputTrackingET.getText().toString();
                     inputData = inputTrackingET.getText().toString();
+                    getCompartmentNum(inputData);
+
                     // Create an instance of CheckRequest and execute it with the tracking ID
                     CheckRequest checkRequestTask = new CheckRequest();
                     checkRequestTask.execute(inputData);
+
                     loading = ProgressDialog.show(InputActivity.this, "Loading", "please wait", false, true);
                 }
                 // Create an instance of SendRequest and execute it with the input data
@@ -171,12 +174,12 @@ public class InputActivity extends AppCompatActivity {
     public class CheckRequest extends AsyncTask<String, Void, String> {
 
         protected void onPreExecute() {
+
         }
 
         protected String doInBackground(String... arg0) {
 
             try {
-                getCompartmentNum(inputData);
 
                 // Enter script URL Here
                 String baseUrl = "https://script.google.com/macros/s/AKfycbycoJM-I4YdT2oMwlI8ZZY8a9HkqrH1N36Aux_Zqcc6MqG6dPnLiL00QODfjk_ESfEK/exec";
@@ -244,7 +247,9 @@ public class InputActivity extends AppCompatActivity {
                 // Tracking ID exists but payment method is not Mobile Wallet
                 //uncomment to enable bluetooth command
                 bluetoothHelper.prepaidTrigger();
+                String readMessage = bluetoothHelper.getReadMessage();
 
+                Toast.makeText(InputActivity.this, "READ ARDUINO " + readMessage, Toast.LENGTH_SHORT).show();
                 loading.dismiss();
 
                 Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
@@ -253,7 +258,6 @@ public class InputActivity extends AppCompatActivity {
                 startActivity(moveToPlaceParcel);
 
 
-                String readMessage = bluetoothHelper.getReadMessage();
                 Toast.makeText(InputActivity.this, "READ ARDUINO NOT mobile " + readMessage, Toast.LENGTH_SHORT).show();
 
             }
@@ -269,9 +273,13 @@ public class InputActivity extends AppCompatActivity {
                     bluetoothHelper.codComp1Trigger();
                     Toast.makeText(InputActivity.this, "COMPARTMENT IS 1", Toast.LENGTH_SHORT).show();
                 }
-                if (compNum.equals("2")) {
+                else if (compNum.equals("2")) {
                     bluetoothHelper.codComp2Trigger();
                     Toast.makeText(InputActivity.this, "COMPARTMENT IS 2", Toast.LENGTH_SHORT).show();
+                }
+                else if(compNum==null){
+                    Log.i("COMPNUM", "comp" + compNum);
+
                 }
                 Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
                 moveToPlaceParcel.putExtra("trackingID", sampleInputData);

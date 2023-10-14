@@ -78,15 +78,15 @@
                 android:paddingTop="0dp"></ImageView>
 
 
-            <pl.droidsonroids.gif.GifImageView
-                android:layout_width="409dp"
-                android:layout_height="381dp"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="-37dp"
-                android:src="@drawable/placeparcel" />
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="1063dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="-87dp"
+        android:src="@drawable/placeparcel" />
 
-            <TextView
+    <TextView
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

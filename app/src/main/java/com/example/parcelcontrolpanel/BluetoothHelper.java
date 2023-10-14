@@ -41,6 +41,8 @@ public class BluetoothHelper {
     private static final int CONNECTING_STATUS = 1;
     private static final int MESSAGE_READ = 2;
     public String Status;
+    public InputStream mmInStream;
+
     private BluetoothSocket mmSocket;
     private ConnectedThread connectedThread;
     private CreateConnectThread createConnectThread;
@@ -203,6 +205,7 @@ public class BluetoothHelper {
 
         if (connectedThread != null) {
             connectedThread.write("B");
+            Log.e("SEND COMMAND", "ARDUINO B");
         } else {
             reconnectToDevice();
             connectedThread.write("B");
@@ -294,6 +297,7 @@ public class BluetoothHelper {
 //            }
 //        }
         public void run() {
+
             BluetoothSocket tmp = null;
             while (!isConnected) {
                 try {
@@ -326,6 +330,34 @@ public class BluetoothHelper {
                     }
                 }
             }
+            if (mmInStream == null) {
+                Log.e("ConnectedThreadSSS", "Input stream is null");
+                return;
+            }
+            byte[] buffer = new byte[1024];
+            int bytes;
+
+            // Keep listening to the InputStream until an exception occurs
+            while (true) {
+                try {
+                    // Read data from the InputStream
+                    bytes = mmInStream.read(buffer);
+
+                    // Process the received data
+                    if (bytes > 0) {
+                        String readMessage = new String(buffer, 0, bytes);
+                        Log.e("ARDUINO Message", readMessage);
+                        readArduino = readMessage;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    break;
+                }
+            }
+
+            // Keep listening to the InputStream until an exception occurs
+
+
         }
 
         public void cancel() {
@@ -340,14 +372,53 @@ public class BluetoothHelper {
         }
     }
 
+    //    public String getReadMessage() {
+//
+//        String readMessage = readArduino;
+//        return readMessage;
+//    }
+//public String getReadMessage() {
+//    byte[] buffer = new byte[1024];
+//    int bytes = 0;
+//    InputStream inputStream = null;
+//    try {
+//        inputStream = mmSocket.getInputStream();
+//    } catch (IOException e) {
+//        e.printStackTrace();
+//    }
+//    // Keep listening to the InputStream until an exception occurs
+//    while (true) {
+//        try {
+//            int data = inputStream.read(buffer); // Read data from the InputStream
+//
+//            if (data != -1) {
+//                bytes += data;
+//                if (buffer[bytes - 1] == '\n') {
+//                    String readMessage = new String(buffer, 0, bytes - 1);
+//                    Log.e("ARDUINO Message", readMessage);
+//                    readArduino = readMessage;
+//                    handler.obtainMessage(MESSAGE_READ, readMessage).sendToTarget();
+//                    bytes = 0;
+//                }
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            break;
+//        }
+//    }
+//    String readMessage = readArduino;
+//    return readMessage;
+//}
     public String getReadMessage() {
+
+
         String readMessage = readArduino;
         return readMessage;
     }
 
     private class ConnectedThread extends Thread {
         private BluetoothSocket mmSocket;
-        private InputStream mmInStream;
+        //        public InputStream mmInStream;
         private OutputStream mmOutStream;
         private boolean isLEDOn;
 
@@ -368,33 +439,35 @@ public class BluetoothHelper {
             mmOutStream = tmpOut;
         }
 
-        //GET DATA FROM ARDUINO MSG---------------------------------------------------------
-        public void run() {
-            byte[] buffer = new byte[1024];  // buffer store for the stream
-            int bytes = 0; // bytes returned from read()
-            // Keep listening to the InputStream until an exception occurs
-            while (true) {
-                try {
-                    int data = mmInStream.read(); // Read a byte from the InputStream
 
-                    if (data != -1) {
-                        buffer[bytes] = (byte) data;
-                        if (buffer[bytes] == '\n') {
-                            String readMessage = new String(buffer, 0, bytes);
-                            Log.e("ARDUINO Message", readMessage);
-                            readArduino = readMessage;
-                            handler.obtainMessage(MESSAGE_READ, readMessage).sendToTarget();
-                            bytes = 0;
-                        } else {
-                            bytes++;
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    break;
-                }
-            }
-        }
+        //GET DATA FROM ARDUINO MSG---------------------------------------------------------
+//        public void run() {
+//            byte[] buffer = new byte[1024];  // buffer store for the stream
+//            int bytes = 0; // bytes returned from read()
+//            // Keep listening to the InputStream until an exception occurs
+//            while (true) {
+//                try {
+//                    int data = mmInStream.read(); // Read a byte from the InputStream
+//
+//                    if (data != -1) {
+//                        buffer[bytes] = (byte) data;
+//                        if (buffer[bytes] == '\n') {
+//                            String readMessage = new String(buffer, 0, bytes);
+//                            Log.e("ARDUINO Message", readMessage);
+//                            readArduino = readMessage;
+//                            handler.obtainMessage(MESSAGE_READ, readMessage).sendToTarget();
+//                            bytes = 0;
+//                        } else {
+//                            bytes++;
+//                        }
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    break;
+//                }
+//            }
+//
+//        }
 
         /* Call this from the main activity to send data to the remote device */
         public void write(String input) {
