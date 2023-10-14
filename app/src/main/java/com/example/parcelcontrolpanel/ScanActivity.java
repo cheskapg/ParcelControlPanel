@@ -62,6 +62,7 @@ public class ScanActivity extends AppCompatActivity {
     String phoneNo;
     private ProgressDialog progressDialog, gettingComp;
     public String compNum = "Empty Comp";
+    public  String finalCompNum;
 
     boolean scanbuttonClicked, checkbuttonClicked;
     ImageView scanBtn, checkBtn;
@@ -157,20 +158,17 @@ public class ScanActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
         if(result!=null) {
             scannedData = result.getContents();
-            getCompartmentNum(scannedData);
             Log.d("DATAAAAA", "tracking" + scannedData);
 
             if (scannedData != null) {
                 if(checkbuttonClicked){
-
+                    getCompartmentNum(scannedData);
                     new CheckRequest().execute();
                 }
 
@@ -180,6 +178,7 @@ public class ScanActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
     private String getTracking() {
+
         return sampleScannedData;
     }
     public void getPhoneNumber(){
@@ -301,20 +300,21 @@ public class ScanActivity extends AppCompatActivity {
             else if (result.equals("Tracking ID exists: " + sampleScannedData + " but payment method is COD")) {
                 // Tracking ID exists but payment method is COD
 
-                Log.i("COMPNUM", "comp" + compNum);
+                Log.i("COMPNUM", "comp" + finalCompNum);
 
+                //FIXXXXXXX get together with trackingid from checking
 
                 // unlock door solenoid change value according to arduino variable for pins
-                if (compNum.equals("1")) {
+                if (finalCompNum.equals("1")) {
                     bluetoothHelper.codComp1Trigger();
                     Toast.makeText(ScanActivity.this, "COMPARTMENT IS 1", Toast.LENGTH_SHORT).show();
                 }
-                if (compNum.equals("2")) {
+                else if (finalCompNum.equals("2")) {
                     bluetoothHelper.codComp2Trigger();
                     Toast.makeText(ScanActivity.this, "COMPARTMENT IS 2", Toast.LENGTH_SHORT).show();
                 }
-                else if(compNum.equals("Empty Comp")){
-                    Log.i("COMPNUM", "comp" + compNum);
+                else if(finalCompNum.equals("Empty Comp")){
+                    Log.e("COMPNUM", "comp" + compNum);
 
                 }
                 Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
@@ -328,7 +328,7 @@ public class ScanActivity extends AppCompatActivity {
 
 
 
-           Toast.makeText(getApplicationContext(), result,Toast.LENGTH_LONG).show();
+           Toast.makeText(getApplicationContext(), "RESULT" + result,Toast.LENGTH_LONG).show();
 
 
             // now by putExtra method put the value in key, value pair key is
@@ -349,14 +349,11 @@ public class ScanActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
-                            compNum = response;
-
-                        Toast myToast = Toast.makeText(ScanActivity.this, response, Toast.LENGTH_LONG);
+                        compNum = response;
+                        finalCompNum = compNum;
+                        Toast myToast = Toast.makeText(ScanActivity.this,"response"+ response, Toast.LENGTH_LONG);
                         myToast.show();
                         gettingComp.dismiss();
-
-
 
                     }
 
@@ -364,7 +361,7 @@ public class ScanActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Handle error response                }
+                        Log.e("ERROR ON GETTING COMP", "RR");
                     }
 
                 }

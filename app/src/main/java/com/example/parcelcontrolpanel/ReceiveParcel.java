@@ -43,15 +43,12 @@ public class ReceiveParcel extends AppCompatActivity {
         Toast.makeText(ReceiveParcel.this, "READ ARDUINO " + readMessage, Toast.LENGTH_SHORT).show();
 
         //only do this after arduino sensor confirms it has parcel inside
-        if (readMessage == null) {
-            Log.d("arduinoOOOOO", "CODE" + readMessage);
-        } else if (readMessage.equals("Waiting")) {
-            while (readMessage.equals("Waiting")) {
-                // Keep waiting until the message is no longer "Waiting"
-                // Read the message again
-                readMessage= bluetoothHelper.getReadMessage();
-            }
-        } else if (readMessage.equals("Mobile")) {
+        if (readMessage == null || readMessage.equals("Waiting message   ")) {
+            // Keep waiting until the message is no longer "Waiting"
+            Log.e("READING", "CODE" + readMessage);
+            readMessage = bluetoothHelper.getReadMessage();
+        }
+        if (readMessage.equals("Mobile")) {
             Intent intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
             intent.putExtra("trackingID", sampleInputData);
             startActivity(intent);
@@ -63,7 +60,51 @@ public class ReceiveParcel extends AppCompatActivity {
             Intent intent = new Intent(ReceiveParcel.this, CashOnDeliveryActivity.class);
             intent.putExtra("trackingID", sampleInputData);
             startActivity(intent);
+        } else if (readMessage.equals("CC")) {
+            Intent intent = new Intent(ReceiveParcel.this, CashOnDeliveryActivity.class);
+            intent.putExtra("trackingID", sampleInputData);
+            startActivity(intent);
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        if (readMessage == null) {
+//            Log.d("arduinoOOOOO", "CODE" + readMessage);
+//        } else if (readMessage.equals("Waiting")) {
+//            while (readMessage.equals("Waiting")) {
+//                // Keep waiting until the message is no longer "Waiting"
+//                Log.e("READING","CODE" + readMessage);
+//                readMessage= bluetoothHelper.getReadMessage();
+//            }
+//        } else if (readMessage.equals("Mobile")) {
+//            Intent intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
+//            intent.putExtra("trackingID", sampleInputData);
+//            startActivity(intent);
+//        } else if (readMessage.equals("AA")) {
+//            Intent intent = new Intent(ReceiveParcel.this, CashOnDeliveryActivity.class);
+//            intent.putExtra("trackingID", sampleInputData);
+//            startActivity(intent);
+//        } else if (readMessage.equals("BB")) {
+//            Intent intent = new Intent(ReceiveParcel.this, CashOnDeliveryActivity.class);
+//            intent.putExtra("trackingID", sampleInputData);
+//            startActivity(intent);
+//        }
+//        else if (readMessage.equals("CC")) {
+//            Intent intent = new Intent(ReceiveParcel.this, CashOnDeliveryActivity.class);
+//            intent.putExtra("trackingID", sampleInputData);
+//            startActivity(intent);
+//        }
 //
 //        if (readMessage.equals("Mobile")) {
 //            Intent intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);

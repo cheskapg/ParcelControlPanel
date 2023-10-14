@@ -195,6 +195,8 @@ public class BluetoothHelper {
 
         if (connectedThread != null) {
             connectedThread.write("A");
+            Log.e("SEND COMMAND", "ARDUINO A");
+
         } else {
             reconnectToDevice();
             connectedThread.write("A");
@@ -297,7 +299,7 @@ public class BluetoothHelper {
 //            }
 //        }
         public void run() {
-
+            Log.e("RUN ERROR EXEPTION","ERRORRR");
             BluetoothSocket tmp = null;
             while (!isConnected) {
                 try {
