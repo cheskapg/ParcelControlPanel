@@ -56,7 +56,7 @@ public class InputActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
     BluetoothHelper bluetoothHelper = new BluetoothHelper(context, "HC-05", "00:22:12:00:3C:EA");
-//        BluetoothHelper bluetoothHelper = new BluetoothHelper();
+    //        BluetoothHelper bluetoothHelper = new BluetoothHelper();
     public String compNum;
     String inputData;
     String checkData;
@@ -95,7 +95,8 @@ public class InputActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 //
             }
-//
+
+            //
             @Override
             public void onFailure() {
 //                // Dismiss the progress dialog and show an error message
@@ -121,7 +122,6 @@ public class InputActivity extends AppCompatActivity {
                 } else {
                     sampleInputData = inputTrackingET.getText().toString();
                     inputData = inputTrackingET.getText().toString();
-                    getCompartmentNum(inputData);
 
                     // Create an instance of CheckRequest and execute it with the tracking ID
                     CheckRequest checkRequestTask = new CheckRequest();
@@ -182,7 +182,7 @@ public class InputActivity extends AppCompatActivity {
             try {
 
                 // Enter script URL Here
-                String baseUrl = "https://script.google.com/macros/s/AKfycbycoJM-I4YdT2oMwlI8ZZY8a9HkqrH1N36Aux_Zqcc6MqG6dPnLiL00QODfjk_ESfEK/exec";
+                String baseUrl = "https://script.google.com/macros/s/AKfycby_xghDiiCNLZvCU_Gjntiavcj8zKEoh6bT6PUrz7-e_tZGNoGFPKaNnSS-Qa3vyU13/exec";
                 String action = "checkQRParcel";
                 String trackingId = inputData;
 
@@ -242,8 +242,7 @@ public class InputActivity extends AppCompatActivity {
 
                 Toast.makeText(getApplicationContext(), "Mobile Payment Parcel", Toast.LENGTH_LONG).show();
 
-            }
-            else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is not Mobile Wallet")) {
+            } else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is not Mobile Wallet")) {
                 // Tracking ID exists but payment method is not Mobile Wallet
                 //uncomment to enable bluetooth command
                 bluetoothHelper.prepaidTrigger();
@@ -260,33 +259,22 @@ public class InputActivity extends AppCompatActivity {
 
                 Toast.makeText(InputActivity.this, "READ ARDUINO NOT mobile " + readMessage, Toast.LENGTH_SHORT).show();
 
-            }
-            else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is COD")) {
+            } else if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 1")) {
                 // Tracking ID exists but payment method is COD
-                loading.dismiss();
-
-                Log.i("COMPNUM", "comp" + compNum);
-
-
-                // unlock door solenoid change value according to arduino variable for pins
-                if (compNum.equals("1")) {
-                    bluetoothHelper.codComp1Trigger();
-                    Toast.makeText(InputActivity.this, "COMPARTMENT IS 1", Toast.LENGTH_SHORT).show();
-                }
-                else if (compNum.equals("2")) {
-                    bluetoothHelper.codComp2Trigger();
-                    Toast.makeText(InputActivity.this, "COMPARTMENT IS 2", Toast.LENGTH_SHORT).show();
-                }
-                else if(compNum==null){
-                    Log.i("COMPNUM", "comp" + compNum);
-
-                }
+                bluetoothHelper.codComp1Trigger();
+                Toast.makeText(InputActivity.this, "COMPARTMENT IS 1", Toast.LENGTH_SHORT).show();
                 Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
                 moveToPlaceParcel.putExtra("trackingID", sampleInputData);
                 startActivity(moveToPlaceParcel);
-            }
 
-            else {
+            } else if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 2")) {
+                bluetoothHelper.codComp2Trigger();
+                Toast.makeText(InputActivity.this, "COMPARTMENT IS 2", Toast.LENGTH_SHORT).show();
+                Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
+                moveToPlaceParcel.putExtra("trackingID", sampleInputData);
+                startActivity(moveToPlaceParcel);
+
+            } else {
                 loading.dismiss();
                 // Tracking ID does not exist or error occurred
                 Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
@@ -294,12 +282,11 @@ public class InputActivity extends AppCompatActivity {
             }
 
             Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
-
-
             // now by putExtra method put the value in key, value pair key is
             // tracKingID by this key we will receive the value, and put the string
 
         }
+
     }
 
 
@@ -396,81 +383,37 @@ public class InputActivity extends AppCompatActivity {
         a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(a);
     }
-    private void getCompartmentNum(String tracking) {
-        String trackingId = tracking;
-        Log.d("TRACKING",inputData + "input track");
-
-        String url = String.format("https://script.google.com/macros/s/AKfycbycoJM-I4YdT2oMwlI8ZZY8a9HkqrH1N36Aux_Zqcc6MqG6dPnLiL00QODfjk_ESfEK/exec?action=getCompNum&trackingId=%s", trackingId);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-                        compNum = response;
-                        Toast myToast = Toast.makeText(InputActivity.this, response, Toast.LENGTH_LONG);
-                        myToast.show();
-                        Log.d("compNum",compNum + "gecomprrespone");
-
-                    }
-
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle error response                }
-                    }
-
-                }
-        );
-        int socketTimeOut = 50000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        stringRequest.setRetryPolicy(policy);
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(stringRequest);
-    }
-
-//    protected void sendSMSMessage() {
-//        phoneNo = "0"; //get from db according to user
-//        message = "Attempt to Deliver Parcel (Info)";
-//        SmsManager smsManager = SmsManager.getDefault();
-//        smsManager.sendTextMessage(phoneNo, null, message, null, null);
-//        Toast.makeText(getApplicationContext(), "SMS sent.",
-//                Toast.LENGTH_LONG).show();
-//        if (ContextCompat.checkSelfPermission(this,
-//                android.Manifest.permission.SEND_SMS)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-//                    android.Manifest.permission.SEND_SMS)) {
-//            } else {
-//                ActivityCompat.requestPermissions(this,
-//                        new String[]{Manifest.permission.SEND_SMS},
-//                        MY_PERMISSIONS_REQUEST_SEND_SMS);
-//            }
+//    private void getCompartmentNum(String tracking) {
+//        String trackingId = tracking;
+//        Log.d("TRACKING",inputData + "input track");
 //
-//        }
+//        String url = String.format("https://script.google.com/macros/s/AKfycbycoJM-I4YdT2oMwlI8ZZY8a9HkqrH1N36Aux_Zqcc6MqG6dPnLiL00QODfjk_ESfEK/exec?action=getCompNum&trackingId=%s", trackingId);
+//        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
 //
-//    }
+//                        compNum = response;
+//                        Toast myToast = Toast.makeText(InputActivity.this, response, Toast.LENGTH_LONG);
+//                        myToast.show();
+//                        Log.d("compNum",compNum + "gecomprrespone");
 //
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        switch (requestCode) {
-//            case MY_PERMISSIONS_REQUEST_SEND_SMS: {
-//                if (grantResults.length > 0
-//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    SmsManager smsManager = SmsManager.getDefault();
-//                    smsManager.sendTextMessage(phoneNo, null, message, null, null);
-//                    Toast.makeText(getApplicationContext(), "SMS sent.",
-//                            Toast.LENGTH_LONG).show();
-//                } else {
-//                    Toast.makeText(getApplicationContext(),
-//                            "SMS faild, please try again.", Toast.LENGTH_LONG).show();
-//                    return;
+//                    }
+//
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        // Handle error response                }
+//                    }
+//
 //                }
-//
-//
-//            }
-//        }
-
+//        );
+//        int socketTimeOut = 50000;
+//        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+//        stringRequest.setRetryPolicy(policy);
+//        RequestQueue queue = Volley.newRequestQueue(this);
+//        queue.add(stringRequest);
 //    }
+
 }

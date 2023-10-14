@@ -333,7 +333,7 @@ public class BluetoothHelper {
                 }
             }
             if (mmInStream == null) {
-                Log.e("ConnectedThreadSSS", "Input stream is null");
+                Log.e("ConnectedThread", "Input stream is null");
                 return;
             }
             byte[] buffer = new byte[1024];
@@ -373,7 +373,12 @@ public class BluetoothHelper {
             isConnected = false;
         }
     }
+    public String getReadMessage() {
 
+
+        String readMessage = readArduino;
+        return readMessage;
+    }
     //    public String getReadMessage() {
 //
 //        String readMessage = readArduino;
@@ -411,12 +416,7 @@ public class BluetoothHelper {
 //    String readMessage = readArduino;
 //    return readMessage;
 //}
-    public String getReadMessage() {
 
-
-        String readMessage = readArduino;
-        return readMessage;
-    }
 
     private class ConnectedThread extends Thread {
         private BluetoothSocket mmSocket;
