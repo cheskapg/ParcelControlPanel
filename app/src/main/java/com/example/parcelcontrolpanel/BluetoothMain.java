@@ -39,13 +39,18 @@ import java.util.UUID;
 
 public class BluetoothMain extends AppCompatActivity {
     Button SelectBT;
+    public static String readArd;
     private String deviceName = null;
     private String deviceAddress;
     public static Handler handler;
     public static BluetoothSocket mmSocket;
     public static ConnectedThread connectedThread;
     public static CreateConnectThread createConnectThread;
-
+    private Thread workerThread;
+    private byte[] readBuffer;
+    private int readBufferPosition;
+    private InputStream inputStream;
+    private boolean stopWorker;
     private final static int CONNECTING_STATUS = 1; // used in bluetooth handler to identify message status
     private final static int MESSAGE_READ = 2; // used in bluetooth handler to identify message update
 
@@ -95,6 +100,8 @@ public class BluetoothMain extends AppCompatActivity {
             createConnectThread = new CreateConnectThread(bluetoothAdapter,
                     deviceAddress);
             createConnectThread.start();
+
+
         }
 
         /*
@@ -123,11 +130,11 @@ public class BluetoothMain extends AppCompatActivity {
                     case MESSAGE_READ:
                         String arduinoMsg = msg.obj.toString(); // Read message from Arduino
                         switch (arduinoMsg.toLowerCase()) {
-                            case "led is turned on":
+                            case "AA":
                                 imageView.setBackgroundColor(getResources().getColor(R.color.white));
                                 textViewInfo.setText("Arduino Message : " + arduinoMsg);
                                 break;
-                            case "led is turned off":
+                            case "Waiting":
                                 imageView.setBackgroundColor(getResources().getColor(R.color.black));
                                 textViewInfo.setText("Arduino Message : " + arduinoMsg);
                                 break;
@@ -153,6 +160,7 @@ public class BluetoothMain extends AppCompatActivity {
             public void onClick(View view) {
                 String cmdText = null;
                 String btnState = buttonToggle.getText().toString().toLowerCase();
+                beginListenForData();
                 switch (btnState) {
                     case "turn on":
                         buttonToggle.setText("Turn Off");
@@ -170,42 +178,56 @@ public class BluetoothMain extends AppCompatActivity {
             }
         });
     }
+    private void beginListenForData() {
+        stopWorker = false;
+        readBufferPosition = 0;
+        readBuffer = new byte[1024];
+
+        workerThread = new Thread(new Runnable() {
+            public void run() {
+                while (!Thread.currentThread().isInterrupted() && !stopWorker) {
+                    try {
+                        int bytesAvailable = inputStream.available();
+                        if (bytesAvailable > 0) {
+                            byte[] packetBytes = new byte[bytesAvailable];
+                            inputStream.read(packetBytes);
+
+                            for (int i = 0; i < bytesAvailable; i++) {
+                                byte b = packetBytes[i];
+                                if (b == '\n') {
+                                    String receivedMessage = new String(readBuffer, 0, readBufferPosition);
+                                    readBufferPosition = 0;
+                                    Log.e("RECEIVED", "RECEIVE" + receivedMessage);
+                                    handleMessage(receivedMessage);
+                                } else {
+                                    readBuffer[readBufferPosition++] = b;
+                                }
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        stopWorker = true;
+                    }
+                }
+            }
+        });
+
+        workerThread.start();
+    }
 
     public class CreateConnectThread extends Thread {
         private Context context;
 
         @SuppressLint("MissingPermission")
         public CreateConnectThread(BluetoothAdapter bluetoothAdapter, String address) {
-            /*
-            Use a temporary object that is later assigned to mmSocket
-            because mmSocket is final.
-             */
-//            if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-//                if (ContextCompat.checkSelfPermission(context,
-//                        Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-//                    if (ActivityCompat.shouldShowRequestPermissionRationale(BluetoothMain.this,
-//                            android.Manifest.permission.BLUETOOTH_CONNECT)) {
-//                        ActivityCompat.requestPermissions(BluetoothMain.this,
-//                                new String[]{android.Manifest.permission.BLUETOOTH_CONNECT}, 1);
-//                    } else {
-//                        ActivityCompat.requestPermissions(BluetoothMain.this,
-//                                new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
-//                    }
-//                }
-//                return;
-//            }
+
             BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(address);
             BluetoothSocket tmp = null;
 
             @SuppressLint("MissingPermission") UUID uuid = bluetoothDevice.getUuids()[0].getUuid();
 
             try {
-                /*
-                Get a BluetoothSocket to connect with the given BluetoothDevice.
-                Due to Android device varieties,the method below may not work fo different devices.
-                You should try using other methods i.e. :
-                tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
-                 */
+
                 tmp = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(uuid);
 
             } catch (IOException e) {
@@ -219,20 +241,6 @@ public class BluetoothMain extends AppCompatActivity {
             // Cancel discovery because it otherwise slows down the connection.
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-//            if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-//                if (ContextCompat.checkSelfPermission(context,
-//                        Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-//                    if (ActivityCompat.shouldShowRequestPermissionRationale(BluetoothMain.this,
-//                            android.Manifest.permission.BLUETOOTH_SCAN)) {
-//                        ActivityCompat.requestPermissions(BluetoothMain.this,
-//                                new String[]{android.Manifest.permission.BLUETOOTH_SCAN}, 1);
-//                    } else {
-//                        ActivityCompat.requestPermissions(BluetoothMain.this,
-//                                new String[]{Manifest.permission.BLUETOOTH_SCAN}, 1);
-//                    }
-//                }
-//                return;
-//            }
             bluetoothAdapter.cancelDiscovery();
             try {
                 // Connect to the remote device through the socket. This call blocks
@@ -256,6 +264,7 @@ public class BluetoothMain extends AppCompatActivity {
             // the connection in a separate thread.
             connectedThread = new ConnectedThread(mmSocket);
             connectedThread.run();
+            beginListenForData();
         }
 
         // Closes the client socket and causes the thread to finish.
@@ -291,30 +300,43 @@ public class BluetoothMain extends AppCompatActivity {
         }
 
         public void run() {
-            byte[] buffer = new byte[1024];  // buffer store for the stream
-            int bytes = 0; // bytes returned from read()
+            BluetoothSocket tmp = null;
+
+            byte[] buffer = new byte[1024];
+            int bytes;
+
             // Keep listening to the InputStream until an exception occurs
             while (true) {
                 try {
-                    /*
-                    Read from the InputStream from Arduino until termination character is reached.
-                    Then send the whole String message to GUI Handler.
-                     */
-                    buffer[bytes] = (byte) mmInStream.read();
-                    String readMessage;
-                    if (buffer[bytes] == '\n'){
-                        readMessage = new String(buffer,0,bytes);
-                        Log.e("Arduino Message",readMessage);
-                        handler.obtainMessage(MESSAGE_READ,readMessage).sendToTarget();
-                        bytes = 0;
-                    } else {
-                        bytes++;
+                    // Read data from the InputStream
+                    bytes = mmInStream.read(buffer);
+
+                    // Process the received data
+                    if (bytes > 0) {
+                        String readMessage = new String(buffer, 0, bytes);
+                        readArd = readMessage;
+                        Log.e("ARDUINO Message", readMessage);
+
+
+//                        if (readMessage.equals("Mobile")) {
+//
+//
+//                        } else if (readMessage.equals("AA")) {
+//
+//
+//                        } else if (readMessage.equals("BB")) {
+//
+//                        } else if (readMessage.equals("CC")) {
+//
+//                        }
+
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                     break;
                 }
             }
+            // Keep listening to the InputStream until an exception occurs
         }
 
         /* Call this from the main activity to send data to the remote device */
@@ -327,12 +349,27 @@ public class BluetoothMain extends AppCompatActivity {
             }
         }
 
+
         /* Call this from the main activity to shutdown the connection */
         public void cancel() {
             try {
                 mmSocket.close();
             } catch (IOException e) { }
         }
+    }
+    public String getReadArd(String msg){
+        msg = readArd;
+        return msg;
+    }
+    private void handleMessage(String message) {
+        // Process the received message here
+        // You can update UI or perform any other actions based on the message
+        // For example:
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+            }
+        });
     }
 
     /* ============================ Terminate Connection at BackPress ====================== */
