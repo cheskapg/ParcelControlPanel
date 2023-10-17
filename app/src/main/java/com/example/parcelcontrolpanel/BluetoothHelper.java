@@ -200,43 +200,43 @@ public class BluetoothHelper {
         }
     }
 
-    private void beginListenForData() {
-        stopWorker = false;
-        readBufferPosition = 0;
-        readBuffer = new byte[1024];
-
-        workerThread = new Thread(new Runnable() {
-            public void run() {
-                while (!Thread.currentThread().isInterrupted() && !stopWorker) {
-                    try {
-                        if (inputStream != null) {
-                            int bytesAvailable = inputStream.available();
-                            if (bytesAvailable > 0) {
-                                byte[] packetBytes = new byte[bytesAvailable];
-                                inputStream.read(packetBytes);
-
-                                for (int i = 0; i < bytesAvailable; i++) {
-                                    byte b = packetBytes[i];
-                                    if (b == '\n') {
-                                        String receivedMessage = new String(readBuffer, 0, readBufferPosition);
-                                        readBufferPosition = 0;
-                                        Log.e("RECEIVED", "RECEIVE" + receivedMessage);
-                                    } else {
-                                        readBuffer[readBufferPosition++] = b;
-                                    }
-                                }
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        stopWorker = true;
-                    }
-                }
-            }
-        });
-
-        workerThread.start();
-    }
+//    private void beginListenForData() {
+//        stopWorker = false;
+//        readBufferPosition = 0;
+//        readBuffer = new byte[1024];
+//
+//        workerThread = new Thread(new Runnable() {
+//            public void run() {
+//                while (!Thread.currentThread().isInterrupted() && !stopWorker) {
+//                    try {
+//                        if (inputStream != null) {
+//                            int bytesAvailable = inputStream.available();
+//                            if (bytesAvailable > 0) {
+//                                byte[] packetBytes = new byte[bytesAvailable];
+//                                inputStream.read(packetBytes);
+//
+//                                for (int i = 0; i < bytesAvailable; i++) {
+//                                    byte b = packetBytes[i];
+//                                    if (b == '\n') {
+//                                        String receivedMessage = new String(readBuffer, 0, readBufferPosition);
+//                                        readBufferPosition = 0;
+//                                        Log.e("RECEIVED", "RECEIVE" + receivedMessage);
+//                                    } else {
+//                                        readBuffer[readBufferPosition++] = b;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                        stopWorker = true;
+//                    }
+//                }
+//            }
+//        });
+//
+//        workerThread.start();
+//    }
 
     private class CreateConnectThread extends Thread {
         private BluetoothDevice bluetoothDevice;
@@ -284,37 +284,39 @@ public class BluetoothHelper {
                 return;
             }
 
-            byte[] buffer = new byte[1024];
-            int bytes;
-            beginListenForData();
-
-            // Keep listening to the InputStream until an exception occurs
-            while (true) {
-                try {
-                    // Read data from the InputStream
-                    bytes = mmInStream.read(buffer);
-
-                    // Process the received data
-                    if (bytes > 0) {
-                        readMessage = new String(buffer, 0, bytes);
-                        Log.e("ARDUINO Message", readMessage);
-
-                        if (readMessage.equals("Mobile")) {
-                            readMessage = "Mobile";
-                        } else if (readMessage.equals("AA")) {
-                            readMessage = "AA";
-                        } else if (readMessage.equals("BB")) {
-                            readMessage = "BB";
-                        } else if (readMessage.equals("CC")) {
-                            readMessage = "CC";
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.e("ERROR BTHELP", "e" + e);
-                    break;
-                }
-            }
+//            byte[] buffer = new byte[1024];
+//            int bytes;
+///*
+//            beginListenForData();
+//*/
+//
+//            // Keep listening to the InputStream until an exception occurs
+//            while (true) {
+//                try {
+//                    // Read data from the InputStream
+//                    bytes = mmInStream.read(buffer);
+//
+//                    // Process the received data
+//                    if (bytes > 0) {
+//                        readMessage = new String(buffer, 0, bytes);
+//                        Log.e("ARDUINO Message", readMessage);
+//
+//                        if (readMessage.equals("Mobile")) {
+//                            readMessage = "Mobile";
+//                        } else if (readMessage.equals("AA")) {
+//                            readMessage = "AA";
+//                        } else if (readMessage.equals("BB")) {
+//                            readMessage = "BB";
+//                        } else if (readMessage.equals("CC")) {
+//                            readMessage = "CC";
+//                        }
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    Log.e("ERROR BTHELP", "e" + e);
+//                    break;
+//                }
+//            }
             // Keep listening to the InputStream until an exception occurs
         }
 
@@ -351,6 +353,49 @@ public class BluetoothHelper {
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
         }
+        public void run() {
+            BluetoothSocket tmp = null;
+
+            if (mmInStream == null) {
+                Log.e("ConnectedThread", "Input stream is null");
+                return;
+            }
+
+            byte[] buffer = new byte[1024];
+            int bytes;
+/*
+            beginListenForData();
+*/
+
+            // Keep listening to the InputStream until an exception occurs
+            while (true) {
+                try {
+                    // Read data from the InputStream
+                    bytes = mmInStream.read(buffer);
+
+                    // Process the received data
+                    if (bytes > 0) {
+                        readMessage = new String(buffer, 0, bytes);
+                        Log.e("ARDUINO Message", readMessage);
+
+                        if (readMessage.equals("Mobile")) {
+                            readMessage = "Mobile";
+                        } else if (readMessage.equals("AA")) {
+                            readMessage = "AA";
+                        } else if (readMessage.equals("BB")) {
+                            readMessage = "BB";
+                        } else if (readMessage.equals("CC")) {
+                            readMessage = "CC";
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e("ERROR BTHELP", "e" + e);
+                    break;
+                }
+            }
+            // Keep listening to the InputStream until an exception occurs
+        }
 
         /* Call this from the main activity to send data to the remote device */
         public void write(String input) {
@@ -361,7 +406,6 @@ public class BluetoothHelper {
                 Log.e("Send Error", "Unable to send message", e);
             }
         }
-
         /* Call this from the main activity to shutdown the connection */
         public void cancel() {
             try {
