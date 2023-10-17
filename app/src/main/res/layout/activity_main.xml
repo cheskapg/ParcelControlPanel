@@ -154,7 +154,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginEnd="375dp"
         android:layout_marginBottom="44dp"
-        android:text="Bluetooth" />
+        android:text="Bluetooth"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/Bluetoothclass"
@@ -165,7 +166,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginEnd="296dp"
         android:layout_marginBottom="25dp"
-        android:text="CLASSBT" />
+        android:text="CLASSBT" android:visibility="gone"
+        />
 
     <Button
         android:id="@+id/SMSButton"
@@ -191,7 +193,8 @@
         android:layout_marginStart="27dp"
         android:layout_marginEnd="387dp"
         android:layout_marginBottom="89dp"
-        android:text="Exit" />
+        android:text="Exit"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/WifiSetup"
@@ -203,7 +206,8 @@
         android:layout_marginStart="-30dp"
         android:layout_marginEnd="392dp"
         android:layout_marginBottom="159dp"
-        android:text="Setup Wifi" />
+        android:text="Setup Wifi"
+        android:visibility="gone"/>
 
 
 </RelativeLayout>

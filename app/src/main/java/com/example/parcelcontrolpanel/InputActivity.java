@@ -290,90 +290,6 @@ public class InputActivity extends AppCompatActivity {
     }
 
 
-////addqr table testing
-//    public class SendRequest extends AsyncTask<String, Void, String> {
-//
-//        protected String doInBackground(String... arg0) {
-//            try {
-//                // Enter script URL Here
-//                URL url = new URL("https://script.google.com/macros/s/AKfycbwsaC5SjNgbXN9K29GmI15DwDFIbKUwbWDYHYP5NmzNMH1MXLmZcL-aTPlx8NaL1Zrw/exec");
-//
-//                JSONObject postDataParams = new JSONObject();
-//
-//                // Passing input data as parameter
-//                postDataParams.put("action", "addQrItem");
-//                postDataParams.put("sdata", inputData);
-//
-//                Log.e("params", postDataParams.toString());
-//
-//                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//                conn.setReadTimeout(30000 /* milliseconds */);
-//                conn.setConnectTimeout(30000 /* milliseconds */);
-//                conn.setRequestMethod("GET");
-//                conn.setDoInput(true);
-//                conn.setDoOutput(true);
-//
-//                OutputStream os = conn.getOutputStream();
-//                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-//                writer.write(getPostDataString(postDataParams));
-//
-//                writer.flush();
-//                writer.close();
-//                os.close();
-//
-//                int responseCode = conn.getResponseCode();
-//
-//                if (responseCode == HttpURLConnection.HTTP_OK) {
-//                    InputStream inputStream = conn.getInputStream();
-//                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-//                    BufferedReader reader = new BufferedReader(inputStreamReader);
-//
-//                    String response = reader.readLine();
-//
-//                    reader.close();
-//                    inputStreamReader.close();
-//                    inputStream.close();
-//                    return response;
-//                } else {
-//                    return "false : " + responseCode;
-//                }
-//            } catch (Exception e) {
-//                return "Exception: " + e.getMessage();
-//            }
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String result) {
-//            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
-//
-//
-//        }
-//    }
-//    public String getPostDataString(JSONObject params) throws Exception {
-//
-//        StringBuilder result = new StringBuilder();
-//        boolean first = true;
-//
-//        Iterator<String> itr = params.keys();
-//
-//        while(itr.hasNext()){
-//
-//            String key= itr.next();
-//            Object value = params.get(key);
-//
-//            if (first)
-//                first = false;
-//            else
-//                result.append("&");
-//
-//            result.append(URLEncoder.encode(key, "UTF-8"));
-//            result.append("=");
-//            result.append(URLEncoder.encode(value.toString(), "UTF-8"));
-//
-//        }
-//        return result.toString();
-//    }
-
     public void onBackPressed() {
         // Terminate Bluetooth Connection and close app
 
@@ -383,37 +299,5 @@ public class InputActivity extends AppCompatActivity {
         a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(a);
     }
-//    private void getCompartmentNum(String tracking) {
-//        String trackingId = tracking;
-//        Log.d("TRACKING",inputData + "input track");
-//
-//        String url = String.format("https://script.google.com/macros/s/AKfycbycoJM-I4YdT2oMwlI8ZZY8a9HkqrH1N36Aux_Zqcc6MqG6dPnLiL00QODfjk_ESfEK/exec?action=getCompNum&trackingId=%s", trackingId);
-//        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//
-//                        compNum = response;
-//                        Toast myToast = Toast.makeText(InputActivity.this, response, Toast.LENGTH_LONG);
-//                        myToast.show();
-//                        Log.d("compNum",compNum + "gecomprrespone");
-//
-//                    }
-//
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        // Handle error response                }
-//                    }
-//
-//                }
-//        );
-//        int socketTimeOut = 50000;
-//        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-//        stringRequest.setRetryPolicy(policy);
-//        RequestQueue queue = Volley.newRequestQueue(this);
-//        queue.add(stringRequest);
-//    }
 
 }
