@@ -27,8 +27,8 @@ public class CashOnDeliveryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cash_on_delivery);
-        getPhoneNumber();
         getTracking();
+        getPhoneNumber();
         received = (ImageView) findViewById(R.id.received);
         received2 = (ImageView) findViewById(R.id.bgReqMobile);
         received.setOnClickListener(new View.OnClickListener() {
@@ -36,6 +36,8 @@ public class CashOnDeliveryActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 Intent toSucc = new Intent(CashOnDeliveryActivity.this, SuccessActivity.class);
+                toSucc.putExtra("trackingID", getTracking());
+
                 startActivity(toSucc);
 
             }
@@ -45,6 +47,7 @@ public class CashOnDeliveryActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 Intent toSucc = new Intent(CashOnDeliveryActivity.this, SuccessActivity.class);
+                toSucc.putExtra("trackingID", getTracking());
                 startActivity(toSucc);
 
             }

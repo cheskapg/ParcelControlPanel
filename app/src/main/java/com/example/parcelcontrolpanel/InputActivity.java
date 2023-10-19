@@ -88,23 +88,24 @@ public class InputActivity extends AppCompatActivity {
 
         // Connect to the Bluetooth device
         // Connect to the Bluetooth device
-        bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
-            @Override
-            public void onConnected() {
-//                // Dismiss the progress dialog when connected
-                progressDialog.dismiss();
-//
-            }
+        if (!bluetoothHelper.isConnected()) {
+            bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
+                @Override
+                public void onConnected() {
+                    // Dismiss the progress dialog when connected
+                    progressDialog.dismiss();
+                    // Continue with other logic or UI updates
+                }
 
-            //
-            @Override
-            public void onFailure() {
-//                // Dismiss the progress dialog and show an error message
-                progressDialog.dismiss();
-                bluetoothHelper.disconnect();
-                Toast.makeText(InputActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure() {
+                    progressDialog.dismiss();
+                    Toast.makeText(InputActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // Bluetooth is already connected, continue with other logic or UI updates
+        }
 
         setContentView(R.layout.activity_input);
         checkBtn = (ImageView) findViewById(R.id.bgButtonInputCheck);

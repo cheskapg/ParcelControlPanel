@@ -76,8 +76,6 @@ public class ReceiveParcel extends AppCompatActivity {
 
         @Override
         protected String doInBackground(Void... voids) {
-            getTracking();
-
             String readBT = getBluetoothMsg();
 
             // Perform the Bluetooth message reading in a loop until a condition is met
@@ -116,11 +114,14 @@ public class ReceiveParcel extends AppCompatActivity {
                 } else if (result.equals("AA_BB")) {
                     intent = new Intent(ReceiveParcel.this, CashOnDeliveryActivity.class);
                     intent.putExtra("userphone", phoneNo);
+                    intent.putExtra("trackingID", sampleInputData);
+
                     startActivity(intent);
 
                 } else if (result.equals("CC")) {
                     intent = new Intent(ReceiveParcel.this, SuccessActivity.class);
                     intent.putExtra("userphone", phoneNo);
+                    intent.putExtra("trackingID", sampleInputData);
 
                     startActivity(intent);
 
@@ -144,8 +145,6 @@ public class ReceiveParcel extends AppCompatActivity {
     private String getTracking() {
         Intent intent = getIntent();
         sampleInputData = intent.getStringExtra("trackingID");
-        Toast myToast = Toast.makeText(ReceiveParcel.this, "received " + sampleInputData, Toast.LENGTH_LONG);
-        myToast.show();
         trackingID = sampleInputData;
         Log.d("TRACKING", "CODE" + sampleInputData);
         return sampleInputData;
