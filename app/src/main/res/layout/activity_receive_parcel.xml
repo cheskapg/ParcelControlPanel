@@ -84,7 +84,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="-87dp"
-        android:src="@drawable/receiveparcelgif" />
+        android:src="@drawable/placeparcelnew" />
 
     <TextView
                 android:id="@+id/textView"

@@ -52,13 +52,14 @@ import java.util.Iterator;
 import javax.net.ssl.HttpsURLConnection;
 
 public class ScanActivity extends AppCompatActivity {
-    String scannedData;
+    String scannedData, readBT;
     String checkData;
     Context context = this;
 
     String urlString;
     String sampleScannedData;
-    BluetoothHelper bluetoothHelper = new BluetoothHelper(context, "HC-05", "00:22:12:00:3C:EA");
+//    BluetoothHelper bluetoothHelper = new BluetoothHelper(context, "HC-05", "00:22:12:00:3C:EA");
+    BluetoothHelper bluetoothHelper;
     private BarcodeDetector barcodeDetector;
     String getParcelId, getPaymentId;
     int brightness;
@@ -77,6 +78,8 @@ public class ScanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
         final Activity activity = this;
+        bluetoothHelper = BluetoothHelper.getInstance(this, "HC-05", "00:22:12:00:3C:EA");
+
         String status = bluetoothHelper.getStatus();
         Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
         progressDialog = new ProgressDialog(this);
@@ -91,6 +94,7 @@ public class ScanActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         }
+
 //        scanBtn = (Button)findViewById(R.id.dat);
         checkBtn = findViewById(R.id.bgButtonScan);
 
@@ -110,19 +114,24 @@ public class ScanActivity extends AppCompatActivity {
             return;
         }
         // Connect to the Bluetooth device
-        bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
-            @Override
-            public void onConnected() {
-                // Dismiss the progress dialog when connected
-                progressDialog.dismiss();
-                // Continue with other logic or UI updates
-            }
-            @Override
-            public void onFailure() {
-                progressDialog.dismiss();
-                Toast.makeText(ScanActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
-            }
-        });
+        if (!bluetoothHelper.isConnected()) {
+            bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
+                @Override
+                public void onConnected() {
+                    // Dismiss the progress dialog when connected
+                    progressDialog.dismiss();
+                    // Continue with other logic or UI updates
+                }
+
+                @Override
+                public void onFailure() {
+                    progressDialog.dismiss();
+                    Toast.makeText(ScanActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // Bluetooth is already connected, continue with other logic or UI updates
+        }
         checkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -252,6 +261,7 @@ public class ScanActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(ScanActivity.this, ReceiveParcel.class);
                 intent.putExtra("trackingID", sampleScannedData);
+                intent.putExtra("userphone", phoneNo);
                 startActivity(intent);
 
                 Toast.makeText(getApplicationContext(), "Mobile Payment Parcel", Toast.LENGTH_LONG).show();
@@ -261,6 +271,8 @@ public class ScanActivity extends AppCompatActivity {
                 //uncomment to enable bluetooth command
                 bluetoothHelper.prepaidTrigger();
                 Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
+                moveToPlaceParcel.putExtra("userphone", phoneNo);
+
                 moveToPlaceParcel.putExtra("trackingID", sampleScannedData);
                 startActivity(moveToPlaceParcel);
                 String readMessage = bluetoothHelper.getReadMessage();
@@ -270,7 +282,8 @@ public class ScanActivity extends AppCompatActivity {
                 // Tracking ID exists but payment method is COD
                 bluetoothHelper.codComp1Trigger();
                 Toast.makeText(ScanActivity.this, "COMPARTMENT IS 1", Toast.LENGTH_SHORT).show();
-                Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
+                Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);                moveToPlaceParcel.putExtra("userphone", phoneNo);
+
                 moveToPlaceParcel.putExtra("trackingID", sampleScannedData);
                 startActivity(moveToPlaceParcel);
 
@@ -279,7 +292,10 @@ public class ScanActivity extends AppCompatActivity {
                 Toast.makeText(ScanActivity.this, "COMPARTMENT IS 2", Toast.LENGTH_SHORT).show();
                 Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
                 moveToPlaceParcel.putExtra("trackingID", sampleScannedData);
+                moveToPlaceParcel.putExtra("userphone", phoneNo);
+
                 startActivity(moveToPlaceParcel);
+                getBluetoothMsg();
             }
             else if (result.equals("Tracking ID does not exist " + sampleScannedData)) {
                 // Tracking ID does not exist or error occurred
@@ -334,5 +350,12 @@ public class ScanActivity extends AppCompatActivity {
 //        queue.add(stringRequest);
 //
 //    }
+public String getBluetoothMsg() {
+    readBT = bluetoothHelper.getReadMessage();
+    Log.d("arduinoOOOOO", "CODE" + readBT);
+    Toast.makeText(ScanActivity.this, "READ ARDUINO " + readBT, Toast.LENGTH_SHORT).show();
+
+    return readBT;
+}
 
 }

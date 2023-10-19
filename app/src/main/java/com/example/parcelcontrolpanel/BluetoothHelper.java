@@ -20,6 +20,8 @@ import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
+import okhttp3.internal.Internal;
+
 //        BluetoothHelper bluetoothHelper = new BluetoothHelper(handler);
 //        . Call `connectToDevice()` to connect to a Bluetooth device:
 //
@@ -35,6 +37,7 @@ import java.util.UUID;
 //
 //THIS WORKS BUT DOES NOT CHECK THE CONNECTION AND RETRY CONTINUOUS AND PAIRS
 public class BluetoothHelper {
+    private static BluetoothHelper instance;
     private Context context;
     //ISSUE WITH PIN ENTERING AUTO
     private static final String TAG = "BluetoothHelper";
@@ -42,12 +45,12 @@ public class BluetoothHelper {
     private static final int MESSAGE_READ = 2;
     public String Status;
     public InputStream mmInStream;
-
+    public UUID uuid;
     private BluetoothSocket mmSocket;
     private ConnectedThread connectedThread;
     private CreateConnectThread createConnectThread;
     private Handler handler;
-    private boolean isConnected = false;
+    public boolean isConnected = false;
     private final String BLE_PIN = "1234";
     private ConnectCallback connectCallback;
     private Thread workerThread;
@@ -56,9 +59,19 @@ public class BluetoothHelper {
     private InputStream inputStream;
     private boolean stopWorker;
     private String readMessage;
+    private BluetoothDevice connectedDevice;
 
     public String getReadMessage() {
         return readMessage;
+    }
+    public boolean isConnected() {
+        return connectedDevice != null;
+    }
+    public static BluetoothHelper getInstance(Context context, String deviceName, String deviceAddress) {
+        if (instance == null) {
+            instance = new BluetoothHelper(context, deviceName, deviceAddress);
+        }
+        return instance;
     }
 
     private String deviceName;
@@ -115,14 +128,25 @@ public class BluetoothHelper {
         return Status;
     }
 
+
     @SuppressLint("MissingPermission")
     public void connectToDevice(ConnectCallback callback) {
         this.connectCallback = callback;
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
+        connectedDevice = bluetoothAdapter.getRemoteDevice(deviceAddress);
         // Device is already paired, proceed with connection
-        createConnectThread = new CreateConnectThread(device);
+        createConnectThread = new CreateConnectThread(connectedDevice);
         createConnectThread.start();
+        if (callback != null) {
+            callback.onConnected();
+        }
+
+        try {
+            mmSocket = connectedDevice.createRfcommSocketToServiceRecord(uuid);
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
     }
 
     public interface ConnectCallback {
@@ -250,7 +274,7 @@ public class BluetoothHelper {
             BluetoothSocket tmp = null;
             while (!isConnected) {
                 try {
-                    UUID uuid = bluetoothDevice.getUuids()[0].getUuid();
+                     uuid = bluetoothDevice.getUuids()[0].getUuid();
                     tmp = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(uuid);
                     mmSocket = tmp;
                     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -377,15 +401,20 @@ public class BluetoothHelper {
                     if (bytes > 0) {
                         readMessage = new String(buffer, 0, bytes);
                         Log.e("ARDUINO Message", readMessage);
+                        getReadMessage();
 
                         if (readMessage.equals("Mobile")) {
                             readMessage = "Mobile";
+                            getReadMessage();
                         } else if (readMessage.equals("AA")) {
                             readMessage = "AA";
+                            getReadMessage();
                         } else if (readMessage.equals("BB")) {
                             readMessage = "BB";
+                            getReadMessage();
                         } else if (readMessage.equals("CC")) {
                             readMessage = "CC";
+                            getReadMessage();
                         }
                     }
                 } catch (IOException e) {

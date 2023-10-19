@@ -78,12 +78,14 @@
         android:paddingTop="0dp"></ImageView>
 
     <ImageView
-        android:layout_width="450dp"
-        android:layout_height="1063dp"
+        android:id="@+id/claim"
+        android:layout_width="366dp"
+        android:layout_height="344dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="61dp"
-        android:layout_marginBottom="-201dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="111dp"
+        android:layout_marginBottom="-24dp"
         android:src="@drawable/money_claim_png" />
 
     <ImageView
@@ -94,11 +96,12 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="600dp"
         android:layout_marginBottom="105dp"
+        android:layout_toRightOf="@+id/claim"
         android:background="@drawable/buttonbgshape"
         android:paddingTop="0dp"></ImageView>
 
     <ImageView
-        android:id="@+id/requesticon"
+        android:id="@+id/received"
         android:layout_width="126dp"
         android:layout_height="115dp"
         android:layout_alignParentStart="true"
