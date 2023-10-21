@@ -194,7 +194,6 @@ public class CourierMobileWallet extends AppCompatActivity {
             public void onResponse(String response) {
 //                Intent intent = new Intent(getApplicationContext(), SuccessActivity.class);
 //                startActivity(intent);
-                loading.dismiss();
                 Toast.makeText(getApplicationContext(), "REQUESTING",Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(CourierMobileWallet.this, WaitingForProofPay.class);
                 intent.putExtra("trackingID", trackingID);

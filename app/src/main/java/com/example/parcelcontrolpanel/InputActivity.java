@@ -105,6 +105,8 @@ public class InputActivity extends AppCompatActivity {
             });
         } else {
             // Bluetooth is already connected, continue with other logic or UI updates
+            progressDialog.dismiss();
+
         }
 
         setContentView(R.layout.activity_input);
@@ -239,6 +241,8 @@ public class InputActivity extends AppCompatActivity {
                 loading.dismiss();
                 Intent intent = new Intent(InputActivity.this, ReceiveParcel.class);
                 intent.putExtra("trackingID", sampleInputData);
+                intent.putExtra("userphone", phoneNo);
+
                 startActivity(intent);
 
                 Toast.makeText(getApplicationContext(), "Mobile Payment Parcel", Toast.LENGTH_LONG).show();
@@ -253,6 +257,8 @@ public class InputActivity extends AppCompatActivity {
                 loading.dismiss();
 
                 Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
+                moveToPlaceParcel.putExtra("userphone", phoneNo);
+
                 moveToPlaceParcel.putExtra("trackingID", sampleInputData);
 
                 startActivity(moveToPlaceParcel);
@@ -265,6 +271,7 @@ public class InputActivity extends AppCompatActivity {
                 bluetoothHelper.codComp1Trigger();
                 Toast.makeText(InputActivity.this, "COMPARTMENT IS 1", Toast.LENGTH_SHORT).show();
                 Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
+                moveToPlaceParcel.putExtra("userphone", phoneNo);
                 moveToPlaceParcel.putExtra("trackingID", sampleInputData);
                 startActivity(moveToPlaceParcel);
 
@@ -272,6 +279,8 @@ public class InputActivity extends AppCompatActivity {
                 bluetoothHelper.codComp2Trigger();
                 Toast.makeText(InputActivity.this, "COMPARTMENT IS 2", Toast.LENGTH_SHORT).show();
                 Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
+                moveToPlaceParcel.putExtra("userphone", phoneNo);
+
                 moveToPlaceParcel.putExtra("trackingID", sampleInputData);
                 startActivity(moveToPlaceParcel);
 

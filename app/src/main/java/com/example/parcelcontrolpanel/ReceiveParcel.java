@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -34,6 +35,7 @@ public class ReceiveParcel extends AppCompatActivity {
     String phoneNo;
     String trackingID, readBT;
     BluetoothHelper bluetoothHelper = BluetoothHelper.getInstance(context, "HC-05", "00:22:12:00:3C:EA");;
+    private static final long DELAY_TIME = 5000; // 5 seconds
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,31 +48,7 @@ public class ReceiveParcel extends AppCompatActivity {
         new BluetoothMessageTask().execute();
         //only do this after arduino sensor confirms it has parcel inside
 //        if this doesnt work put in bthelper run and save it in variables then get it from there
-//        while (true) {
-//            readBT = getBluetoothMsg();
-//
-//            if (readBT.equals("Mobile")) {
-//                Intent intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
-//                intent.putExtra("trackingID", sampleInputData);
-//                startActivity(intent);
-//                break;
-//            } else if (readBT.equals("AA") || readBT.equals("BB")) {
-//                Intent intent = new Intent(ReceiveParcel.this, CashOnDeliveryActivity.class);
-//                intent.putExtra("trackingID", sampleInputData);
-//                startActivity(intent);
-//                break;
-//            } else if (readBT.equals("CC")) {
-//                Intent intent = new Intent(ReceiveParcel.this, SuccessActivity.class);
-//                intent.putExtra("trackingID", sampleInputData);
-//                startActivity(intent);
-//                break;
-//            }
-//            try {
-//                Thread.sleep(2000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
+
     }
     private class BluetoothMessageTask extends AsyncTask<Void, Void, String> {
 
@@ -112,25 +90,17 @@ public class ReceiveParcel extends AppCompatActivity {
                     intent.putExtra("userphone", phoneNo);
                     startActivity(intent);
                 } else if (result.equals("AA_BB")) {
-                    intent = new Intent(ReceiveParcel.this, CashOnDeliveryActivity.class);
-                    intent.putExtra("userphone", phoneNo);
-                    intent.putExtra("trackingID", sampleInputData);
-
-                    startActivity(intent);
+                    openCODwithDelay();
 
                 } else if (result.equals("CC")) {
-                    intent = new Intent(ReceiveParcel.this, SuccessActivity.class);
-                    intent.putExtra("userphone", phoneNo);
-                    intent.putExtra("trackingID", sampleInputData);
-
-                    startActivity(intent);
+                    finish();
+                    openSuccessActivityWithDelay();
 
                 } else {
                     // Handle other cases or show an error message
                     return;
                 }
-                intent.putExtra("trackingID", sampleInputData);
-                startActivity(intent);
+
             } else {
                 // Handle the case when the AsyncTask was cancelled or no valid result was obtained
                 Toast.makeText(ReceiveParcel.this, "Failed to read Bluetooth message", Toast.LENGTH_SHORT).show();
@@ -149,36 +119,36 @@ public class ReceiveParcel extends AppCompatActivity {
         Log.d("TRACKING", "CODE" + sampleInputData);
         return sampleInputData;
     }
-//    public void getPhoneNumber() {
-//        String url = String.format("https://script.google.com/macros/s/AKfycbz0HTpS_z0h5CeN0mgcCrSWh4DXtwzz3oT5hN10QO7nGUQmuy2tc0xDXTtiHIkrysZo/exec?action=getPhoneNumberByTracking&trackingId=%s", getTracking());
-//
-//        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        // Handle the response (file URL)
-//                        phoneNo = response;
-//                        Toast.makeText(getApplicationContext(), "Phone:" + phoneNo, Toast.LENGTH_SHORT).show();
-//                        SMSHandler.sendSMSMessage(ReceiveParcel.this, phoneNo, "ParcelPal SMS Notification: Parcel-" + sampleInputData + " Payment has been released");
-//
-//
-//                    }
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                // Handle the error
-//                Toast.makeText(getApplicationContext(), "Error" + phoneNo, Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        RequestQueue queue = Volley.newRequestQueue(this);
-//        queue.add(stringRequest);
-//    }
-
-
         public String getBluetoothMsg() {
         readBT = bluetoothHelper.getReadMessage();
         Log.d("arduinoOOOOO", "CODE" + readBT);
 
         return readBT;
+    }
+    private void openSuccessActivityWithDelay() {
+        // Open the SuccessActivity after a delay
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent toSucc = new Intent(ReceiveParcel.this, SuccessActivity.class);
+                toSucc.putExtra("userphone", phoneNo);
+                toSucc.putExtra("trackingID", sampleInputData);
+                startActivity(toSucc);
+                finish(); // Optional: close the CashOnDeliveryActivity if needed
+            }
+        }, DELAY_TIME);
+    }
+    private void openCODwithDelay() {
+        // Open the SuccessActivity after a delay
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent toCod = new Intent(ReceiveParcel.this, CashOnDeliveryActivity.class);
+                toCod.putExtra("userphone", phoneNo);
+                toCod.putExtra("trackingID", sampleInputData);
+                startActivity(toCod);
+                finish(); // Optional: close the CashOnDeliveryActivity if needed
+            }
+        }, 10000);
     }
 }

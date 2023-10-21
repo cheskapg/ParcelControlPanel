@@ -115,6 +115,7 @@ public class ScanActivity extends AppCompatActivity {
         }
         // Connect to the Bluetooth device
         if (!bluetoothHelper.isConnected()) {
+
             bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
                 @Override
                 public void onConnected() {
@@ -130,7 +131,8 @@ public class ScanActivity extends AppCompatActivity {
                 }
             });
         } else {
-            // Bluetooth is already connected, continue with other logic or UI updates
+            progressDialog.dismiss();
+
         }
         checkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,6 +155,10 @@ public class ScanActivity extends AppCompatActivity {
             scannedData = result.getContents();
             if (scannedData != null) {
                 if (checkbuttonClicked) {
+                    progressDialog = new ProgressDialog(this);
+                    progressDialog.setMessage("Loading...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
                     new CheckRequest().execute();
                 }
             } else {
@@ -195,6 +201,7 @@ public class ScanActivity extends AppCompatActivity {
 
     public class CheckRequest extends AsyncTask<String, Void, String> {
         protected void onPreExecute() {
+
         }
 
         protected String doInBackground(String... arg0) {
@@ -242,8 +249,8 @@ public class ScanActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            getPhoneNumber();
 
+            progressDialog.dismiss();
             int dur = 1000000;
             Log.i("Info", result);
 
@@ -255,6 +262,8 @@ public class ScanActivity extends AppCompatActivity {
 
 
             if (result.equals("Tracking ID exists: " + sampleScannedData + " and payment method is Mobile Wallet")) {
+                getPhoneNumber();
+
                 // Tracking ID exists and payment method is Mobile Wallet
                 bluetoothHelper.mobileTrigger();
                 // unlock door and wait for mobile payment screen
@@ -267,6 +276,8 @@ public class ScanActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Mobile Payment Parcel", Toast.LENGTH_LONG).show();
 
             } else if (result.equals("Tracking ID exists: " + sampleScannedData + " but payment method is not Mobile Wallet")) {
+                getPhoneNumber();
+
                 // Tracking ID exists but payment method is not Mobile Wallet
                 //uncomment to enable bluetooth command
                 bluetoothHelper.prepaidTrigger();
@@ -279,6 +290,8 @@ public class ScanActivity extends AppCompatActivity {
                 Toast.makeText(ScanActivity.this, "READ ARDUINO NOT mobile " + readMessage, Toast.LENGTH_SHORT).show();
 
             } else if (result.equals("Tracking ID exists: " + sampleScannedData + " and payment method is COD 1")) {
+                getPhoneNumber();
+
                 // Tracking ID exists but payment method is COD
                 bluetoothHelper.codComp1Trigger();
                 Toast.makeText(ScanActivity.this, "COMPARTMENT IS 1", Toast.LENGTH_SHORT).show();
@@ -288,6 +301,8 @@ public class ScanActivity extends AppCompatActivity {
                 startActivity(moveToPlaceParcel);
 
             } else if (result.equals("Tracking ID exists: " + sampleScannedData + " and payment method is COD 2")) {
+                getPhoneNumber();
+
                 bluetoothHelper.codComp2Trigger();
                 Toast.makeText(ScanActivity.this, "COMPARTMENT IS 2", Toast.LENGTH_SHORT).show();
                 Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
@@ -298,6 +313,7 @@ public class ScanActivity extends AppCompatActivity {
                 getBluetoothMsg();
             }
             else if (result.equals("Tracking ID does not exist " + sampleScannedData)) {
+
                 // Tracking ID does not exist or error occurred
                 Toast.makeText(getApplicationContext(), "PLEASE TRY AGAIN", Toast.LENGTH_LONG).show();
             }
