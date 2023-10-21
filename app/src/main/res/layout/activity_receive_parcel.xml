@@ -79,12 +79,12 @@
 
 
     <pl.droidsonroids.gif.GifImageView
-        android:layout_width="1063dp"
-        android:layout_height="wrap_content"
+        android:layout_width="1226dp"
+        android:layout_height="832dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="-87dp"
-        android:src="@drawable/placeparcel" />
+        android:src="@drawable/receiveparcelgif" />
 
     <TextView
                 android:id="@+id/textView"

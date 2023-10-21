@@ -58,7 +58,7 @@ public class ScanActivity extends AppCompatActivity {
 
     String urlString;
     String sampleScannedData;
-//    BluetoothHelper bluetoothHelper = new BluetoothHelper(context, "HC-05", "00:22:12:00:3C:EA");
+    //    BluetoothHelper bluetoothHelper = new BluetoothHelper(context, "HC-05", "00:22:12:00:3C:EA");
     BluetoothHelper bluetoothHelper;
     private BarcodeDetector barcodeDetector;
     String getParcelId, getPaymentId;
@@ -95,10 +95,8 @@ public class ScanActivity extends AppCompatActivity {
             }
         }
 
-//        scanBtn = (Button)findViewById(R.id.dat);
         checkBtn = findViewById(R.id.bgButtonScan);
 
-//        scanbuttonClicked =false;
         checkbuttonClicked = false;
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.ALL_FORMATS)
@@ -115,7 +113,6 @@ public class ScanActivity extends AppCompatActivity {
         }
         // Connect to the Bluetooth device
         if (!bluetoothHelper.isConnected()) {
-
             bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
                 @Override
                 public void onConnected() {
@@ -148,6 +145,7 @@ public class ScanActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
@@ -221,8 +219,7 @@ public class ScanActivity extends AppCompatActivity {
                 conn.setReadTimeout(30000 /* milliseconds */);
                 conn.setConnectTimeout(30000 /* milliseconds */);
                 conn.setRequestMethod("GET");
-//                conn.setDoInput(true);
-//                conn.setDoOutput(true);
+
 
                 int responseCode = conn.getResponseCode();
 
@@ -295,7 +292,8 @@ public class ScanActivity extends AppCompatActivity {
                 // Tracking ID exists but payment method is COD
                 bluetoothHelper.codComp1Trigger();
                 Toast.makeText(ScanActivity.this, "COMPARTMENT IS 1", Toast.LENGTH_SHORT).show();
-                Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);                moveToPlaceParcel.putExtra("userphone", phoneNo);
+                Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
+                moveToPlaceParcel.putExtra("userphone", phoneNo);
 
                 moveToPlaceParcel.putExtra("trackingID", sampleScannedData);
                 startActivity(moveToPlaceParcel);
@@ -311,8 +309,7 @@ public class ScanActivity extends AppCompatActivity {
 
                 startActivity(moveToPlaceParcel);
                 getBluetoothMsg();
-            }
-            else if (result.equals("Tracking ID does not exist " + sampleScannedData)) {
+            } else if (result.equals("Tracking ID does not exist " + sampleScannedData)) {
 
                 // Tracking ID does not exist or error occurred
                 Toast.makeText(getApplicationContext(), "PLEASE TRY AGAIN", Toast.LENGTH_LONG).show();
@@ -328,50 +325,20 @@ public class ScanActivity extends AppCompatActivity {
         }
     }
 
-//    private void getCompartmentNum(String tracking) {
-//        gettingComp = new ProgressDialog(this);
-//        gettingComp.setMessage("Connecting...");
-//        gettingComp.setCancelable(false);
-//        gettingComp.show();
-//        String trackingId = tracking;
-//        Log.d("TRACKING", trackingId + "input track");
-//
-//        String url = String.format("https://script.google.com/macros/s/AKfycbycoJM-I4YdT2oMwlI8ZZY8a9HkqrH1N36Aux_Zqcc6MqG6dPnLiL00QODfjk_ESfEK/exec?action=getCompNum&trackingId=%s", trackingId);
-//        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//
-//                        compNum = response;
-//
-//                        Toast myToast = Toast.makeText(ScanActivity.this, response, Toast.LENGTH_LONG);
-//                        myToast.show();
-//                        gettingComp.dismiss();
-//
-//
-//                    }
-//
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        // Handle error response                }
-//                    }
-//
-//                }
-//
-//        );
-//
-//        RequestQueue queue = Volley.newRequestQueue(this);
-//        queue.add(stringRequest);
-//
-//    }
-public String getBluetoothMsg() {
-    readBT = bluetoothHelper.getReadMessage();
-    Log.d("arduinoOOOOO", "CODE" + readBT);
-    Toast.makeText(ScanActivity.this, "READ ARDUINO " + readBT, Toast.LENGTH_SHORT).show();
+    public String getBluetoothMsg() {
+        readBT = bluetoothHelper.getReadMessage();
+        Log.d("arduinoOOOOO", "CODE" + readBT);
+        Toast.makeText(ScanActivity.this, "READ ARDUINO " + readBT, Toast.LENGTH_SHORT).show();
 
-    return readBT;
-}
+        return readBT;
+    }
+    public void onBackPressed() {
+        // Terminate Bluetooth Connection and close app
 
+//            bluetoothHelper.disconnect();
+        Intent a = new Intent(ScanActivity.this, MainActivity.class);
+        a.addCategory(Intent.CATEGORY_HOME);
+        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(a);
+    }
 }

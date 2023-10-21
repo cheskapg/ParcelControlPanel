@@ -182,7 +182,7 @@ public class CourierMobileWallet extends AppCompatActivity {
 
     }
     private void RequestMobilePayment() {
-        Toast myToast = Toast.makeText(CourierMobileWallet.this, "EXECUTING REQUEST"+trackingID, Toast.LENGTH_LONG);
+        Toast myToast = Toast.makeText(CourierMobileWallet.this, "EXECUTING REQUEST "+trackingID, Toast.LENGTH_LONG);
         myToast.show();
         String accountName = etAccountName.getText().toString();
         String accountNumber = etAccountNumber.getText().toString();

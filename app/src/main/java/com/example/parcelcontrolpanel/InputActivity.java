@@ -55,8 +55,10 @@ public class InputActivity extends AppCompatActivity {
     Context context = this;
 
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
-    BluetoothHelper bluetoothHelper = new BluetoothHelper(context, "HC-05", "00:22:12:00:3C:EA");
+    //    BluetoothHelper bluetoothHelper = new BluetoothHelper(context, "HC-05", "00:22:12:00:3C:EA");
     //        BluetoothHelper bluetoothHelper = new BluetoothHelper();
+    BluetoothHelper bluetoothHelper;
+
     public String compNum;
     String inputData;
     String checkData;
@@ -75,6 +77,8 @@ public class InputActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         String status = bluetoothHelper.getStatus();
         Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
+        bluetoothHelper = BluetoothHelper.getInstance(this, "HC-05", "00:22:12:00:3C:EA");
+
 //        progressDialog = new ProgressDialog(this);
 //        progressDialog.setMessage("Connecting...");
 //        progressDialog.setCancelable(false);
@@ -234,6 +238,8 @@ public class InputActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), sampleInputData, Toast.LENGTH_LONG).show();
 
             if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is Mobile Wallet")) {
+                getPhoneNumber();
+
                 // Tracking ID exists and payment method is Mobile Wallet
                 bluetoothHelper.mobileTrigger();
                 // unlock door and wait for mobile payment screen
@@ -248,13 +254,15 @@ public class InputActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Mobile Payment Parcel", Toast.LENGTH_LONG).show();
 
             } else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is not Mobile Wallet")) {
+                getPhoneNumber();
+
                 // Tracking ID exists but payment method is not Mobile Wallet
                 //uncomment to enable bluetooth command
                 bluetoothHelper.prepaidTrigger();
-                String readMessage = bluetoothHelper.getReadMessage();
-
-                Toast.makeText(InputActivity.this, "READ ARDUINO " + readMessage, Toast.LENGTH_SHORT).show();
-                loading.dismiss();
+//                String readMessage = bluetoothHelper.getReadMessage();
+//
+//                Toast.makeText(InputActivity.this, "READ ARDUINO " + readMessage, Toast.LENGTH_SHORT).show();
+//                loading.dismiss();
 
                 Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
                 moveToPlaceParcel.putExtra("userphone", phoneNo);
@@ -263,11 +271,13 @@ public class InputActivity extends AppCompatActivity {
 
                 startActivity(moveToPlaceParcel);
 
-
+                String readMessage = bluetoothHelper.getReadMessage();
                 Toast.makeText(InputActivity.this, "READ ARDUINO NOT mobile " + readMessage, Toast.LENGTH_SHORT).show();
 
             } else if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 1")) {
                 // Tracking ID exists but payment method is COD
+                getPhoneNumber();
+
                 bluetoothHelper.codComp1Trigger();
                 Toast.makeText(InputActivity.this, "COMPARTMENT IS 1", Toast.LENGTH_SHORT).show();
                 Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
@@ -276,6 +286,8 @@ public class InputActivity extends AppCompatActivity {
                 startActivity(moveToPlaceParcel);
 
             } else if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 2")) {
+                getPhoneNumber();
+
                 bluetoothHelper.codComp2Trigger();
                 Toast.makeText(InputActivity.this, "COMPARTMENT IS 2", Toast.LENGTH_SHORT).show();
                 Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
