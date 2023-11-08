@@ -11,17 +11,22 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.BatteryManager;
+import android.os.Handler;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.UserManager;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextClock;
+import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 
@@ -31,13 +36,40 @@ public class MainActivity extends AppCompatActivity {
     private DevicePolicyManager mDevicePolicyManager;
     ImageView ScanButton, InputButton;
     TextClock dateClock;
+    String readBT;
+    BluetoothHelper bluetoothHelper; //bluetooth to receive check compartments
 
-    Button Bluetooth,SMSButton, btclass, ExitApp, wifi;
-//    BluetoothHelper bluetoothHelper = new BluetoothHelper("HC-05", "00:22:12:00:3C:EA");
+    Button Bluetooth, SMSButton, btclass, ExitApp, wifi;
+
+    //    BluetoothHelper bluetoothHelper = new BluetoothHelper("HC-05", "00:22:12:00:3C:EA");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //reecently added for receiving sensor info from compartment
+        bluetoothHelper = BluetoothHelper.getInstance(this, "HC-05", "00:22:12:00:3C:EA");
+        String status = bluetoothHelper.getStatus();
+        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
+
+        if (!bluetoothHelper.isConnected()) {
+            bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
+                @Override
+                public void onConnected() {
+                    // Dismiss the progress dialog when connected
+                    // Continue with other logic or UI updates
+                }
+
+                @Override
+                public void onFailure() {
+                    Toast.makeText(MainActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        getBluetoothMsg();
+        readBT = getBluetoothMsg();
+        // Start the AsyncTask to read Bluetooth messages and handle the logic
+        new BluetoothMessageTask().execute();
+
         // Retrieve Device Policy Manager so that we can check whether we can
 // lock to screen later
 //        mAdminComponentName = new ComponentName(this,AppAdminReceiver.class);
@@ -60,15 +92,16 @@ public class MainActivity extends AppCompatActivity {
         ScanButton = (ImageView) findViewById(R.id.bgButtonScan);
         InputButton = (ImageView) findViewById(R.id.bgButtonInput);
 //        bluetoothHelper.connectToDevice();
+
+
         ScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isNetworkAvailable()){
+                if (isNetworkAvailable()) {
 
-                Intent moveToScanActivity = new Intent(MainActivity.this, ScanActivity.class);
-                startActivity(moveToScanActivity);
-                }
-                else{
+                    Intent moveToScanActivity = new Intent(MainActivity.this, ScanActivity.class);
+                    startActivity(moveToScanActivity);
+                } else {
 
                     Intent openWirelessSettings = new Intent(MainActivity.this, WifiActivity.class);
 
@@ -81,11 +114,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(isNetworkAvailable()){
+                if (isNetworkAvailable()) {
                     Intent moveToInpActivity = new Intent(MainActivity.this, InputActivity.class);
                     startActivity(moveToInpActivity);
-                }
-                else{
+                } else {
 
                     Intent openWirelessSettings = new Intent(MainActivity.this, WifiActivity.class);
 
@@ -140,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(openWirelessSettings);
             }
         });
-
     }
 //
 //    @Override
@@ -234,13 +265,50 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
 
+    private class BluetoothMessageTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            String readBT = getBluetoothMsg();
+
+            // Perform the Bluetooth message reading in a loop until a condition is met
+            while (!isCancelled()) {
+                readBT = getBluetoothMsg();
+
+                if (readBT.equals("Mobile")) {
+                    return "Mobile";
+                } else if (readBT.equals("AA") || readBT.equals("BB")) {
+                    return "AA_BB";
+                } else if (readBT.equals("CC")) {
+                    return "CC";
+                }
+
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
 
 
 
+        }
+    }
     private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    public String getBluetoothMsg() {
+        readBT = bluetoothHelper.getReadMessage();
+        Log.d("arduinoOOOOO", "CODE" + readBT);
+
+        return readBT;
     }
 }

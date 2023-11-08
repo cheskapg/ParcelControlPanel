@@ -404,6 +404,7 @@ public class BluetoothHelper {
                         getReadMessage();
 
                         if (readMessage.equals("Mobile")) {
+                            //comment this out to reuse the string for compartments
                             readMessage = "Mobile";
                             getReadMessage();
                         } else if (readMessage.equals("AA")) {
