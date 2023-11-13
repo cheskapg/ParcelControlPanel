@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private DevicePolicyManager mDevicePolicyManager;
     ImageView ScanButton, InputButton;
     TextClock dateClock;
-    String readBT;
+    String readBT, phoneNo;
     BluetoothHelper bluetoothHelper; //bluetooth to receive check compartments
 
     Button Bluetooth, SMSButton, btclass, ExitApp, wifi;
@@ -324,26 +324,56 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        //if response disable 1 means 1 is used and then add && to check if sensors are showing empty
                         if (response.equals("disable 1")) {
-                            //if compartment 1 is used then response = disabled 1 -> basis for notifications -> execute send notification for sensor 1 compartment continuously with intervals
-
+                            sendCompartmentStatus("1");
                         } else if (response.equals("disable 2")) {
+                            sendCompartmentStatus("2");
                         } else if (response.equals("disable 3")) {
+                            sendCompartmentStatus("3");
                         } else if (response.equals("disable 4")) {
+                            sendCompartmentStatus("4");
                         } else if (response.equals("disable 1,disable 2")) {
+                            sendCompartmentStatus("1");
+                            sendCompartmentStatus("2");
                         } else if (response.equals("disable 1,disable 3")) {
+                            sendCompartmentStatus("1");
+                            sendCompartmentStatus("3");
                         } else if (response.equals("disable 1,disable 4")) {
+                            sendCompartmentStatus("1");
+                            sendCompartmentStatus("4");
                         } else if (response.equals("disable 2,disable 3")) {
+                            sendCompartmentStatus("2");
+                            sendCompartmentStatus("3");
                         } else if (response.equals("disable 2,disable 4")) {
+                            sendCompartmentStatus("2");
+                            sendCompartmentStatus("4");
                         } else if (response.equals("disable 3,disable 4")) {
+                            sendCompartmentStatus("3");
+                            sendCompartmentStatus("4");
                         } else if (response.equals("disable 1,disable 2,disable 3")) {
+                            sendCompartmentStatus("1");
+                            sendCompartmentStatus("2");
+                            sendCompartmentStatus("3");
                         } else if (response.equals("disable 1,disable 2,disable 4")) {
+                            sendCompartmentStatus("1");
+                            sendCompartmentStatus("2");
+                            sendCompartmentStatus("4");
                         } else if (response.equals("disable 1,disable 3,disable 4")) {
+                            sendCompartmentStatus("1");
+                            sendCompartmentStatus("3");
+                            sendCompartmentStatus("4");
                         } else if (response.equals("disable 2,disable 3,disable 4")) {
-
+                            sendCompartmentStatus("2");
+                            sendCompartmentStatus("3");
+                            sendCompartmentStatus("4");
                         } else if (response.equals("disable 1,disable 2,disable 3,disable 4")) {
-                        }
-                        else{
+                            sendCompartmentStatus("1");
+                            sendCompartmentStatus("2");
+                            sendCompartmentStatus("3");
+                            sendCompartmentStatus("4");
+                        } else {
+                            // Handle other cases if needed
                         }
                     }
                 },
@@ -367,8 +397,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         //SEND SMS HERE  response is phone num to use for sms
-                        String phoneNo = response;
-                        SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment-" + compartmentNum + " is Empty. Please insert payment");
+                        phoneNo = response;
+
 
                     }
                 },
