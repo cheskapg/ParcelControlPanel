@@ -28,6 +28,14 @@ import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.zxing.integration.android.IntentIntegrator;
 
 
@@ -275,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
             while (!isCancelled()) {
                 readBT = getBluetoothMsg();
 
-                if (readBT.equals("Mobile")) {
+                if (readBT.equals("comp1Empty")) {
                     return "Mobile";
                 } else if (readBT.equals("AA") || readBT.equals("BB")) {
                     return "AA_BB";
@@ -311,4 +319,73 @@ public class MainActivity extends AppCompatActivity {
 
         return readBT;
     }
+    private void checkCompartmentExisting() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, "https://script.google.com/macros/s/AKfycbxe60Ea0TWyGRRig0LemVXLYN_KWBV_QJ6gPZyfiXIIJXsrDLPOqQHk2up0B2Nv_DIu/exec?action=checkExistingComp",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if (response.equals("disable 1")) {
+                            //if compartment 1 is used then response = disabled 1 -> basis for notifications -> execute send notification for sensor 1 compartment continuously with intervals
+
+                        } else if (response.equals("disable 2")) {
+                        } else if (response.equals("disable 3")) {
+                        } else if (response.equals("disable 4")) {
+                        } else if (response.equals("disable 1,disable 2")) {
+                        } else if (response.equals("disable 1,disable 3")) {
+                        } else if (response.equals("disable 1,disable 4")) {
+                        } else if (response.equals("disable 2,disable 3")) {
+                        } else if (response.equals("disable 2,disable 4")) {
+                        } else if (response.equals("disable 3,disable 4")) {
+                        } else if (response.equals("disable 1,disable 2,disable 3")) {
+                        } else if (response.equals("disable 1,disable 2,disable 4")) {
+                        } else if (response.equals("disable 1,disable 3,disable 4")) {
+                        } else if (response.equals("disable 2,disable 3,disable 4")) {
+
+                        } else if (response.equals("disable 1,disable 2,disable 3,disable 4")) {
+                        }
+                        else{
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle error response
+                    }
+                }
+        );
+
+        int socketTimeOut = 50000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(stringRequest);
+    }
+    private void sendCompartmentStatus(String compartmentNum) {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, "https://script.google.com/macros/s/AKfycbwsTuzWHUAmgLcz6jieXE2H9vPeHJ5LWC3Pg_aIJIkcnrw1YAnhOOnW1NSdWLm7O8_r/exec?action=sensor"+compartmentNum,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        //SEND SMS HERE  response is phone num to use for sms
+                        String phoneNo = response;
+                        SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment-" + compartmentNum + " is Empty. Please insert payment");
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle error response
+                    }
+                }
+        );
+
+        int socketTimeOut = 50000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(stringRequest);
+    }
+
+
 }
