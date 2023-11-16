@@ -54,30 +54,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        checkCompartmentExisting();
         //reecently added for receiving sensor info from compartment
-        bluetoothHelper = BluetoothHelper.getInstance(this, "HC-05", "00:22:12:00:3C:EA");
-        String status = bluetoothHelper.getStatus();
-        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
-
-        if (!bluetoothHelper.isConnected()) {
-            bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
-                @Override
-                public void onConnected() {
-                    // Dismiss the progress dialog when connected
-                    // Continue with other logic or UI updates
-                }
-
-                @Override
-                public void onFailure() {
-                    Toast.makeText(MainActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        getBluetoothMsg();
-        readBT = getBluetoothMsg();
-        // Start the AsyncTask to read Bluetooth messages and handle the logic
-        new BluetoothMessageTask().execute();
-
+//        bluetoothHelper = BluetoothHelper.getInstance(this, "HC-05", "00:22:12:00:3C:EA");
+//        String status = bluetoothHelper.getStatus();
+//
+//        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
+//
+//        if (!bluetoothHelper.isConnected()) {
+//            bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
+//                @Override
+//                public void onConnected() {
+//                    // Dismiss the progress dialog when connected
+//                    // Continue with other logic or UI updates
+//                }
+//
+//                @Override
+//                public void onFailure() {
+//                    Toast.makeText(MainActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//        }
+//        getBluetoothMsg();
+//        readBT = getBluetoothMsg();
+//        // Start the AsyncTask to read Bluetooth messages and handle the logic
+//        new BluetoothMessageTask().execute();
+        //---------------------------------------------------------------------------------------------
         // Retrieve Device Policy Manager so that we can check whether we can
 // lock to screen later
 //        mAdminComponentName = new ComponentName(this,AppAdminReceiver.class);
@@ -324,7 +326,9 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        if (response.equals("disable 1")) {
+                        //if response disable 1 means 1 is used and then add && to check if sensors are showing emptyx
+
+                        if (response.equals("disable 1")){
                             sendCompartmentStatus("1");
                             SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 is empty. Please insert payment on compartment accordingly");
                         } else if (response.equals("disable 2")) {

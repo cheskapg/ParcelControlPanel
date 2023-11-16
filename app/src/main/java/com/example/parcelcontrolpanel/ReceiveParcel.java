@@ -62,17 +62,17 @@ public class ReceiveParcel extends AppCompatActivity {
 
                 if (readBT.equals("Mobile")) {
                     return "Mobile";
-                } else if (readBT.equals("AA") || readBT.equals("BB")) {
-                    return "AA_BB";
-                } else if (readBT.equals("CC")) {
-                    return "CC";
+                } else if (readBT.equals("AA") || readBT.equals("BB") || readBT.equals("CC") || readBT.equals("DD") ) {
+                    return "AA_BB_CC_DD";
+                } else if (readBT.equals("EE")) {
+                    return "EE";
                 }
-
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
             }
 
             return null;
@@ -89,10 +89,10 @@ public class ReceiveParcel extends AppCompatActivity {
                     intent.putExtra("trackingID", sampleInputData);
                     intent.putExtra("userphone", phoneNo);
                     startActivity(intent);
-                } else if (result.equals("AA_BB")) {
+                } else if (result.equals("AA_BB_CC_DD")) {
                     openCODwithDelay();
 
-                } else if (result.equals("CC")) {
+                } else if (result.equals("EE")) {
                     finish();
                     openSuccessActivityWithDelay();
 

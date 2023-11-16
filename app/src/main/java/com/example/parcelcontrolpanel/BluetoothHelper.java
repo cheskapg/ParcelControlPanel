@@ -417,6 +417,21 @@ public class BluetoothHelper {
                             readMessage = "CC";
                             getReadMessage();
                         }
+                        else if (readMessage.equals("DD")) {
+                            readMessage = "DD";
+                            getReadMessage();
+                        }
+                        else if (readMessage.equals("EE")) {
+                            readMessage = "EE";
+                            getReadMessage();
+                        }
+                        else if (readMessage.equals("FF")) {
+                            readMessage = "FF";
+                            getReadMessage();
+                        }
+                        else{
+                            getReadMessage();
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
