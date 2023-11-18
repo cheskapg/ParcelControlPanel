@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                             checkCompartmentExisting();
                         }
 //
-                    }, 1000); // Adjust the duration as needed
+                    }, 5000); // Adjust the duration as needed
                     // Dismiss the progress dialog when connected
                     // Continue with other logic or UI updates
                 }
@@ -347,11 +347,12 @@ public class MainActivity extends AppCompatActivity {
                             sendCompartmentStatus("4");
                         } else if (response.equals("disable 1,disable 2") && readBT.contains("empty 1") && readBT.contains("empty 2")) {
                             compartmentStatus = "disable 1,disable 2";
+                            sendCompartmentStatus("1");
+
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     Log.e("HANDLER", "checkcomp");
-                                    sendCompartmentStatus("1");
                                     sendCompartmentStatus("2");
 
                                 }
@@ -361,19 +362,55 @@ public class MainActivity extends AppCompatActivity {
                         } else if (response.equals("disable 1,disable 3") && readBT.contains("empty 1") && readBT.contains("empty 3")) {
                             compartmentStatus = "disable 1,disable 3";
                             sendCompartmentStatus("1");
-                            sendCompartmentStatus("3");
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Log.e("HANDLER", "checkcomp");
+                                    sendCompartmentStatus("3");
+
+                                }
+//
+                            }, 5000); // Adjust the duration as needed
+
                         } else if (response.equals("disable 1,disable 4") && readBT.contains("empty 1") && readBT.contains("empty 4")) {
                             compartmentStatus = "disable 1,disable 4";
                             sendCompartmentStatus("1");
-                            sendCompartmentStatus("4");
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Log.e("HANDLER", "checkcomp");
+                                    sendCompartmentStatus("4");
+
+                                }
+//
+                            }, 5000); // Adjust the duration as needed
+
                         } else if (response.equals("disable 2,disable 3") && readBT.contains("empty 2") && readBT.contains("empty 3")) {
                             compartmentStatus = "disable 2,disable 3";
                             sendCompartmentStatus("2");
-                            sendCompartmentStatus("3");
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Log.e("HANDLER", "checkcomp");
+                                    sendCompartmentStatus("3");
+
+                                }
+//
+                            }, 5000); // Adjust the duration as needed
+
                         } else if (response.equals("disable 2,disable 4") && readBT.contains("empty 2") && readBT.contains("empty 4")) {
                             compartmentStatus = "disable 2,disable 4";
                             sendCompartmentStatus("2");
-                            sendCompartmentStatus("4");
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Log.e("HANDLER", "checkcomp");
+                                    sendCompartmentStatus("4");
+
+                                }
+//
+                            }, 5000); // Adjust the duration as needed
+
                         } else if (response.equals("disable 3,disable 4") && readBT.contains("empty 3") && readBT.contains("empty 4")) {
                             compartmentStatus = "disable 3,disable 4";
                             sendCompartmentStatus("3");
@@ -395,16 +432,13 @@ public class MainActivity extends AppCompatActivity {
                             sendCompartmentStatus("4");
                         } else if (response.equals("disable 2,disable 3,disable 4") && readBT.contains("empty 2") && readBT.contains("empty 3") && readBT.contains("empty 4")) {
                             compartmentStatus = "disable 2,disable 3,disable 4";
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Log.e("HANDLER", "checkcomp");
-                                    sendCompartmentStatus("2");
-                                    sendCompartmentStatus("3");
-                                    sendCompartmentStatus("4");
-                                }
-//
-                            }, 5000); // Adjust the duration as needed
+
+                            Log.e("HANDLER", "checkcomp");
+
+                            sendCompartmentStatus("2");
+                            sendCompartmentStatus("3");
+                            sendCompartmentStatus("4");
+
 
                         } else if (response.equals("disable 1,disable 2,disable 3,disable 4") && readBT.contains("empty 1") && readBT.contains("empty 2") && readBT.contains("empty 3") && readBT.contains("empty 4")) {
                             compartmentStatus = "disable 1,disable 2,disable 3,disable 4";
