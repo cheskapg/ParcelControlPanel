@@ -177,23 +177,43 @@ public class BluetoothHelper {
             connectedThread.write("B");
         }
     }
-
-    public void prepaidTrigger() {
+    public void codComp3Trigger() {
 
         if (connectedThread != null) {
             connectedThread.write("C");
+            Log.e("SEND COMMAND", "ARDUINO C");
         } else {
             reconnectToDevice();
             connectedThread.write("C");
         }
     }
+    public void codComp4Trigger() {
 
-    public void mobileTrigger() {
         if (connectedThread != null) {
             connectedThread.write("D");
+            Log.e("SEND COMMAND", "ARDUINO D");
         } else {
             reconnectToDevice();
             connectedThread.write("D");
+        }
+    }
+
+    public void prepaidTrigger() {
+
+        if (connectedThread != null) {
+            connectedThread.write("E");
+        } else {
+            reconnectToDevice();
+            connectedThread.write("E");
+        }
+    }
+
+    public void mobileTrigger() {
+        if (connectedThread != null) {
+            connectedThread.write("F");
+        } else {
+            reconnectToDevice();
+            connectedThread.write("F");
         }
     }
 
@@ -432,6 +452,7 @@ public class BluetoothHelper {
                         else{
                             getReadMessage();
                         }
+                        Log.d("btHELPER", getReadMessage() + "--e");
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

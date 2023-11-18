@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private DevicePolicyManager mDevicePolicyManager;
     ImageView ScanButton, InputButton;
     TextClock dateClock;
-    String readBT, phoneNo;
+    String readBT, phoneNo , compartmentStatus;
     BluetoothHelper bluetoothHelper; //bluetooth to receive check compartments
 
     Button Bluetooth, SMSButton, btclass, ExitApp, wifi;
@@ -54,31 +54,30 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        checkCompartmentExisting();
         //reecently added for receiving sensor info from compartment
-//        bluetoothHelper = BluetoothHelper.getInstance(this, "HC-05", "00:22:12:00:3C:EA");
-//        String status = bluetoothHelper.getStatus();
-//
-//        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
-//
-//        if (!bluetoothHelper.isConnected()) {
-//            bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
-//                @Override
-//                public void onConnected() {
-//                    // Dismiss the progress dialog when connected
-//                    // Continue with other logic or UI updates
-//                }
-//
-//                @Override
-//                public void onFailure() {
-//                    Toast.makeText(MainActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//        }
-//        getBluetoothMsg();
-//        readBT = getBluetoothMsg();
-//        // Start the AsyncTask to read Bluetooth messages and handle the logic
-//        new BluetoothMessageTask().execute();
+        bluetoothHelper = BluetoothHelper.getInstance(this, "HC-05", "00:22:12:00:3C:EA");
+        String status = bluetoothHelper.getStatus();
+
+        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
+
+        if (!bluetoothHelper.isConnected()) {
+            bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
+                @Override
+                public void onConnected() {
+                    // Dismiss the progress dialog when connected
+                    // Continue with other logic or UI updates
+                }
+
+                @Override
+                public void onFailure() {
+                    Toast.makeText(MainActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        getBluetoothMsg();
+        readBT = getBluetoothMsg();
+        // Start the AsyncTask to read Bluetooth messages and handle the logic
+        new BluetoothMessageTask().execute();
         //---------------------------------------------------------------------------------------------
         // Retrieve Device Policy Manager so that we can check whether we can
 // lock to screen later
@@ -182,6 +181,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(openWirelessSettings);
             }
         });
+
+        checkCompartmentExisting();
+
+
     }
 //
 //    @Override
@@ -284,14 +287,9 @@ public class MainActivity extends AppCompatActivity {
             // Perform the Bluetooth message reading in a loop until a condition is met
             while (!isCancelled()) {
                 readBT = getBluetoothMsg();
+                Log.d("MainActivity", readBT + "--e");
 
-                if (readBT.equals("comp1Empty")) {
-                    return "Mobile";
-                } else if (readBT.equals("AA") || readBT.equals("BB")) {
-                    return "AA_BB";
-                } else if (readBT.equals("CC")) {
-                    return "CC";
-                }
+
 
                 try {
                     Thread.sleep(2000);
@@ -302,11 +300,14 @@ public class MainActivity extends AppCompatActivity {
 
             return null;
         }
-
+//
         @Override
         protected void onPostExecute(String result) {
 
+                if (readBT.equals("empty 1,empty 2,empty 3,empty 4")) {
+                    Log.d("READINGBT", readBT + "--e");
 
+                }
 
         }
     }
@@ -317,7 +318,6 @@ public class MainActivity extends AppCompatActivity {
     }
     public String getBluetoothMsg() {
         readBT = bluetoothHelper.getReadMessage();
-        Log.d("arduinoOOOOO", "CODE" + readBT);
 
         return readBT;
     }
@@ -328,9 +328,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         //if response disable 1 means 1 is used and then add && to check if sensors are showing emptyx
 
-                        if (response.equals("disable 1")){
+                        if (response.equals("disable 1")) {
                             sendCompartmentStatus("1");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 is empty. Please insert payment on compartment accordingly");
+                            compartmentStatus ="disable 1";
+
                         } else if (response.equals("disable 2")) {
                             sendCompartmentStatus("2");
                             SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 is empty. Please insert payment on compartment accordingly");
@@ -383,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
                             sendCompartmentStatus("2");
                             sendCompartmentStatus("3");
                             sendCompartmentStatus("4");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment-2, 3, and 4 are empty. Please insert payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2, 3, and 4 are empty. Please insert payment on compartment accordingly");
                         } else if (response.equals("disable 1,disable 2,disable 3,disable 4")) {
                             sendCompartmentStatus("1");
                             sendCompartmentStatus("2");
@@ -394,7 +395,6 @@ public class MainActivity extends AppCompatActivity {
                             // Handle other cases if needed
                         }
                     }
-
                 },
                 new Response.ErrorListener() {
                     @Override
@@ -403,19 +403,20 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
-
         int socketTimeOut = 50000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         stringRequest.setRetryPolicy(policy);
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(stringRequest);
     }
     private void sendCompartmentStatus(String compartmentNum) {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, "https://script.google.com/macros/s/AKfycbwsTuzWHUAmgLcz6jieXE2H9vPeHJ5LWC3Pg_aIJIkcnrw1YAnhOOnW1NSdWLm7O8_r/exec?action=sensor"+compartmentNum,
+        String url ="https://script.google.com/macros/s/AKfycbzEAgfYgo6a1jNUFsRyFVIcxIF2EllQevrABjMEpfI-JnpGpbysnWTHxPms86i2BKyj/exec?action=sensor"+compartmentNum;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         //SEND SMS HERE  response is phone num to use for sms
+                        Log.e("SEND COMMAND", url + "e");
                         phoneNo = response;
 
 
@@ -429,8 +430,9 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
+
         int socketTimeOut = 50000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         stringRequest.setRetryPolicy(policy);
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(stringRequest);

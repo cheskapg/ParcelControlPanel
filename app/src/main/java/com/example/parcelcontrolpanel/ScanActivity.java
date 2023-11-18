@@ -72,7 +72,8 @@ public class ScanActivity extends AppCompatActivity {
 
     public ScanActivity() throws IOException {
     }
-
+    //IF PARCEL IS SCANNED BUT SENSOR IS EMPTY DO NOT PROCEED USE ANDROID
+    // get VALUE OF COMPARTMET STATUS AND STORE CHECKCOMPARTMENT IN ARDUINO RETURNS EMPTY 1 AND THEN PARCEL SCANNED, SHOW ERROR SCREEN , SEND NOTIF TO USER TO SWITCH TO MOBILE PAYMENT
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -207,7 +208,7 @@ public class ScanActivity extends AppCompatActivity {
             try {
 
                 // Enter script URL Here
-                String baseUrl = "https://script.google.com/macros/s/AKfycby_xghDiiCNLZvCU_Gjntiavcj8zKEoh6bT6PUrz7-e_tZGNoGFPKaNnSS-Qa3vyU13/exec";
+                String baseUrl = "https://script.google.com/macros/s/AKfycbzEAgfYgo6a1jNUFsRyFVIcxIF2EllQevrABjMEpfI-JnpGpbysnWTHxPms86i2BKyj/exec";
                 String action = "checkQRParcel";
                 String trackingId = scannedData;
                 sampleScannedData = scannedData;
@@ -309,7 +310,31 @@ public class ScanActivity extends AppCompatActivity {
 
                 startActivity(moveToPlaceParcel);
                 getBluetoothMsg();
-            } else if (result.equals("Tracking ID does not exist " + sampleScannedData)) {
+            }
+            else if (result.equals("Tracking ID exists: " + sampleScannedData + " and payment method is COD 3")) {
+                getPhoneNumber();
+
+                bluetoothHelper.codComp3Trigger();
+                Toast.makeText(ScanActivity.this, "COMPARTMENT IS 3", Toast.LENGTH_SHORT).show();
+                Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
+                moveToPlaceParcel.putExtra("trackingID", sampleScannedData);
+                moveToPlaceParcel.putExtra("userphone", phoneNo);
+
+                startActivity(moveToPlaceParcel);
+                getBluetoothMsg();
+            }
+            else if (result.equals("Tracking ID exists: " + sampleScannedData + " and payment method is COD 4")) {
+                getPhoneNumber();
+
+                bluetoothHelper.codComp4Trigger();
+                Toast.makeText(ScanActivity.this, "COMPARTMENT IS 4", Toast.LENGTH_SHORT).show();
+                Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
+                moveToPlaceParcel.putExtra("trackingID", sampleScannedData);
+                moveToPlaceParcel.putExtra("userphone", phoneNo);
+
+                startActivity(moveToPlaceParcel);
+                getBluetoothMsg();
+            }else if (result.equals("Tracking ID does not exist " + sampleScannedData)) {
 
                 // Tracking ID does not exist or error occurred
                 Toast.makeText(getApplicationContext(), "PLEASE TRY AGAIN", Toast.LENGTH_LONG).show();
