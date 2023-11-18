@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.UserManager;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -37,6 +38,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.zxing.integration.android.IntentIntegrator;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         //reecently added for receiving sensor info from compartment
         bluetoothHelper = BluetoothHelper.getInstance(this, "HC-05", "00:22:12:00:3C:EA");
         String status = bluetoothHelper.getStatus();
+        readBT = getBluetoothMsg();
 
         Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
 
@@ -64,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
             bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
                 @Override
                 public void onConnected() {
+                    readBT = getBluetoothMsg();
+//                    checkCompartmentExisting();
+
                     // Dismiss the progress dialog when connected
                     // Continue with other logic or UI updates
                 }
@@ -180,8 +187,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        checkCompartmentExisting();
-
 
     }
 //
@@ -284,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
             while (!isCancelled()) {
                 readBT = getBluetoothMsg();
                 Log.d("MainActivity", readBT + "--e");
+                checkCompartmentExisting();
 
 
                 try {
@@ -299,11 +305,8 @@ public class MainActivity extends AppCompatActivity {
         //
         @Override
         protected void onPostExecute(String result) {
+            readBT = getBluetoothMsg();
 
-            if (readBT.equals("empty 1,empty 2,empty 3,empty 4")) {
-                Log.d("READINGBT", readBT + "--e");
-
-            }
 
         }
     }
@@ -318,6 +321,114 @@ public class MainActivity extends AppCompatActivity {
         readBT = bluetoothHelper.getReadMessage();
 
         return readBT;
+    }
+
+    public void checkCompartmentExisting1() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, "https://script.google.com/macros/s/AKfycbxe60Ea0TWyGRRig0LemVXLYN_KWBV_QJ6gPZyfiXIIJXsrDLPOqQHk2up0B2Nv_DIu/exec?action=checkExistingComp",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if (readBT == null) {
+                            // If fileUrl is still null, wait for a short duration and call the method again
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    checkCompartmentExisting1();
+                                }
+                            }, 1000); // Adjust the duration as needed
+                        } else if (readBT == "All Compartments filled") {
+                            Toast.makeText(getApplicationContext(), "comp filled", Toast.LENGTH_SHORT).show();
+                            Log.e("COMPSTAT", "ALL FILLED");
+
+                        } else {
+
+                            if (response.equals("disable 1") && readBT.equals("empty 1")) {
+                                compartmentStatus = "disable 1";
+                                sendCompartmentStatus("1");
+                            } else if (response.equals("disable 2") && readBT.equals("empty 2")) {
+                                compartmentStatus = "disable 2";
+                                sendCompartmentStatus("2");
+                            } else if (response.equals("disable 3") && readBT.equals("empty 3")) {
+                                compartmentStatus = "disable 3";
+                                sendCompartmentStatus("3");
+                            } else if (response.equals("disable 4") && readBT.equals("empty 4")) {
+                                compartmentStatus = "disable 4";
+                                sendCompartmentStatus("4");
+                            } else if (response.equals("disable 1,disable 2") && readBT.equals("empty 1,empty 2")) {
+                                compartmentStatus = "disable 1,disable 2";
+                                sendCompartmentStatus("2");
+                                sendCompartmentStatus("1");
+                            } else if (response.equals("disable 1,disable 3") && readBT.equals("empty 1,empty 3")) {
+                                compartmentStatus = "disable 1,disable 3";
+                                sendCompartmentStatus("1");
+                                sendCompartmentStatus("3");
+                            } else if (response.equals("disable 1,disable 4") && readBT.equals("empty 1,empty 4")) {
+                                compartmentStatus = "disable 1,disable 4";
+                                sendCompartmentStatus("1");
+                                sendCompartmentStatus("4");
+                            } else if (response.equals("disable 2,disable 3") && readBT.equals("empty 2,empty 3")) {
+                                compartmentStatus = "disable 2,disable 3";
+                                sendCompartmentStatus("2");
+                                sendCompartmentStatus("3");
+                            } else if (response.equals("disable 2,disable2,empty 4")) {
+                                compartmentStatus = "disable 2,disable 4";
+                                sendCompartmentStatus("2");
+                                sendCompartmentStatus("4");
+                            } else if (response.equals("disable 3,disable 4") && readBT.equals("empty 3,empty 4")) {
+                                compartmentStatus = "disable 3,disable 4";
+                                sendCompartmentStatus("3");
+                                sendCompartmentStatus("4");
+                            } else if (response.equals("disable 1,disable 2,disable 3") && readBT.equals("empty 1,empty 2,empty 3")) {
+                                compartmentStatus = "disable 1,disable 2,disable 3";
+                                sendCompartmentStatus("1");
+                                sendCompartmentStatus("2");
+                                sendCompartmentStatus("3");
+                            } else if (response.equals("disable 1,disable 2,disable 4") && readBT.equals("empty 1,empty 2,empty 4")) {
+                                compartmentStatus = "disable 1,disable 2,disable 4";
+                                sendCompartmentStatus("1");
+                                sendCompartmentStatus("2");
+                                sendCompartmentStatus("4");
+                            } else if (response.equals("disable 1,disable 3,disable 4") && readBT.equals("empty 1,empty 3,empty 4")) {
+                                compartmentStatus = "disable 1,disable 3,disable 4";
+                                sendCompartmentStatus("1");
+                                sendCompartmentStatus("3");
+                                sendCompartmentStatus("4");
+                            } else if (response.equals("disable 2,disable 3,disable 4") && readBT.equals("empty 2,empty 3,empty 4")) {
+                                compartmentStatus = "disable 2,disable 3,disable 4";
+                                sendCompartmentStatus("2");
+                                sendCompartmentStatus("3");
+                                sendCompartmentStatus("4");
+                            } else if (response.equals("disable 1,disable 2,disable 3,disable 4") && readBT.equals("empty 1,empty 2,empty 3,empty 4")) {
+                                compartmentStatus = "disable 1,disable 2,disable 3,disable 4";
+                                sendCompartmentStatus("1");
+                                sendCompartmentStatus("2");
+                                sendCompartmentStatus("3");
+                                sendCompartmentStatus("4");
+                            } else {
+                                // Sending SMS only if compartmentStatus is not empty
+
+                            }
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    checkCompartmentExisting1();
+                                }
+                            }, 1000); // Adjust the duration as needed
+                        }
+
+                    }
+
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(stringRequest);
     }
 
     private void checkCompartmentExisting() {

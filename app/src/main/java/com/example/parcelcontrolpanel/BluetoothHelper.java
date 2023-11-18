@@ -420,7 +420,6 @@ public class BluetoothHelper {
                     // Process the received data
                     if (bytes > 0) {
                         readMessage = new String(buffer, 0, bytes);
-                        Log.e("ARDUINO Message", readMessage);
                         getReadMessage();
 
                         if (readMessage.equals("Mobile")) {
@@ -450,9 +449,10 @@ public class BluetoothHelper {
                             getReadMessage();
                         }
                         else{
+
                             getReadMessage();
                         }
-                        Log.d("btHELPER", getReadMessage() + "--e");
+                        Log.e("btHELPER", getReadMessage() + "--e");
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
