@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private DevicePolicyManager mDevicePolicyManager;
     ImageView ScanButton, InputButton;
     TextClock dateClock;
-    String readBT, phoneNo , compartmentStatus;
+    String readBT, phoneNo, compartmentStatus;
     BluetoothHelper bluetoothHelper; //bluetooth to receive check compartments
 
     Button Bluetooth, SMSButton, btclass, ExitApp, wifi;
@@ -74,8 +74,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-        getBluetoothMsg();
-        readBT = getBluetoothMsg();
         // Start the AsyncTask to read Bluetooth messages and handle the logic
         new BluetoothMessageTask().execute();
         //---------------------------------------------------------------------------------------------
@@ -282,13 +280,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(Void... voids) {
-            String readBT = getBluetoothMsg();
-
             // Perform the Bluetooth message reading in a loop until a condition is met
             while (!isCancelled()) {
                 readBT = getBluetoothMsg();
                 Log.d("MainActivity", readBT + "--e");
-
 
 
                 try {
@@ -300,27 +295,31 @@ public class MainActivity extends AppCompatActivity {
 
             return null;
         }
-//
+
+        //
         @Override
         protected void onPostExecute(String result) {
 
-                if (readBT.equals("empty 1,empty 2,empty 3,empty 4")) {
-                    Log.d("READINGBT", readBT + "--e");
+            if (readBT.equals("empty 1,empty 2,empty 3,empty 4")) {
+                Log.d("READINGBT", readBT + "--e");
 
-                }
+            }
 
         }
     }
+
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+
     public String getBluetoothMsg() {
         readBT = bluetoothHelper.getReadMessage();
 
         return readBT;
     }
+
     private void checkCompartmentExisting() {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, "https://script.google.com/macros/s/AKfycbxe60Ea0TWyGRRig0LemVXLYN_KWBV_QJ6gPZyfiXIIJXsrDLPOqQHk2up0B2Nv_DIu/exec?action=checkExistingComp",
                 new Response.Listener<String>() {
@@ -328,71 +327,71 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         //if response disable 1 means 1 is used and then add && to check if sensors are showing emptyx
 
-                        if (response.equals("disable 1")) {
+                        if (response.equals("disable 1") && readBT.equals("empty 1")) {
+                            compartmentStatus = "disable 1";
                             sendCompartmentStatus("1");
-                            compartmentStatus ="disable 1";
-
-                        } else if (response.equals("disable 2")) {
+                        } else if (response.equals("disable 2") && readBT.equals("empty 2")) {
+                            compartmentStatus = "disable 2";
                             sendCompartmentStatus("2");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 is empty. Please insert payment on compartment accordingly");
-                        } else if (response.equals("disable 3")) {
+                        } else if (response.equals("disable 3") && readBT.equals("empty 3")) {
+                            compartmentStatus = "disable 3";
                             sendCompartmentStatus("3");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 3 is empty. Please insert payment on compartment accordingly");
-                        } else if (response.equals("disable 4")) {
+                        } else if (response.equals("disable 4") && readBT.equals("empty 4")) {
+                            compartmentStatus = "disable 4";
                             sendCompartmentStatus("4");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 4 is empty. Please insert payment on compartment accordingly");
-                        } else if (response.equals("disable 1,disable 2")) {
-                            sendCompartmentStatus("1");
+                        } else if (response.equals("disable 1,disable 2") && readBT.equals("empty 1,empty 2")) {
+                            compartmentStatus = "disable 1,disable 2";
                             sendCompartmentStatus("2");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 and 2 are empty. Please insert payment on compartment accordingly");
-                        } else if (response.equals("disable 1,disable 3")) {
                             sendCompartmentStatus("1");
-                            sendCompartmentStatus("3");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 and 3 are empty. Please insert payment on compartment accordingly");
-                        } else if (response.equals("disable 1,disable 4")) {
-                            sendCompartmentStatus("1");
-                            sendCompartmentStatus("4");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 and 4 are empty. Please insert payment on compartment accordingly");
-                        } else if (response.equals("disable 2,disable 3")) {
-                            sendCompartmentStatus("2");
-                            sendCompartmentStatus("3");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 and 3 are empty. Please insert payment on compartment accordingly");
-                        } else if (response.equals("disable 2,disable 4")) {
-                            sendCompartmentStatus("2");
-                            sendCompartmentStatus("4");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 and 4 are empty. Please insert payment on compartment accordingly");
-                        } else if (response.equals("disable 3,disable 4")) {
-                            sendCompartmentStatus("3");
-                            sendCompartmentStatus("4");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 3 and 4 are empty. Please insert payment on compartment accordingly");
-                        } else if (response.equals("disable 1,disable 2,disable 3")) {
-                            sendCompartmentStatus("1");
-                            sendCompartmentStatus("2");
-                            sendCompartmentStatus("3");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 2, and 3 are empty. Please insert payment on compartment accordingly");
-                        } else if (response.equals("disable 1,disable 2,disable 4")) {
-                            sendCompartmentStatus("1");
-                            sendCompartmentStatus("2");
-                            sendCompartmentStatus("4");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 2, and 4 are empty. Please insert payment on compartment accordingly");
-                        } else if (response.equals("disable 1,disable 3,disable 4")) {
+                        } else if (response.equals("disable 1,disable 3") && readBT.equals("empty 1,empty 3")) {
+                            compartmentStatus = "disable 1,disable 3";
                             sendCompartmentStatus("1");
                             sendCompartmentStatus("3");
+                        } else if (response.equals("disable 1,disable 4") && readBT.equals("empty 1,empty 4")) {
+                            compartmentStatus = "disable 1,disable 4";
+                            sendCompartmentStatus("1");
                             sendCompartmentStatus("4");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 3, and 4 are empty. Please insert payment on compartment accordingly");
-                        } else if (response.equals("disable 2,disable 3,disable 4")) {
+                        } else if (response.equals("disable 2,disable 3") && readBT.equals("empty 2,empty 3")) {
+                            compartmentStatus = "disable 2,disable 3";
                             sendCompartmentStatus("2");
                             sendCompartmentStatus("3");
+                        } else if (response.equals("disable 2,disable2,empty 4")) {
+                            compartmentStatus = "disable 2,disable 4";
+                            sendCompartmentStatus("2");
                             sendCompartmentStatus("4");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2, 3, and 4 are empty. Please insert payment on compartment accordingly");
-                        } else if (response.equals("disable 1,disable 2,disable 3,disable 4")) {
+                        } else if (response.equals("disable 3,disable 4") && readBT.equals("empty 3,empty 4")) {
+                            compartmentStatus = "disable 3,disable 4";
+                            sendCompartmentStatus("3");
+                            sendCompartmentStatus("4");
+                        } else if (response.equals("disable 1,disable 2,disable 3") && readBT.equals("empty 1,empty 2,empty 3")) {
+                            compartmentStatus = "disable 1,disable 2,disable 3";
                             sendCompartmentStatus("1");
                             sendCompartmentStatus("2");
                             sendCompartmentStatus("3");
+                        } else if (response.equals("disable 1,disable 2,disable 4") && readBT.equals("empty 1,empty 2,empty 4")) {
+                            compartmentStatus = "disable 1,disable 2,disable 4";
+                            sendCompartmentStatus("1");
+                            sendCompartmentStatus("2");
                             sendCompartmentStatus("4");
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: All compartments are empty. Please insert payment on compartment accordingly");
+                        } else if (response.equals("disable 1,disable 3,disable 4") && readBT.equals("empty 1,empty 3,empty 4")) {
+                            compartmentStatus = "disable 1,disable 3,disable 4";
+                            sendCompartmentStatus("1");
+                            sendCompartmentStatus("3");
+                            sendCompartmentStatus("4");
+                        } else if (response.equals("disable 2,disable 3,disable 4") && readBT.equals("empty 2,empty 3,empty 4")) {
+                            compartmentStatus = "disable 2,disable 3,disable 4";
+                            sendCompartmentStatus("2");
+                            sendCompartmentStatus("3");
+                            sendCompartmentStatus("4");
+                        } else if (response.equals("disable 1,disable 2,disable 3,disable 4") && readBT.equals("empty 1,empty 2,empty 3,empty 4")) {
+                            compartmentStatus = "disable 1,disable 2,disable 3,disable 4";
+                            sendCompartmentStatus("1");
+                            sendCompartmentStatus("2");
+                            sendCompartmentStatus("3");
+                            sendCompartmentStatus("4");
                         } else {
-                            // Handle other cases if needed
+                            // Sending SMS only if compartmentStatus is not empty
+
                         }
                     }
                 },
@@ -409,8 +408,9 @@ public class MainActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(stringRequest);
     }
+
     private void sendCompartmentStatus(String compartmentNum) {
-        String url ="https://script.google.com/macros/s/AKfycbzEAgfYgo6a1jNUFsRyFVIcxIF2EllQevrABjMEpfI-JnpGpbysnWTHxPms86i2BKyj/exec?action=sensor"+compartmentNum;
+        String url = "https://script.google.com/macros/s/AKfycbzEAgfYgo6a1jNUFsRyFVIcxIF2EllQevrABjMEpfI-JnpGpbysnWTHxPms86i2BKyj/exec?action=sensor" + compartmentNum;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -419,6 +419,43 @@ public class MainActivity extends AppCompatActivity {
                         Log.e("SEND COMMAND", url + "e");
                         phoneNo = response;
 
+                        if (compartmentStatus.equals("disable 1")) {
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 is empty. Please insert payment on compartment accordingly");
+
+                        } else if (compartmentStatus.equals("disable 2")) {
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 is empty. Please insert payment on compartment accordingly");
+
+                        } else if (compartmentStatus.equals("disable 3")) {
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 3 is empty. Please insert payment on compartment accordingly");
+                        } else if (compartmentStatus.equals("disable 4")) {
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 4 is empty. Please insert payment on compartment accordingly");
+                        } else if (compartmentStatus.equals("disable 1,disable 2")) {
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 and 2 are empty. Please insert payment on compartment accordingly");
+                        } else if (compartmentStatus.equals("disable 1,disable 3")) {
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 and 3 are empty. Please insert payment on compartment accordingly");
+                        } else if (compartmentStatus.equals("disable 1,disable 4")) {
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 and 4 are empty. Please insert payment on compartment accordingly");
+                        } else if (compartmentStatus.equals("disable 2,disable 3")) {
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 and 3 are empty. Please insert payment on compartment accordingly");
+                        } else if (compartmentStatus.equals("disable 2,disable 4")) {
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 and 4 are empty. Please insert payment on compartment accordingly");
+                        } else if (compartmentStatus.equals("disable 3,disable 4")) {
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 3 and 4 are empty. Please insert payment on compartment accordingly");
+                        } else if (compartmentStatus.equals("disable 1,disable 2,disable 3")) {
+
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 2, and 3 are empty. Please insert payment on compartment accordingly");
+                        } else if (compartmentStatus.equals("disable 1,disable 2,disable 4")) {
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 2, and 4 are empty. Please insert payment on compartment accordingly");
+                        } else if (compartmentStatus.equals("disable 1,disable 3,disable 4")) {
+
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 3, and 4 are empty. Please insert payment on compartment accordingly");
+                        } else if (compartmentStatus.equals("disable 2,disable 3,disable 4")) {
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2, 3, and 4 are empty. Please insert payment on compartment accordingly");
+                        } else if (compartmentStatus.equals("disable 1,disable 2,disable 3,disable 4")) {
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: All compartments are empty. Please insert payment on compartment accordingly");
+                        } else {
+                            // Handle other cases if needed
+                        }
 
                     }
                 },
