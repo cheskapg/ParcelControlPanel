@@ -337,22 +337,29 @@ public class MainActivity extends AppCompatActivity {
 //                        sendCompartmentStatus("sensor1");
                         Log.e("RESPO1", response);
                         Log.e("readBT", readBT);
-                        if (response.equals("disable 1") && getBluetoothMsg().equals("empty 1")) {
+                        if (response.equals("disable 1")) {
                             compartmentStatus = "disable 1";
-                            sendCompartmentStatus("sensor1");
-                        } else if (response.equals("disable 2") && readBT.trim().equals("empty2")) {
+                            if( readBT.contains("empty1")) {
+                                sendCompartmentStatus("sensor1");
+                            }
+                        } else if (response.equals("disable 2") ) {
                             compartmentStatus = "disable 2";
-                            sendCompartmentStatus("sensor2");
+                            if( readBT.contains("empty2")) {
+                                sendCompartmentStatus("sensor2");
+                            }
                             Log.e("COMP", compartmentStatus);
 
-                        } else if (response.equals("disable 3") && readBT.trim().equals("empty3")) {
+                        } else if (response.equals("disable 3")){
                             compartmentStatus = "disable 3";
-                            sendCompartmentStatus("sensor3");
-                        } else if (response.equals("disable 4") && readBT.trim().equals("empty4")) {
+                            if( readBT.contains("empty3")) {
+                                sendCompartmentStatus("sensor3");
+                            }
+                        } else if (response.equals("disable 4")) {
                             compartmentStatus = "disable 4";
                             Log.e("COMP", compartmentStatus);
-
-                            sendCompartmentStatus("sensor4");
+                            if( readBT.contains("empty4")) {
+                                sendCompartmentStatus("sensor4");
+                            }
                         } else if (response.equals("disable 1,disable 2")){
 
                             compartmentStatus = "disable 1,disable 2";
@@ -366,57 +373,150 @@ public class MainActivity extends AppCompatActivity {
                            else{
 
                            }
-                        } else if (response.equals("disable 1,disable 3") && readBT.contains("empty1,empty3")) {
+                        } else if (response.equals("disable 1,disable 3")) {
                             compartmentStatus = "disable 1,disable 3";
                             Log.e("COMP", compartmentStatus);
+                            if( readBT.contains("empty1")) {
+                                sendCompartmentStatus("sensor1");
+                            }
+                            else if( readBT.contains("empty3")) {
+                                sendCompartmentStatus("sensor3");
+                            }
+                            else{
 
-                            sendCompartmentStatus("sensor3");
-                            sendCompartmentStatus("sensor1");
-                        } else if (response.equals("disable 1,disable 4") && readBT.trim().contains("empty1,empty4")) {
+                            }
+                        } else if (response.equals("disable 1,disable 4")) {
                             compartmentStatus = "disable 1,disable 4";
                             Log.e("COMP", compartmentStatus);
 
-                            sendCompartmentStatus("sensor1,sensor4");
-                        } else if (response.equals("disable 2,disable 3") && readBT.trim().contains("empty2,empty3")) {
+                            if( readBT.contains("empty1")) {
+                                sendCompartmentStatus("sensor1");
+                            }
+                            else if( readBT.contains("empty4")) {
+                                sendCompartmentStatus("sensor4");
+                            }
+                            else{
+
+                            }
+                        } else if (response.equals("disable 2,disable 3")) {
                             compartmentStatus = "disable 2,disable 3";
                             Log.e("COMP", compartmentStatus);
+                            if( readBT.contains("empty2")) {
+                                sendCompartmentStatus("sensor2");
+                            }
+                            else if( readBT.contains("empty2")) {
+                                sendCompartmentStatus("sensor3");
+                            }
+                            else{
 
-                            sendCompartmentStatus("sensor2,sensor3");
-                        } else if (response.equals("disable 2,disable 4") && readBT.trim().contains("empty2,empty4")) {
+                            }
+                        } else if (response.equals("disable 2,disable 4")) {
                             compartmentStatus = "disable 2,disable 4";
                             Log.e("COMP", compartmentStatus);
+                            if( readBT.contains("empty2")) {
+                                sendCompartmentStatus("sensor2");
+                            }
+                            else if( readBT.contains("empty4")) {
+                                sendCompartmentStatus("sensor4");
+                            }
+                            else{
 
-                            sendCompartmentStatus("sensor2,sensor4");
-                        } else if (response.equals("disable 3,disable 4") && readBT.trim().contains("empty3,empty4")) {
+                            }
+                        } else if (response.equals("disable 3,disable 4")) {
                             compartmentStatus = "disable 3,disable 4";
                             Log.e("COMP", compartmentStatus);
 
-                            sendCompartmentStatus("sensor3,sensor4");
-                        } else if (response.equals("disable 1,disable 2,disable 3") && readBT.trim().contains("empty1,empty2,empty3")) {
+                            if( readBT.contains("empty3")) {
+                                sendCompartmentStatus("sensor3");
+                            }
+                            else if( readBT.contains("empty4")) {
+                                sendCompartmentStatus("sensor4");
+                            }
+                            else{
+
+                            }
+                        } else if (response.equals("disable 1,disable 2,disable 3")) {
                             compartmentStatus = "disable 1,disable 2,disable 3";
                             Log.e("COMP", compartmentStatus);
 
-                            sendCompartmentStatus("sensor1,sensor2,sensor3");
-                        } else if (response.equals("disable 1,disable 2,disable 4") && readBT.trim().contains("empty1,empty2,empty4")) {
+
+                            if( readBT.contains("empty1")) {
+                                sendCompartmentStatus("sensor1");
+                            }
+                            else if( readBT.contains("empty2")) {
+                                sendCompartmentStatus("sensor2");
+                            }
+                            else if( readBT.contains("empty3")) {
+                                sendCompartmentStatus("sensor3");
+                            }
+                            else{
+
+                            }
+                        } else if (response.equals("disable 1,disable 2,disable 4")) {
                             compartmentStatus = "disable 1,disable 2,disable 4";
                             Log.e("COMP", compartmentStatus);
+                            if( readBT.contains("empty1")) {
+                                sendCompartmentStatus("sensor1");
+                            }
+                            else if( readBT.contains("empty2")) {
+                                sendCompartmentStatus("sensor2");
+                            }
+                            else if( readBT.contains("empty4")) {
+                                sendCompartmentStatus("sensor4");
+                            }
+                            else{
 
-                            sendCompartmentStatus("sensor1,sensor2,sensor4");
-                        } else if (response.equals("disable 1,disable 3,disable 4") && readBT.trim().equals("empty1,empty3,empty4")) {
+                            }
+                        } else if (response.equals("disable 1,disable 3,disable 4")) {
                             compartmentStatus = "disable 1,disable 3,disable 4";
                             Log.e("COMP", compartmentStatus);
 
-                            sendCompartmentStatus("sensor1,sensor3,sensor4");
-                        } else if (response.equals("disable 2,disable 3,disable 4") && readBT.trim().equals("empty2,empty3,empty4")) {
+                            if( readBT.contains("empty1")) {
+                                sendCompartmentStatus("sensor1");
+                            }
+                            else if( readBT.contains("empty3")) {
+                                sendCompartmentStatus("sensor3");
+                            }
+                            else if( readBT.contains("empty4")) {
+                                sendCompartmentStatus("sensor4");
+                            }
+                            else{
+
+                            }
+                        } else if (response.equals("disable 2,disable 3,disable 4")) {
                             compartmentStatus = "disable 2,disable 3,disable 4";
                             Log.e("COMP", compartmentStatus);
+                            if( readBT.contains("empty2")) {
+                                sendCompartmentStatus("sensor2");
+                            }
+                            else if( readBT.contains("empty3")) {
+                                sendCompartmentStatus("sensor3");
+                            }
+                            else if( readBT.contains("empty4")) {
+                                sendCompartmentStatus("sensor4");
+                            }
+                            else{
 
-                            sendCompartmentStatus("sensor2,sensor3,sensor4");
-                        } else if (response.equals("disable 1,disable 2,disable 3,disable 4") && readBT.trim().equals("empty1,empty2,empty3,empty4")) {
+                            }
+                        } else if (response.equals("disable 1,disable 2,disable 3,disable 4") ) {
                             compartmentStatus = "disable 1,disable 2,disable 3,disable 4";
                             Log.e("COMP", compartmentStatus);
 
-                            sendCompartmentStatus("sensor1,sensor2,sensor3,sensor4");
+                            if( readBT.contains("empty1")) {
+                                sendCompartmentStatus("sensor1");
+                            }
+                            else if( readBT.contains("empty2")) {
+                                sendCompartmentStatus("sensor2");
+                            }
+                            else if( readBT.contains("empty3")) {
+                                sendCompartmentStatus("sensor3");
+                            }
+                            else if( readBT.contains("empty4")) {
+                                sendCompartmentStatus("sensor4");
+                            }
+                            else{
+
+                            }
                         } else {
                             // Sending SMS only if compartmentStatus is not empty
                         }
@@ -445,7 +545,7 @@ public class MainActivity extends AppCompatActivity {
                         //SEND SMS HERE  response is phone num to use for sms
                         Log.e("SEND COMMAND", url + "e");
                         phoneNo = response;
-
+                        //add if for separate sms
                         if (compartmentStatus.equals("disable 1")) {
                             SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 is empty. Please insert payment on compartment accordingly");
 
@@ -453,31 +553,31 @@ public class MainActivity extends AppCompatActivity {
                             SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 is empty. Please insert payment on compartment accordingly");
 
                         } else if (compartmentStatus.equals("disable 3")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 3 is empty. Please insert payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 3 is empty. Please check payment on compartment accordingly");
                         } else if (compartmentStatus.equals("disable 4")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 4 is empty. Please insert payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 4 is empty. Please check payment on compartment accordingly");
                         } else if (compartmentStatus.equals("disable 1,disable 2")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 and 2 are empty. Please insert payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 or 2 is empty. Please check payment on compartment accordingly");
                         } else if (compartmentStatus.equals("disable 1,disable 3")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 and 3 are empty. Please insert payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 or 3 is empty. Please check payment on compartment accordingly");
                         } else if (compartmentStatus.equals("disable 1,disable 4")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 and 4 are empty. Please insert payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 or 4 is empty. Please check payment on compartment accordingly");
                         } else if (compartmentStatus.equals("disable 2,disable 3")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 and 3 are empty. Please insert payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 or 3 is empty. Please check payment on compartment accordingly");
                         } else if (compartmentStatus.equals("disable 2,disable 4")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 and 4 are empty. Please insert payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 or 4 is empty. Please check payment on compartment accordingly");
                         } else if (compartmentStatus.equals("disable 3,disable 4")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 3 and 4 are empty. Please insert payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 3 or 4 is empty. Please check payment on compartment accordingly");
                         } else if (compartmentStatus.equals("disable 1,disable 2,disable 3")) {
 
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 2, and 3 are empty. Please insert payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 2, or 3 is empty. Please check payment on compartment accordingly");
                         } else if (compartmentStatus.equals("disable 1,disable 2,disable 4")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 2, and 4 are empty. Please insert payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 2, or 4 is empty. Please check payment on compartment accordingly");
                         } else if (compartmentStatus.equals("disable 1,disable 3,disable 4")) {
 
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 3, and 4 are empty. Please insert payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 3, or 4 is empty. Please check payment on compartment accordingly");
                         } else if (compartmentStatus.equals("disable 2,disable 3,disable 4")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2, 3, and 4 are empty. Please insert payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2, 3, or 4 is empty. Please check payment on compartment accordingly");
                         } else if (compartmentStatus.equals("disable 1,disable 2,disable 3,disable 4")) {
                             SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: All compartments are empty. Please insert payment on compartment accordingly");
                         } else {
