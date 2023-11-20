@@ -65,16 +65,17 @@ public class MainActivity extends AppCompatActivity {
                 public void onConnected() {
                     getBluetoothMsg();
 ////                    checkCompartmentExisting();
+                    // Use a Handler to run checkCompartmentExisting with a 2-minute interval
+                    final int interval = 1 * 30 * 1000; // 2 minutes in milliseconds
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             Log.e("HANDLER", "checkcomp");
-//                            checkCompartmentExisting();
+                            checkCompartmentExisting();
+                            // Schedule the next execution after the interval
+                            new Handler().postDelayed(this, interval);
                         }
-//
-                    }, 10000); // Adjust the duration as needed
-                    // Dismiss the progress dialog when connected
-                    // Continue with other logic or UI updates
+                    }, interval);
                 }
 
                 @Override
@@ -356,12 +357,13 @@ public class MainActivity extends AppCompatActivity {
                             compartmentStatus = "disable 1,disable 2";
 
                             Log.e("COMP", compartmentStatus);
-                            sendCompartmentStatus("sensor 1, sensor 2");
+                            sendCompartmentStatus("sensor1,sensor2");
                         } else if (response.equals("disable 1,disable 3") && readBT.trim().contains("empty1,empty3")) {
                             compartmentStatus = "disable 1,disable 3";
                             Log.e("COMP", compartmentStatus);
 
-                            sendCompartmentStatus("sensor1,sensor3");
+                            sendCompartmentStatus("sensor3");
+                            sendCompartmentStatus("sensor1");
                         } else if (response.equals("disable 1,disable 4") && readBT.trim().contains("empty1,empty4")) {
                             compartmentStatus = "disable 1,disable 4";
                             Log.e("COMP", compartmentStatus);
