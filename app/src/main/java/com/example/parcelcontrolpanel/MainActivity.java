@@ -64,17 +64,15 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onConnected() {
                     getBluetoothMsg();
-//                    checkCompartmentExisting();
-
 ////                    checkCompartmentExisting();
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             Log.e("HANDLER", "checkcomp");
-                            checkCompartmentExisting();
+//                            checkCompartmentExisting();
                         }
 //
-                    }, 5000); // Adjust the duration as needed
+                    }, 10000); // Adjust the duration as needed
                     // Dismiss the progress dialog when connected
                     // Continue with other logic or UI updates
                 }
@@ -192,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        checkCompartmentExisting();
 
     }
 //
@@ -327,129 +326,90 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkCompartmentExisting() {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, "https://script.google.com/macros/s/AKfycbznT6yesAqPqO7T2pUs01zalng4jtRz8AuZ5Gh0M0Wz0Kdbi0RetSp_qNHGlcB5peHS/exec?action=checkExistingComp",
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, "https://script.google.com/macros/s/AKfycbxe60Ea0TWyGRRig0LemVXLYN_KWBV_QJ6gPZyfiXIIJXsrDLPOqQHk2up0B2Nv_DIu/exec?action=checkExistingComp",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         //if response disable 1 means 1 is used and then add && to check if sensors are showing emptyx
                         //1 is used in daabase but bluetooth can have many outomes like empty 1,2,3,4
-                        if (response.equals("disable 1") && readBT.contains("empty 1")) {
+                        compartmentStatus = "disable 1";
+                        sendCompartmentStatus("sensor1");
+                        Log.e("RESPO1", response);
+                        Log.e("readBT", readBT);
+                        if (response.equals("disable 1") && getBluetoothMsg().equals("empty 1")) {
                             compartmentStatus = "disable 1";
-                            sendCompartmentStatus("1");
-                        } else if (response.equals("disable 2") && readBT.contains("empty 2")) {
+                            sendCompartmentStatus("sensor1");
+                        } else if (response.equals("disable 2") && readBT.trim().equals("empty2")) {
                             compartmentStatus = "disable 2";
-                            sendCompartmentStatus("2");
-                        } else if (response.equals("disable 3") && readBT.contains("empty 3")) {
+                            sendCompartmentStatus("sensor2");
+                            Log.e("COMP", compartmentStatus);
+
+                        } else if (response.equals("disable 3") && readBT.trim().equals("empty3")) {
                             compartmentStatus = "disable 3";
-                            sendCompartmentStatus("3");
-                        } else if (response.equals("disable 4") && readBT.contains("empty 4")) {
+                            sendCompartmentStatus("sensor3");
+                        } else if (response.equals("disable 4") && readBT.trim().equals("empty4")) {
                             compartmentStatus = "disable 4";
-                            sendCompartmentStatus("4");
-                        } else if (response.equals("disable 1,disable 2") && readBT.contains("empty 1") && readBT.contains("empty 2")) {
+                            Log.e("COMP", compartmentStatus);
+
+                            sendCompartmentStatus("sensor4");
+                        } else if (response.equals("disable 1,disable 2") && readBT.trim().contains("empty1,empty2")) {
                             compartmentStatus = "disable 1,disable 2";
-                            sendCompartmentStatus("1");
 
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Log.e("HANDLER", "checkcomp");
-                                    sendCompartmentStatus("2");
-
-                                }
-//
-                            }, 5000); // Adjust the duration as needed
-
-                        } else if (response.equals("disable 1,disable 3") && readBT.contains("empty 1") && readBT.contains("empty 3")) {
+                            Log.e("COMP", compartmentStatus);
+                            sendCompartmentStatus("sensor 1, sensor 2");
+                        } else if (response.equals("disable 1,disable 3") && readBT.trim().contains("empty1,empty3")) {
                             compartmentStatus = "disable 1,disable 3";
-                            sendCompartmentStatus("1");
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Log.e("HANDLER", "checkcomp");
-                                    sendCompartmentStatus("3");
+                            Log.e("COMP", compartmentStatus);
 
-                                }
-//
-                            }, 5000); // Adjust the duration as needed
-
-                        } else if (response.equals("disable 1,disable 4") && readBT.contains("empty 1") && readBT.contains("empty 4")) {
+                            sendCompartmentStatus("sensor1,sensor3");
+                        } else if (response.equals("disable 1,disable 4") && readBT.trim().contains("empty1,empty4")) {
                             compartmentStatus = "disable 1,disable 4";
-                            sendCompartmentStatus("1");
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Log.e("HANDLER", "checkcomp");
-                                    sendCompartmentStatus("4");
+                            Log.e("COMP", compartmentStatus);
 
-                                }
-//
-                            }, 5000); // Adjust the duration as needed
-
-                        } else if (response.equals("disable 2,disable 3") && readBT.contains("empty 2") && readBT.contains("empty 3")) {
+                            sendCompartmentStatus("sensor1,sensor4");
+                        } else if (response.equals("disable 2,disable 3") && readBT.trim().contains("empty2,empty3")) {
                             compartmentStatus = "disable 2,disable 3";
-                            sendCompartmentStatus("2");
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Log.e("HANDLER", "checkcomp");
-                                    sendCompartmentStatus("3");
+                            Log.e("COMP", compartmentStatus);
 
-                                }
-//
-                            }, 5000); // Adjust the duration as needed
-
-                        } else if (response.equals("disable 2,disable 4") && readBT.contains("empty 2") && readBT.contains("empty 4")) {
+                            sendCompartmentStatus("sensor2,sensor3");
+                        } else if (response.equals("disable 2,disable 4") && readBT.trim().contains("empty2,empty4")) {
                             compartmentStatus = "disable 2,disable 4";
-                            sendCompartmentStatus("2");
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Log.e("HANDLER", "checkcomp");
-                                    sendCompartmentStatus("4");
+                            Log.e("COMP", compartmentStatus);
 
-                                }
-//
-                            }, 5000); // Adjust the duration as needed
-
-                        } else if (response.equals("disable 3,disable 4") && readBT.contains("empty 3") && readBT.contains("empty 4")) {
+                            sendCompartmentStatus("sensor2,sensor4");
+                        } else if (response.equals("disable 3,disable 4") && readBT.trim().contains("empty3,empty4")) {
                             compartmentStatus = "disable 3,disable 4";
-                            sendCompartmentStatus("3");
-                            sendCompartmentStatus("4");
-                        } else if (response.equals("disable 1,disable 2,disable 3") && readBT.contains("empty 1") && readBT.contains("empty 2") && readBT.contains("empty 3")) {
+                            Log.e("COMP", compartmentStatus);
+
+                            sendCompartmentStatus("sensor3,sensor4");
+                        } else if (response.equals("disable 1,disable 2,disable 3") && readBT.trim().contains("empty1,empty2,empty3")) {
                             compartmentStatus = "disable 1,disable 2,disable 3";
-                            sendCompartmentStatus("1");
-                            sendCompartmentStatus("2");
-                            sendCompartmentStatus("3");
-                        } else if (response.contains("disable 2,disable 4") && readBT.contains("empty 1") && readBT.contains("empty 2") && readBT.contains("empty 4")) {
+                            Log.e("COMP", compartmentStatus);
+
+                            sendCompartmentStatus("sensor1,sensor2,sensor3");
+                        } else if (response.equals("disable 1,disable 2,disable 4") && readBT.trim().contains("empty1,empty2,empty4")) {
                             compartmentStatus = "disable 1,disable 2,disable 4";
-                            sendCompartmentStatus("1");
-                            sendCompartmentStatus("2");
-                            sendCompartmentStatus("4");
-                        } else if (response.equals("disable 1,disable 3,disable 4") && readBT.contains("empty 1") && readBT.contains("empty 3") && readBT.contains("empty 4")) {
+                            Log.e("COMP", compartmentStatus);
+
+                            sendCompartmentStatus("sensor1,sensor2,sensor4");
+                        } else if (response.equals("disable 1,disable 3,disable 4") && readBT.trim().equals("empty1,empty3,empty4")) {
                             compartmentStatus = "disable 1,disable 3,disable 4";
-                            sendCompartmentStatus("1");
-                            sendCompartmentStatus("3");
-                            sendCompartmentStatus("4");
-                        } else if (response.equals("disable 2,disable 3,disable 4") && readBT.contains("empty 2") && readBT.contains("empty 3") && readBT.contains("empty 4")) {
+                            Log.e("COMP", compartmentStatus);
+
+                            sendCompartmentStatus("sensor1,sensor3,sensor4");
+                        } else if (response.equals("disable 2,disable 3,disable 4") && readBT.trim().equals("empty2,empty3,empty4")) {
                             compartmentStatus = "disable 2,disable 3,disable 4";
+                            Log.e("COMP", compartmentStatus);
 
-                            Log.e("HANDLER", "checkcomp");
-
-                            sendCompartmentStatus("2");
-                            sendCompartmentStatus("3");
-                            sendCompartmentStatus("4");
-
-
-                        } else if (response.equals("disable 1,disable 2,disable 3,disable 4") && readBT.contains("empty 1") && readBT.contains("empty 2") && readBT.contains("empty 3") && readBT.contains("empty 4")) {
+                            sendCompartmentStatus("sensor2,sensor3,sensor4");
+                        } else if (response.equals("disable 1,disable 2,disable 3,disable 4") && readBT.trim().equals("empty1,empty2,empty3,empty4")) {
                             compartmentStatus = "disable 1,disable 2,disable 3,disable 4";
-                            sendCompartmentStatus("1");
-                            sendCompartmentStatus("2");
-                            sendCompartmentStatus("3");
-                            sendCompartmentStatus("4");
-                        } else {
-                            // Handle the default case
-                        }
+                            Log.e("COMP", compartmentStatus);
 
+                            sendCompartmentStatus("sensor1,sensor2,sensor3,sensor4");
+                        } else {
+                            // Sending SMS only if compartmentStatus is not empty
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -467,7 +427,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendCompartmentStatus(String compartmentNum) {
-        String url = "https://script.google.com/macros/s/AKfycbznT6yesAqPqO7T2pUs01zalng4jtRz8AuZ5Gh0M0Wz0Kdbi0RetSp_qNHGlcB5peHS/exec?action=sensor" + compartmentNum;
+        String url = "https://script.google.com/macros/s/AKfycbysqvozsAk47H7sdHsjA5Yc5xUdqMPBD-7BoDtLpEelvDbvMZQblC5YW-Woo4Oxp3Jf/exec?action=" + compartmentNum;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
