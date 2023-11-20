@@ -293,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
             // Perform the Bluetooth message reading in a loop until a condition is met
             while (!isCancelled()) {
                 getBluetoothMsg();
-                Log.d("MainActivity", readBT + "--e");
+//                Log.d("MainActivity", readBT + "--e");
 
 
                 try {
@@ -333,8 +333,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         //if response disable 1 means 1 is used and then add && to check if sensors are showing emptyx
                         //1 is used in daabase but bluetooth can have many outomes like empty 1,2,3,4
-                        compartmentStatus = "disable 1";
-                        sendCompartmentStatus("sensor1");
+//                        compartmentStatus = "disable 1";
+//                        sendCompartmentStatus("sensor1");
                         Log.e("RESPO1", response);
                         Log.e("readBT", readBT);
                         if (response.equals("disable 1") && getBluetoothMsg().equals("empty 1")) {
@@ -353,12 +353,20 @@ public class MainActivity extends AppCompatActivity {
                             Log.e("COMP", compartmentStatus);
 
                             sendCompartmentStatus("sensor4");
-                        } else if (response.equals("disable 1,disable 2") && readBT.trim().contains("empty1,empty2")) {
-                            compartmentStatus = "disable 1,disable 2";
+                        } else if (response.equals("disable 1,disable 2")){
 
+                            compartmentStatus = "disable 1,disable 2";
                             Log.e("COMP", compartmentStatus);
-                            sendCompartmentStatus("sensor1,sensor2");
-                        } else if (response.equals("disable 1,disable 3") && readBT.trim().contains("empty1,empty3")) {
+                           if( readBT.contains("empty1")) {
+                               sendCompartmentStatus("sensor1");
+                           }
+                           else if( readBT.contains("empty2")) {
+                                sendCompartmentStatus("sensor2");
+                            }
+                           else{
+
+                           }
+                        } else if (response.equals("disable 1,disable 3") && readBT.contains("empty1,empty3")) {
                             compartmentStatus = "disable 1,disable 3";
                             Log.e("COMP", compartmentStatus);
 
@@ -429,7 +437,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendCompartmentStatus(String compartmentNum) {
-        String url = "https://script.google.com/macros/s/AKfycbysqvozsAk47H7sdHsjA5Yc5xUdqMPBD-7BoDtLpEelvDbvMZQblC5YW-Woo4Oxp3Jf/exec?action=" + compartmentNum;
+        String url = "https://script.google.com/macros/s/AKfycbzpGLlomo9XfEG8MhP2tSBNM-VNjDjS7MepYwavicL1A-Mxx0NcjzGx2aL76dUokTLR/exec?action=" + compartmentNum;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
