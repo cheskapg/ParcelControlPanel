@@ -34,7 +34,8 @@ public class ReceiveParcel extends AppCompatActivity {
     String sampleInputData;
     String phoneNo;
     String trackingID, readBT;
-    BluetoothHelper bluetoothHelper = BluetoothHelper.getInstance(context, "HC-05", "00:22:12:00:3C:EA");;
+    BluetoothHelper bluetoothHelper = BluetoothHelper.getInstance(context, "HC-05", "00:22:12:00:3C:EA");
+    ;
     private static final long DELAY_TIME = 5000; // 5 seconds
 
     @Override
@@ -50,11 +51,13 @@ public class ReceiveParcel extends AppCompatActivity {
 //        if this doesnt work put in bthelper run and save it in variables then get it from there
 
     }
+
     private class BluetoothMessageTask extends AsyncTask<Void, Void, String> {
+        String readBT = getBluetoothMsg();
+        String resp;
 
         @Override
         protected String doInBackground(Void... voids) {
-            String readBT = getBluetoothMsg();
 
             // Perform the Bluetooth message reading in a loop until a condition is met
             while (!isCancelled()) {
@@ -62,7 +65,7 @@ public class ReceiveParcel extends AppCompatActivity {
 
                 if (readBT.equals("Mobile")) {
                     return "Mobile";
-                } else if (readBT.equals("AA") || readBT.equals("BB") || readBT.equals("CC") || readBT.equals("DD") ) {
+                } else if (readBT.equals("AA") || readBT.equals("BB") || readBT.equals("CC") || readBT.equals("DD")) {
                     return "AA_BB_CC_DD";
                 } else if (readBT.equals("EE")) {
                     return "EE";
@@ -81,18 +84,19 @@ public class ReceiveParcel extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             getTracking();
+                Log.d("LOGBT", readBT + "LOG " + result);
 
-            if (result != null) {
+            if (readBT != null) {
                 Intent intent;
-                if (result.equals("Mobile")) {
+                if (readBT.equals("Mobile")) {
                     intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
                     intent.putExtra("trackingID", sampleInputData);
                     intent.putExtra("userphone", phoneNo);
                     startActivity(intent);
-                } else if (result.equals("AA_BB_CC_DD")) {
+                } else if (readBT.equals("AA") || readBT.equals("BB") || readBT.equals("CC") || readBT.equals("DD")) {
                     openCODwithDelay();
 
-                } else if (result.equals("EE")) {
+                } else if (readBT.equals("EE")) {
                     finish();
                     openSuccessActivityWithDelay();
 
@@ -107,6 +111,7 @@ public class ReceiveParcel extends AppCompatActivity {
             }
         }
     }
+
     //WAIT FOR SENSOR TO OKAY AND PARCEL DROPPED
     //IF DROPPED NA AND SENSOR GOOD IDENTIFY PAYMENT METHOD
     //PROCEED TO NEXT ACTIVITY - MOBILE PAYMENT - THANK YOU IF PREPAID - COD RELEASE PAYMENT
@@ -119,12 +124,14 @@ public class ReceiveParcel extends AppCompatActivity {
         Log.d("TRACKING", "CODE" + sampleInputData);
         return sampleInputData;
     }
-        public String getBluetoothMsg() {
+
+    public String getBluetoothMsg() {
         readBT = bluetoothHelper.getReadMessage();
         Log.d("arduinoOOOOO", "CODE" + readBT);
 
         return readBT;
     }
+
     private void openSuccessActivityWithDelay() {
         // Open the SuccessActivity after a delay
         new Handler().postDelayed(new Runnable() {
@@ -138,6 +145,7 @@ public class ReceiveParcel extends AppCompatActivity {
             }
         }, DELAY_TIME);
     }
+
     private void openCODwithDelay() {
         // Open the SuccessActivity after a delay
         new Handler().postDelayed(new Runnable() {

@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                     getBluetoothMsg();
 
                     // Use a Handler to run checkCompartmentExisting with a 2-minute interval
-                    final int interval = 1 * 30 * 1000; // 2 minutes in milliseconds
+                    final int interval = 2 * 60 * 1000; // 2 minutes in milliseconds
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {

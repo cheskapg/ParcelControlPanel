@@ -205,7 +205,7 @@ public class ScanActivity extends AppCompatActivity {
         return scannedData;
     }
     public void checktheParcel() {
-        String url = String.format("https://script.google.com/macros/s/AKfycbzEAgfYgo6a1jNUFsRyFVIcxIF2EllQevrABjMEpfI-JnpGpbysnWTHxPms86i2BKyj/exec?action=checkQRParcel&trackingId=%s", getScanned());
+        String url = String.format("https://script.google.com/macros/s/AKfycbxvxIv7Pp866ZrbnoT5bNXkRoggFBRq5s6mI02cnw4Gc0ZnRdnISkQl0vY0xH-2ph3o/exec?action=checkQRParcel&trackingId=%s", getScanned());
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -351,7 +351,7 @@ public class ScanActivity extends AppCompatActivity {
                 Log.d("CheckRequest", "doInBackground started"); // Log to verify doInBackground execution
 
                 // Enter script URL Here
-                String baseUrl = "https://script.google.com/macros/s/AKfycbzEAgfYgo6a1jNUFsRyFVIcxIF2EllQevrABjMEpfI-JnpGpbysnWTHxPms86i2BKyj/exec";
+                String baseUrl = "https://script.google.com/macros/s/AKfycbxvxIv7Pp866ZrbnoT5bNXkRoggFBRq5s6mI02cnw4Gc0ZnRdnISkQl0vY0xH-2ph3o/exec";
                 String action = "checkQRParcel";
                 String trackingId = scannedData;
                 sampleScannedData = scannedData;
