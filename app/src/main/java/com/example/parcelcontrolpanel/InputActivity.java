@@ -75,9 +75,9 @@ public class InputActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String status = bluetoothHelper.getStatus();
-        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
+
         bluetoothHelper = BluetoothHelper.getInstance(this, "HC-05", "00:22:12:00:3C:EA");
+
 
 //        progressDialog = new ProgressDialog(this);
 //        progressDialog.setMessage("Connecting...");
@@ -109,6 +109,8 @@ public class InputActivity extends AppCompatActivity {
             });
         } else {
             // Bluetooth is already connected, continue with other logic or UI updates
+            String status = bluetoothHelper.getStatus();
+            Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
             progressDialog.dismiss();
 
         }
@@ -255,6 +257,7 @@ public class InputActivity extends AppCompatActivity {
 
             } else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is not Mobile Wallet")) {
                 getPhoneNumber();
+                loading.dismiss();
 
                 // Tracking ID exists but payment method is not Mobile Wallet
                 //uncomment to enable bluetooth command
@@ -277,6 +280,7 @@ public class InputActivity extends AppCompatActivity {
             } else if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 1")) {
                 // Tracking ID exists but payment method is COD
                 getPhoneNumber();
+                loading.dismiss();
 
                 bluetoothHelper.codComp1Trigger();
                 Toast.makeText(InputActivity.this, "COMPARTMENT IS 1", Toast.LENGTH_SHORT).show();
@@ -287,9 +291,34 @@ public class InputActivity extends AppCompatActivity {
 
             } else if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 2")) {
                 getPhoneNumber();
+                loading.dismiss();
 
                 bluetoothHelper.codComp2Trigger();
                 Toast.makeText(InputActivity.this, "COMPARTMENT IS 2", Toast.LENGTH_SHORT).show();
+                Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
+                moveToPlaceParcel.putExtra("userphone", phoneNo);
+
+                moveToPlaceParcel.putExtra("trackingID", sampleInputData);
+                startActivity(moveToPlaceParcel);
+
+            } else if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 3")) {
+                getPhoneNumber();
+                loading.dismiss();
+
+                bluetoothHelper.codComp3Trigger();
+                Toast.makeText(InputActivity.this, "COMPARTMENT IS 3", Toast.LENGTH_SHORT).show();
+                Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
+                moveToPlaceParcel.putExtra("userphone", phoneNo);
+
+                moveToPlaceParcel.putExtra("trackingID", sampleInputData);
+                startActivity(moveToPlaceParcel);
+
+            } else if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 4")) {
+                getPhoneNumber();
+                loading.dismiss();
+
+                bluetoothHelper.codComp4Trigger();
+                Toast.makeText(InputActivity.this, "COMPARTMENT IS 4", Toast.LENGTH_SHORT).show();
                 Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
                 moveToPlaceParcel.putExtra("userphone", phoneNo);
 

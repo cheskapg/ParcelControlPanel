@@ -26,6 +26,9 @@ public class WaitingForProofPay extends AppCompatActivity {
     ProgressDialog loading;
     String fileUrl, trackingID;
     ImageView imageProof;
+    ImageView received, received2;
+    private static final long DELAY_TIME = 5000; // 5 seconds
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +40,27 @@ public class WaitingForProofPay extends AppCompatActivity {
         imageProof = (ImageView) findViewById(R.id.imageProof);
         getPaymentImageUrl();
         loading = ProgressDialog.show(WaitingForProofPay.this, "Loading", "please wait", false, true);
+        received = (ImageView) findViewById(R.id.receivedIcon);
+        received2 = (ImageView) findViewById(R.id.bgReqMobile);
+        received.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent toSucc = new Intent(WaitingForProofPay.this, SuccessActivity.class);
+                toSucc.putExtra("trackingID", getTracking());
+                startActivity(toSucc);
+
+            }
+        });
+
+        received2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openSuccessActivityWithDelay();
+
+
+            }
+        });
     }
 
     private String getTracking() {
@@ -104,6 +128,18 @@ public class WaitingForProofPay extends AppCompatActivity {
 
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(stringRequest);
+    }
+    private void openSuccessActivityWithDelay() {
+        // Open the SuccessActivity after a delay
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent toSucc = new Intent(WaitingForProofPay.this, SuccessActivity.class);
+                toSucc.putExtra("trackingID", getTracking());
+                startActivity(toSucc);
+                finish(); // Optional: close the CashOnDeliveryActivity if needed
+            }
+        }, DELAY_TIME);
     }
 
 }

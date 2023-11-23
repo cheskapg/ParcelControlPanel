@@ -89,7 +89,7 @@
         android:paddingTop="0dp"></ImageView>
 
     <ImageView
-        android:id="@+id/requesticon"
+        android:id="@+id/receivedIcon"
         android:layout_width="126dp"
         android:layout_height="115dp"
         android:layout_alignParentStart="true"
@@ -111,7 +111,7 @@
         android:layout_marginStart="550dp"
         android:layout_marginBottom="305dp"
         android:paddingTop="0dp"
-        android:text="Please Verify Payment Before Leaving"
+        android:text="Please Confirm Payment Before Leaving"
         android:textColor="@color/white"
         android:textSize="20dp"></TextView>
     <TextView

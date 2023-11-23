@@ -103,13 +103,13 @@ public class BluetoothHelper {
                     case CONNECTING_STATUS:
                         switch (msg.arg1) {
                             case 1:
-                                Log.d("CONNECTTEDCONNECTTED", "DEVICE CONNECTTED");
+                                Log.d("CONNECTED", "DEVICE CONNECTTED");
                                 Status = "BT CONNECTED";
                                 connectCallback.onConnected();
 
                                 break;
                             case -1:
-                                Log.d("DISCCONENECTEDENECTED", "DEVICE DISCCONENECTED");
+                                Log.d("DISCONNECTED", "DEVICE DISCCONENECTED");
                                 Status = "BT NOT CONNECTED";
                                 connectCallback.onFailure();
                                 break;

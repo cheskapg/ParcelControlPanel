@@ -158,7 +158,8 @@ public class ScanActivity extends AppCompatActivity {
                     progressDialog.setMessage("Loading...");
                     progressDialog.setCancelable(false);
                     progressDialog.show();
-                    new CheckRequest().execute();
+//                    new CheckRequest().execute();
+                    checktheParcel();
                 }
             } else {
             }
@@ -167,7 +168,7 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     private String getTracking() {
-        return sampleScannedData;
+        return scannedData;
     }
 
     public void getPhoneNumber() {
@@ -196,16 +197,158 @@ public class ScanActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(stringRequest);
 
+
+
+
+    }
+    public String getScanned(){
+        return scannedData;
+    }
+    public void checktheParcel() {
+        String url = String.format("https://script.google.com/macros/s/AKfycbzEAgfYgo6a1jNUFsRyFVIcxIF2EllQevrABjMEpfI-JnpGpbysnWTHxPms86i2BKyj/exec?action=checkQRParcel&trackingId=%s", getScanned());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Handle the response (file URL)
+                        Log.i("Info", url);
+                        Toast.makeText(getApplicationContext(),
+                                "Checking Barcode", Toast.LENGTH_LONG).show();
+                        Log.i("Info", response);
+
+//                        Toast.makeText(getApplicationContext(), sampleScannedData, Toast.LENGTH_LONG).show();
+
+                        sampleScannedData = scannedData;
+
+                        if (response.equals("Tracking ID exists: " + sampleScannedData + " and payment method is Mobile Wallet")) {
+                            getPhoneNumber();
+                            progressDialog.dismiss();
+
+                            // Tracking ID exists and payment method is Mobile Wallet
+                            bluetoothHelper.mobileTrigger();
+                            // unlock door and wait for mobile payment screen
+
+                            Intent intent = new Intent(ScanActivity.this, ReceiveParcel.class);
+                            intent.putExtra("trackingID", sampleScannedData);
+                            intent.putExtra("userphone", phoneNo);
+                            startActivity(intent);
+
+                            Toast.makeText(getApplicationContext(), "Mobile Payment Parcel", Toast.LENGTH_LONG).show();
+
+                        } else if (response.equals("Tracking ID exists: " + sampleScannedData + " but payment method is not Mobile Wallet")) {
+                            getPhoneNumber();
+                            progressDialog.dismiss();
+
+                            // Tracking ID exists but payment method is not Mobile Wallet
+                            //uncomment to enable bluetooth command
+                            bluetoothHelper.prepaidTrigger();
+                            Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
+                            moveToPlaceParcel.putExtra("userphone", phoneNo);
+
+                            moveToPlaceParcel.putExtra("trackingID", sampleScannedData);
+                            startActivity(moveToPlaceParcel);
+                            String readMessage = bluetoothHelper.getReadMessage();
+                            Toast.makeText(ScanActivity.this, "READ ARDUINO NOT mobile " + readMessage, Toast.LENGTH_SHORT).show();
+
+                        } else if (response.equals("Tracking ID exists: " + sampleScannedData + " and payment method is COD 1")) {
+                            getPhoneNumber();
+                            progressDialog.dismiss();
+
+                            // Tracking ID exists but payment method is COD
+                            bluetoothHelper.codComp1Trigger();
+                            Toast.makeText(ScanActivity.this, "COMPARTMENT IS 1", Toast.LENGTH_SHORT).show();
+                            Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
+                            moveToPlaceParcel.putExtra("userphone", phoneNo);
+
+                            moveToPlaceParcel.putExtra("trackingID", sampleScannedData);
+                            startActivity(moveToPlaceParcel);
+
+                        } else if (response.equals("Tracking ID exists: " + sampleScannedData + " and payment method is COD 2")) {
+                            getPhoneNumber();
+                            progressDialog.dismiss();
+
+                            bluetoothHelper.codComp2Trigger();
+                            Toast.makeText(ScanActivity.this, "COMPARTMENT IS 2", Toast.LENGTH_SHORT).show();
+                            Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
+                            moveToPlaceParcel.putExtra("trackingID", sampleScannedData);
+                            moveToPlaceParcel.putExtra("userphone", phoneNo);
+
+                            startActivity(moveToPlaceParcel);
+                            getBluetoothMsg();
+                        }
+                        else if (response.equals("Tracking ID exists: " + sampleScannedData + " and payment method is COD 3")) {
+                            getPhoneNumber();
+                            progressDialog.dismiss();
+
+                            bluetoothHelper.codComp3Trigger();
+                            Toast.makeText(ScanActivity.this, "COMPARTMENT IS 3", Toast.LENGTH_SHORT).show();
+                            Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
+                            moveToPlaceParcel.putExtra("trackingID", sampleScannedData);
+                            moveToPlaceParcel.putExtra("userphone", phoneNo);
+
+                            startActivity(moveToPlaceParcel);
+                            getBluetoothMsg();
+                        }
+                        else if (response.equals("Tracking ID exists: " + sampleScannedData + " and payment method is COD 4")) {
+                            getPhoneNumber();
+                            progressDialog.dismiss();
+
+                            bluetoothHelper.codComp4Trigger();
+                            Toast.makeText(ScanActivity.this, "COMPARTMENT IS 4", Toast.LENGTH_SHORT).show();
+                            Intent moveToPlaceParcel = new Intent(ScanActivity.this, ReceiveParcel.class);
+                            moveToPlaceParcel.putExtra("trackingID", sampleScannedData);
+                            moveToPlaceParcel.putExtra("userphone", phoneNo);
+
+                            startActivity(moveToPlaceParcel);
+                            getBluetoothMsg();
+                        }else if (response.equals("Tracking ID does not exist " + sampleScannedData)) {
+                            progressDialog.dismiss();
+
+                            // Tracking ID does not exist or error occurred
+                            Toast.makeText(getApplicationContext(), "PLEASE TRY AGAIN", Toast.LENGTH_LONG).show();
+                        }
+
+                        progressDialog.dismiss();
+
+                        Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Handle the error
+                progressDialog.dismiss();
+                Toast.makeText(getApplicationContext(), "Error" + phoneNo, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+// Add the request to the RequestQueue
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(stringRequest);
+
+
+
+
     }
 
     public class CheckRequest extends AsyncTask<String, Void, String> {
+        private ProgressDialog sendDialog;
+
         protected void onPreExecute() {
+            sendDialog = new ProgressDialog(ScanActivity.this);
+            sendDialog.setMessage("Loading...");
+            sendDialog.setCancelable(false);
+            sendDialog.show();
+            Log.e("PARCELCHECK",   "URLS");
 
         }
 
         protected String doInBackground(String... arg0) {
 
             try {
+                Log.d("CheckRequest", "doInBackground started"); // Log to verify doInBackground execution
 
                 // Enter script URL Here
                 String baseUrl = "https://script.google.com/macros/s/AKfycbzEAgfYgo6a1jNUFsRyFVIcxIF2EllQevrABjMEpfI-JnpGpbysnWTHxPms86i2BKyj/exec";
@@ -220,6 +363,7 @@ public class ScanActivity extends AppCompatActivity {
                 conn.setReadTimeout(30000 /* milliseconds */);
                 conn.setConnectTimeout(30000 /* milliseconds */);
                 conn.setRequestMethod("GET");
+                Log.i("PARCELCHECK", url + "URLS");
 
 
                 int responseCode = conn.getResponseCode();
@@ -248,7 +392,7 @@ public class ScanActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
 
-            progressDialog.dismiss();
+            sendDialog.dismiss();
             int dur = 1000000;
             Log.i("Info", result);
 

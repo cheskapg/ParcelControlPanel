@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     TextClock dateClock;
     String readBT, phoneNo, compartmentStatus;
     BluetoothHelper bluetoothHelper; //bluetooth to receive check compartments
+    private boolean shouldRunCheckCompartment = true;
 
     Button Bluetooth, SMSButton, btclass, ExitApp, wifi;
 
@@ -58,25 +59,28 @@ public class MainActivity extends AppCompatActivity {
         bluetoothHelper = BluetoothHelper.getInstance(this, "HC-05", "00:22:12:00:3C:EA");
         String status = bluetoothHelper.getStatus();
 
-        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
         if (!bluetoothHelper.isConnected()) {
             bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
                 @Override
                 public void onConnected() {
                     getBluetoothMsg();
-////                    checkCompartmentExisting();
+
                     // Use a Handler to run checkCompartmentExisting with a 2-minute interval
                     final int interval = 1 * 30 * 1000; // 2 minutes in milliseconds
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Log.e("HANDLER", "checkcomp");
-                            checkCompartmentExisting();
-                            // Schedule the next execution after the interval
-                            new Handler().postDelayed(this, interval);
+                            if (shouldRunCheckCompartment) {
+                                Log.e("HANDLER", "checkcomp");
+                                checkCompartmentExisting();
+                                // Schedule the next execution after the interval
+                                new Handler().postDelayed(this, interval);
+                            }
                         }
                     }, interval);
                 }
+
 
                 @Override
                 public void onFailure() {
@@ -116,10 +120,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (isNetworkAvailable()) {
+                    stopCheckCompartment();
 
                     Intent moveToScanActivity = new Intent(MainActivity.this, ScanActivity.class);
                     startActivity(moveToScanActivity);
                 } else {
+//                    stopCheckCompartment();
 
                     Intent openWirelessSettings = new Intent(MainActivity.this, WifiActivity.class);
 
@@ -133,10 +139,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if (isNetworkAvailable()) {
+                    stopCheckCompartment();
+
                     Intent moveToInpActivity = new Intent(MainActivity.this, InputActivity.class);
                     startActivity(moveToInpActivity);
                 } else {
-
+//                    stopCheckCompartment();
                     Intent openWirelessSettings = new Intent(MainActivity.this, WifiActivity.class);
 
                     startActivity(openWirelessSettings);
@@ -336,7 +344,8 @@ public class MainActivity extends AppCompatActivity {
 //                        compartmentStatus = "disable 1";
 //                        sendCompartmentStatus("sensor1");
                         Log.e("RESPO1", response);
-                        Log.e("readBT", readBT);
+                        Log.e("readBT", readBT + "BLUTOT");
+                        getBluetoothMsg();
                         if (response.equals("disable 1")) {
                             compartmentStatus = "disable 1";
                             if( readBT.contains("empty1")) {
@@ -519,6 +528,8 @@ public class MainActivity extends AppCompatActivity {
                             }
                         } else {
                             // Sending SMS only if compartmentStatus is not empty
+                            Log.e("readBT", readBT + "BLUTOT");
+
                         }
                     }
                 },
@@ -537,7 +548,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendCompartmentStatus(String compartmentNum) {
-        String url = "https://script.google.com/macros/s/AKfycbzpGLlomo9XfEG8MhP2tSBNM-VNjDjS7MepYwavicL1A-Mxx0NcjzGx2aL76dUokTLR/exec?action=" + compartmentNum;
+        String url = "https://script.google.com/macros/s/AKfycbyI6kfBVlvBgOcCTsu_8h9CuTxnmJHBXfFaW1NsEBpREJoVBBK9IH_ehmXuUB00GwSe/exec/exec?action=" + compartmentNum;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -557,27 +568,27 @@ public class MainActivity extends AppCompatActivity {
                         } else if (compartmentStatus.equals("disable 4")) {
                             SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 4 is empty. Please check payment on compartment accordingly");
                         } else if (compartmentStatus.equals("disable 1,disable 2")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 or 2 is empty. Please check payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 or 2 is empty. Please check payment on compartments accordingly");
                         } else if (compartmentStatus.equals("disable 1,disable 3")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 or 3 is empty. Please check payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 or 3 is empty. Please check payment on compartments accordingly");
                         } else if (compartmentStatus.equals("disable 1,disable 4")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 or 4 is empty. Please check payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1 or 4 is empty. Please check payment on compartments accordingly");
                         } else if (compartmentStatus.equals("disable 2,disable 3")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 or 3 is empty. Please check payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 or 3 is empty. Please check payment on compartments accordingly");
                         } else if (compartmentStatus.equals("disable 2,disable 4")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 or 4 is empty. Please check payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2 or 4 is empty. Please check payment on compartments accordingly");
                         } else if (compartmentStatus.equals("disable 3,disable 4")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 3 or 4 is empty. Please check payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 3 or 4 is empty. Please check payment on compartments accordingly");
                         } else if (compartmentStatus.equals("disable 1,disable 2,disable 3")) {
 
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 2, or 3 is empty. Please check payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 2, or 3 is empty. Please check payment on compartments accordingly");
                         } else if (compartmentStatus.equals("disable 1,disable 2,disable 4")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 2, or 4 is empty. Please check payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 2, or 4 is empty. Please check payment on compartments accordingly");
                         } else if (compartmentStatus.equals("disable 1,disable 3,disable 4")) {
 
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 3, or 4 is empty. Please check payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 1, 3, or 4 is empty. Please check payment on compartments accordingly");
                         } else if (compartmentStatus.equals("disable 2,disable 3,disable 4")) {
-                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2, 3, or 4 is empty. Please check payment on compartment accordingly");
+                            SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: Compartment 2, 3, or 4 is empty. Please check payment on compartments accordingly");
                         } else if (compartmentStatus.equals("disable 1,disable 2,disable 3,disable 4")) {
                             SMSHandler.sendSMSMessage(MainActivity.this, phoneNo, "ParcelPal SMS Notification: All compartments are empty. Please insert payment on compartment accordingly");
                         } else {
@@ -601,6 +612,8 @@ public class MainActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(stringRequest);
     }
-
+    private void stopCheckCompartment() {
+        shouldRunCheckCompartment = false;
+    }
 
 }
