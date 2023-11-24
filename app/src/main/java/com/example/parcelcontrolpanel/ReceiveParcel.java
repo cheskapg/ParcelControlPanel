@@ -39,7 +39,7 @@ public class ReceiveParcel extends AppCompatActivity {
     private boolean shouldRunCheckCompartment = true;
 
 
-    private static final long DELAY_TIME = 5000; // 5 seconds
+    private static final long DELAY_TIME = 10000; // 5 seconds
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,78 +154,63 @@ public class ReceiveParcel extends AppCompatActivity {
 //
 //                Here's a modified version of your code to address this issue:
 
-        private class BluetoothMessageTask extends AsyncTask<Void, Void, String> {
+    private class BluetoothMessageTask extends AsyncTask<Void, Void, String> {
 
-            @Override
-            protected String doInBackground(Void... voids) {
+        @Override
+        protected String doInBackground(Void... voids) {
 
-                // Perform the Bluetooth message reading in a loop until a condition is met
-                while (!isCancelled()) {
-                    readBT = getBluetoothMsg();
-                    Log.d("LOGBT", readBT + "LOG");
-
-                    if (readBT != null) {
-                        Intent intent = null;
-
-                        if (readBT.contains("Mobile")) {
-                            intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
-                            intent.putExtra("trackingID", sampleInputData);
-                            intent.putExtra("userphone", phoneNo);
-                        } else if (readBT.contains("AA") || readBT.contains("BB") || readBT.contains("CC") || readBT.contains("DD")) {
-                            openCODwithDelay();
-                        } else if (readBT.contains("EE")) {
-                            finish();
-                            openSuccessActivityWithDelay();
-                        } else {
-                            Log.d("LOGBT", readBT + "else");
-                        }
-
-                        // Outside the if-else block, start the activity if intent is not null
-                        if (intent != null) {
-                            startActivity(intent);
-                        }
-                    }
-
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+            // Perform the Bluetooth message reading in a loop until a condition is met
+            while (!isCancelled()) {
+                readBT = getBluetoothMsg();
+                Log.d("LOGBT", readBT + "LOG");
+                if (readBT.contains("Mobile")) {
+                    return "Mobile";
+                } else if (readBT.contains("AA") || readBT.contains("BB") || readBT.contains("CC") || readBT.contains("DD") ) {
+                    return "AA_BB_CC_DD";
+                } else if (readBT.contains("EE")) {
+                    return "EE";
+                } else if (readBT.contains("HOME")) {
+                    return "HOME";
                 }
 
-                return null;
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+
+            return null;
+        }
+
         @Override
         protected void onPostExecute(String result) {
             getTracking();
 
             if (readBT != null) {
-                Intent intent;
-                if (readBT.equals("Mobile")) {
-                    finish();
+                Intent intent = null;
 
+                if (result.contains("Mobile")) {
                     intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
                     intent.putExtra("trackingID", sampleInputData);
                     intent.putExtra("userphone", phoneNo);
-                    startActivity(intent);
-                    cancel(true);
-
-                } else if (readBT.equals("AA") || readBT.equals("BB") || readBT.equals("CC") || readBT.equals("DD")) {
-                    finish();
-
+                } else if (result.contains("AA") || result.contains("BB") || result.contains("CC") || result.contains("DD")) {
                     openCODwithDelay();
-                    cancel(true);
-
-                } else if (readBT.equals("EE")) {
+                } else if (result.contains("EE")) {
                     finish();
                     openSuccessActivityWithDelay();
-                    cancel(true);
-
-
-                } else {
+                } else if (result.contains("HOME")) {
+                    finish();
+                    intent = new Intent(ReceiveParcel.this, MainActivity.class);
+                }
+                else {
                     Log.d("LOGBT", readBT + "else");
                 }
 
+                // Outside the if-else block, start the activity if intent is not null
+                if (intent != null) {
+                    startActivity(intent);
+                }
             } else {
                 // Handle the case when the AsyncTask was cancelled or no valid result was obtained
                 Toast.makeText(ReceiveParcel.this, "Failed to read Bluetooth message", Toast.LENGTH_SHORT).show();
@@ -278,7 +263,7 @@ public class ReceiveParcel extends AppCompatActivity {
                 startActivity(toCod);
                 finish(); // Optional: close the CashOnDeliveryActivity if needed
             }
-        }, 10000);
+        }, 30000);
     }
 
     private void startOrCheckBluetoothTask() {

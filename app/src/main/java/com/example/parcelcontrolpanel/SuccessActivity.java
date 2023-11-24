@@ -35,12 +35,14 @@ public class SuccessActivity extends AppCompatActivity {
         setContentView(R.layout.activity_success);
         proceedBackToMainActivityWithDelay();
         getTracking();
-        CheckRequest checkRequest = new CheckRequest();
-        checkRequest.execute();
+        successParcel();
+//        CheckRequest checkRequest = new CheckRequest();
+//        checkRequest.execute();
         getPhoneNumber();
 
 
     }
+
     private void proceedBackToMainActivityWithDelay() {
         // Proceed back to the MainActivity after a delay
         new Handler().postDelayed(new Runnable() {
@@ -52,21 +54,22 @@ public class SuccessActivity extends AppCompatActivity {
             }
         }, DELAY_TIME);
     }
+
     public void getPhoneNumber() {
         String url = String.format("https://script.google.com/macros/s/AKfycbz0HTpS_z0h5CeN0mgcCrSWh4DXtwzz3oT5hN10QO7nGUQmuy2tc0xDXTtiHIkrysZo/exec?action=getPhoneNumberByTracking&trackingId=%s", getTracking());
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Handle the response (file URL)
-                        phoneNo = response;
-                        Toast.makeText(getApplicationContext(), "Phone:" + phoneNo, Toast.LENGTH_SHORT).show();
-                        SMSHandler.sendSMSMessage(SuccessActivity.this, phoneNo, "ParcelPal SMS Notification: Parcel-" + sampleInputData + " Delivery Success");
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                // Handle the response (file URL)
+                phoneNo = response;
+                Log.e("SuccessPhone", phoneNo);
+                Toast.makeText(getApplicationContext(), "Phone:" + phoneNo, Toast.LENGTH_SHORT).show();
+                SMSHandler.sendSMSMessage(SuccessActivity.this, phoneNo, "ParcelPal SMS Notification: Parcel-" + sampleInputData + " Delivery Success");
 
 
-                    }
-                }, new Response.ErrorListener() {
+            }
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 // Handle the error
@@ -88,64 +91,91 @@ public class SuccessActivity extends AppCompatActivity {
         return sampleInputData;
     }
 
-    public class CheckRequest extends AsyncTask<String, Void, String> {
+    public void successParcel() {
+        String url = String.format("https://script.google.com/macros/s/AKfycbw0cJezInEDGDAWa7v7SOZAb7Yk3sdgO7VgcbIoSbDuu-Le16x_XCT-CuYf0MyP0L4B/exec?action=successDelivered&trackingId=%s", getTracking());
 
-        protected void onPreExecute() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                // Handle the response (file URL)
+                Log.i("COD ACTIVITY NOTIF", response);
 
-        }
+                Toast.makeText(getApplicationContext(), "COD NOTIF" + sampleInputData, Toast.LENGTH_LONG).show();
 
-        protected String doInBackground(String... arg0) {
-
-            try {
-
-                // Enter script URL Here
-                String baseUrl = "https://script.google.com/macros/s/AKfycbw0cJezInEDGDAWa7v7SOZAb7Yk3sdgO7VgcbIoSbDuu-Le16x_XCT-CuYf0MyP0L4B/exec";
-                String action = "successDelivered";
-                String trackingId = getTracking();
-
-                // Construct the URL with the parameters
-                String urlString = baseUrl + "?action=" + action + "&trackingId=" + trackingId;
-                URL url = new URL(urlString);
-
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(30000 /* milliseconds */);
-                conn.setConnectTimeout(30000 /* milliseconds */);
-                conn.setRequestMethod("GET");
-//                conn.setDoInput(true);
-//                conn.setDoOutput(true);
-
-                int responseCode = conn.getResponseCode();
-
-                if (responseCode == HttpsURLConnection.HTTP_OK) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    StringBuffer sb = new StringBuffer("");
-                    String line = "";
-                    while ((line = in.readLine()) != null) {
-                        sb.append(line);
-                        break;
-                    }
-
-                    in.close();
-                    return sb.toString();
-                } else {
-                    return new String("false : " + responseCode);
-                }
-            } catch (Exception e) {
-                return new String("Exception: " + e.getMessage());
             }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Handle the error
+                Toast.makeText(getApplicationContext(), "Error" + phoneNo, Toast.LENGTH_SHORT).show();
+            }
+        });
 
-        }
+// Add the request to the RequestQueue
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(stringRequest);
 
-        @Override
-        protected void onPostExecute(String result) {
-            int dur = 1000000;
-
-            Log.i("COD ACTIVITY NOTIF", result);
-
-            Toast.makeText(getApplicationContext(), "COD NOTIF" + sampleInputData, Toast.LENGTH_LONG).show();
-
-
-        }
 
     }
+
+//    public class CheckRequest extends AsyncTask<String, Void, String> {
+//
+//        protected void onPreExecute() {
+//
+//        }
+//
+//        protected String doInBackground(String... arg0) {
+//
+//            try {
+//
+//                // Enter script URL Here
+//                String baseUrl = "https://script.google.com/macros/s/AKfycbw0cJezInEDGDAWa7v7SOZAb7Yk3sdgO7VgcbIoSbDuu-Le16x_XCT-CuYf0MyP0L4B/exec";
+//                String action = "successDelivered";
+//                String trackingId = getTracking();
+//
+//                // Construct the URL with the parameters
+//                String urlString = baseUrl + "?action=" + action + "&trackingId=" + trackingId;
+//                URL url = new URL(urlString);
+//
+//                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//                conn.setReadTimeout(30000 /* milliseconds */);
+//                conn.setConnectTimeout(30000 /* milliseconds */);
+//                conn.setRequestMethod("GET");
+////                conn.setDoInput(true);
+////                conn.setDoOutput(true);
+//
+//                int responseCode = conn.getResponseCode();
+//
+//                if (responseCode == HttpsURLConnection.HTTP_OK) {
+//                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//                    StringBuffer sb = new StringBuffer("");
+//                    String line = "";
+//                    while ((line = in.readLine()) != null) {
+//                        sb.append(line);
+//                        break;
+//                    }
+//
+//                    in.close();
+//                    return sb.toString();
+//                } else {
+//                    return new String("false : " + responseCode);
+//                }
+//            } catch (Exception e) {
+//                return new String("Exception: " + e.getMessage());
+//            }
+//
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            int dur = 1000000;
+//
+//            Log.i("COD ACTIVITY NOTIF", result);
+//
+//            Toast.makeText(getApplicationContext(), "COD NOTIF" + sampleInputData, Toast.LENGTH_LONG).show();
+//
+//
+//        }
+
+//    }
 }
