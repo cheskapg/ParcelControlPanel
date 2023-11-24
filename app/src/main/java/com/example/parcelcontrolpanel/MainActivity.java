@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         }
         // Start the AsyncTask to read Bluetooth messages and handle the logic
 
-        new BluetoothMessageTask().execute();
+//        new MainActivity.BluetoothMessageTask().execute();
         //---------------------------------------------------------------------------------------------
         // Retrieve Device Policy Manager so that we can check whether we can
 // lock to screen later
@@ -176,7 +176,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent toBT = new Intent(MainActivity.this, BluetoothMain.class);
+                Intent toBT = new Intent(MainActivity.this, ReceiveParcel.class);
+                bluetoothHelper.TESTtrigger();
+
                 startActivity(toBT);
 
             }
@@ -301,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
             // Perform the Bluetooth message reading in a loop until a condition is met
             while (!isCancelled()) {
                 getBluetoothMsg();
-//                Log.d("MainActivity", readBT + "--e");
+                Log.d("MainActivity", readBT + "--e");
 
 
                 try {
@@ -376,24 +378,20 @@ public class MainActivity extends AppCompatActivity {
                            if( readBT.contains("empty1")) {
                                sendCompartmentStatus("sensor1");
                            }
-                           else if( readBT.contains("empty2")) {
+                           if( readBT.contains("empty2")) {
                                 sendCompartmentStatus("sensor2");
                             }
-                           else{
 
-                           }
                         } else if (response.equals("disable 1,disable 3")) {
                             compartmentStatus = "disable 1,disable 3";
                             Log.e("COMP", compartmentStatus);
                             if( readBT.contains("empty1")) {
                                 sendCompartmentStatus("sensor1");
                             }
-                            else if( readBT.contains("empty3")) {
+                             if( readBT.contains("empty3")) {
                                 sendCompartmentStatus("sensor3");
                             }
-                            else{
 
-                            }
                         } else if (response.equals("disable 1,disable 4")) {
                             compartmentStatus = "disable 1,disable 4";
                             Log.e("COMP", compartmentStatus);
@@ -401,36 +399,30 @@ public class MainActivity extends AppCompatActivity {
                             if( readBT.contains("empty1")) {
                                 sendCompartmentStatus("sensor1");
                             }
-                            else if( readBT.contains("empty4")) {
+                            if( readBT.contains("empty4")) {
                                 sendCompartmentStatus("sensor4");
                             }
-                            else{
 
-                            }
                         } else if (response.equals("disable 2,disable 3")) {
                             compartmentStatus = "disable 2,disable 3";
                             Log.e("COMP", compartmentStatus);
                             if( readBT.contains("empty2")) {
                                 sendCompartmentStatus("sensor2");
                             }
-                            else if( readBT.contains("empty2")) {
+                            if( readBT.contains("empty2")) {
                                 sendCompartmentStatus("sensor3");
                             }
-                            else{
 
-                            }
                         } else if (response.equals("disable 2,disable 4")) {
                             compartmentStatus = "disable 2,disable 4";
                             Log.e("COMP", compartmentStatus);
                             if( readBT.contains("empty2")) {
                                 sendCompartmentStatus("sensor2");
                             }
-                            else if( readBT.contains("empty4")) {
+                            if( readBT.contains("empty4")) {
                                 sendCompartmentStatus("sensor4");
                             }
-                            else{
 
-                            }
                         } else if (response.equals("disable 3,disable 4")) {
                             compartmentStatus = "disable 3,disable 4";
                             Log.e("COMP", compartmentStatus);
@@ -438,12 +430,10 @@ public class MainActivity extends AppCompatActivity {
                             if( readBT.contains("empty3")) {
                                 sendCompartmentStatus("sensor3");
                             }
-                            else if( readBT.contains("empty4")) {
+                            if( readBT.contains("empty4")) {
                                 sendCompartmentStatus("sensor4");
                             }
-                            else{
 
-                            }
                         } else if (response.equals("disable 1,disable 2,disable 3")) {
                             compartmentStatus = "disable 1,disable 2,disable 3";
                             Log.e("COMP", compartmentStatus);
@@ -452,29 +442,24 @@ public class MainActivity extends AppCompatActivity {
                             if( readBT.contains("empty1")) {
                                 sendCompartmentStatus("sensor1");
                             }
-                            else if( readBT.contains("empty2")) {
+                            if( readBT.contains("empty2")) {
                                 sendCompartmentStatus("sensor2");
                             }
-                            else if( readBT.contains("empty3")) {
+                            if( readBT.contains("empty3")) {
                                 sendCompartmentStatus("sensor3");
                             }
-                            else{
 
-                            }
                         } else if (response.equals("disable 1,disable 2,disable 4")) {
                             compartmentStatus = "disable 1,disable 2,disable 4";
                             Log.e("COMP", compartmentStatus);
                             if( readBT.contains("empty1")) {
                                 sendCompartmentStatus("sensor1");
                             }
-                            else if( readBT.contains("empty2")) {
+                            if( readBT.contains("empty2")) {
                                 sendCompartmentStatus("sensor2");
                             }
-                            else if( readBT.contains("empty4")) {
+                            if( readBT.contains("empty4")) {
                                 sendCompartmentStatus("sensor4");
-                            }
-                            else{
-
                             }
                         } else if (response.equals("disable 1,disable 3,disable 4")) {
                             compartmentStatus = "disable 1,disable 3,disable 4";
@@ -483,14 +468,11 @@ public class MainActivity extends AppCompatActivity {
                             if( readBT.contains("empty1")) {
                                 sendCompartmentStatus("sensor1");
                             }
-                            else if( readBT.contains("empty3")) {
+                            if( readBT.contains("empty3")) {
                                 sendCompartmentStatus("sensor3");
                             }
-                            else if( readBT.contains("empty4")) {
+                            if( readBT.contains("empty4")) {
                                 sendCompartmentStatus("sensor4");
-                            }
-                            else{
-
                             }
                         } else if (response.equals("disable 2,disable 3,disable 4")) {
                             compartmentStatus = "disable 2,disable 3,disable 4";
@@ -498,15 +480,13 @@ public class MainActivity extends AppCompatActivity {
                             if( readBT.contains("empty2")) {
                                 sendCompartmentStatus("sensor2");
                             }
-                            else if( readBT.contains("empty3")) {
+                            if( readBT.contains("empty3")) {
                                 sendCompartmentStatus("sensor3");
                             }
-                            else if( readBT.contains("empty4")) {
+                            if( readBT.contains("empty4")) {
                                 sendCompartmentStatus("sensor4");
                             }
-                            else{
 
-                            }
                         } else if (response.equals("disable 1,disable 2,disable 3,disable 4") ) {
                             compartmentStatus = "disable 1,disable 2,disable 3,disable 4";
                             Log.e("COMP", compartmentStatus);
@@ -514,18 +494,16 @@ public class MainActivity extends AppCompatActivity {
                             if( readBT.contains("empty1")) {
                                 sendCompartmentStatus("sensor1");
                             }
-                            else if( readBT.contains("empty2")) {
+                            if( readBT.contains("empty2")) {
                                 sendCompartmentStatus("sensor2");
                             }
-                            else if( readBT.contains("empty3")) {
+                            if( readBT.contains("empty3")) {
                                 sendCompartmentStatus("sensor3");
                             }
-                            else if( readBT.contains("empty4")) {
+                            if( readBT.contains("empty4")) {
                                 sendCompartmentStatus("sensor4");
                             }
-                            else{
 
-                            }
                         } else {
                             // Sending SMS only if compartmentStatus is not empty
                             Log.e("readBT", readBT + "BLUTOT");

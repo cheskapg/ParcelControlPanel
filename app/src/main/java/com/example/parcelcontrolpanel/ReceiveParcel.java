@@ -33,10 +33,12 @@ public class ReceiveParcel extends AppCompatActivity {
     Context context = this;
     String sampleInputData;
     String phoneNo;
+    private BluetoothMessageTask bluetoothMessageTask;
+    BluetoothHelper bluetoothHelper;
     String trackingID, readBT;
-    private boolean shouldContinue = true;
-    BluetoothHelper bluetoothHelper ;
-    ;
+    private boolean shouldRunCheckCompartment = true;
+
+
     private static final long DELAY_TIME = 5000; // 5 seconds
 
     @Override
@@ -44,113 +46,73 @@ public class ReceiveParcel extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive_parcel);
         getTracking();
-        BluetoothHelper bluetoothHelper = BluetoothHelper.getInstance(context, "HC-05", "00:22:12:00:3C:EA");
-        getBluetoothMsg();
-        readBT = getBluetoothMsg();
-        if (!bluetoothHelper.isConnected()) {
-            bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
-                @Override
-                public void onConnected() {
-                    getBluetoothMsg();
 
-                    // Use a Handler to run checkCompartmentExisting with a 2-minute interval
-                    final int interval = 3 * 1000; // 2 minutes in milliseconds
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.e("HANDLER", "NEXT before if ACT"+ readBT);
+        bluetoothHelper = BluetoothHelper.getInstance(context, "HC-05", "00:22:12:00:3C:EA");
+//        if (!bluetoothHelper.isConnected()) {
+//            bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
+//                @Override
+//                public void onConnected() {
+//                    Log.e("BTSTATUS", "Connected");
+//                    // Use a Handler to run checkCompartmentExisting with a 2-minute interval
+//                    final int interval =  1000; //
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            getBluetoothMsg();
+//
+//                            if (shouldRunCheckCompartment) {
+//                                Log.e("HANDLER", "rcvpcl");
+//                                if (readBT != null) {
+//                                    Intent intent;
+//                                    if (readBT.equals("Mobile")) {
+//                                        intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
+//                                        intent.putExtra("trackingID", sampleInputData);
+//                                        intent.putExtra("userphone", phoneNo);
+//                                        startActivity(intent);
+//                                    } else if (readBT.equals("AA") || readBT.equals("BB") || readBT.equals("CC") || readBT.equals("DD")) {
+//                                        openCODwithDelay();
+//
+//                                    } else if (readBT.equals("EE")) {
+//                                        finish();
+//                                        openSuccessActivityWithDelay();
+//
+//                                    } else {
+//                                        Log.d("LOGBT", readBT + "else" );
+//                                    }
+//
+//                                } else {
+//                                    // Handle the case when the AsyncTask was cancelled or no valid result was obtained
+//                                    Toast.makeText(ReceiveParcel.this, "Failed to read Bluetooth message", Toast.LENGTH_SHORT).show();
+//                                }
+//                                // Schedule the next execution after the interval
+//                                new Handler().postDelayed(this, interval);
+//                            }
+//                        }
+//                    }, interval);
+//                }
+//
+//
+//                @Override
+//                public void onFailure() {
+//                    Toast.makeText(ReceiveParcel.this, "Failed to connect", Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//        }
+        // Start the AsyncTask to read Bluetooth messages and handle the logic
+//        bluetoothHelper.TESTtrigger();
 
-                            if (shouldContinue) {
+        new ReceiveParcel.BluetoothMessageTask().execute();
+        // Start the AsyncTask to read Bluetooth messages and handle the logic
 
-                                if (readBT != null) {
-                                    Intent intent;
-                                    if (readBT.equals("Mobile")) {
-                                        intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
-                                        shouldContinue = false;
+//        startOrCheckBluetoothTask();
 
-                                        intent.putExtra("trackingID", sampleInputData);
-                                        intent.putExtra("userphone", phoneNo);
-                                        startActivity(intent);
-
-                                    } else if (readBT.equals("AA") || readBT.equals("BB") || readBT.equals("CC") || readBT.equals("DD")) {
-                                        shouldContinue = false;
-
-                                        openCODwithDelay();
-
-                                    } else if (readBT.equals("EE")) {
-                                        finish();
-                                        shouldContinue = false;
-
-                                        openSuccessActivityWithDelay();
-
-                                    } else {
-                                        // Handle other cases or show an error message
-                                        return;
-                                    }
-
-                                } else {
-                                    // Handle the case when the AsyncTask was cancelled or no valid result was obtained
-                                    Toast.makeText(ReceiveParcel.this, "Failed to read Bluetooth message", Toast.LENGTH_SHORT).show();
-                                }                                Log.e("HANDLER", "NEXT ACT"+ readBT);
-
-                                // Schedule the next execution after the interval
-                                new Handler().postDelayed(this, interval);
-                            }
-                        }
-                    }, interval);
-                }
-
-
-                @Override
-                public void onFailure() {
-                    Toast.makeText(ReceiveParcel.this, "Failed to connect", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }        // Start the AsyncTask to read Bluetooth messages and handle the logic
-//        new BluetoothMessageTask().execute();
         //only do this after arduino sensor confirms it has parcel inside
 //        if this doesnt work put in bthelper run and save it in variables then get it from there
 
-
     }
 
-    private void startContinuousTask() {
-       getTracking();
-
-        if (readBT != null) {
-            Intent intent;
-            if (readBT.equals("Mobile")) {
-                intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
-                shouldContinue = false;
-
-                intent.putExtra("trackingID", sampleInputData);
-                intent.putExtra("userphone", phoneNo);
-                startActivity(intent);
-
-            } else if (readBT.equals("AA") || readBT.equals("BB") || readBT.equals("CC") || readBT.equals("DD")) {
-                shouldContinue = false;
-
-                openCODwithDelay();
-
-            } else if (readBT.equals("EE")) {
-                finish();
-                shouldContinue = false;
-
-                openSuccessActivityWithDelay();
-
-            } else {
-                // Handle other cases or show an error message
-                return;
-            }
-
-        } else {
-            // Handle the case when the AsyncTask was cancelled or no valid result was obtained
-            Toast.makeText(ReceiveParcel.this, "Failed to read Bluetooth message", Toast.LENGTH_SHORT).show();
-        }
-    }
 //    private class BluetoothMessageTask extends AsyncTask<Void, Void, String> {
-//        String readBT = getBluetoothMsg();
-//        String resp;
+//
 //
 //        @Override
 //        protected String doInBackground(Void... voids) {
@@ -158,13 +120,25 @@ public class ReceiveParcel extends AppCompatActivity {
 //            // Perform the Bluetooth message reading in a loop until a condition is met
 //            while (!isCancelled()) {
 //                readBT = getBluetoothMsg();
+//                Log.d("LOGBT", readBT + "LOG" );
 //
-//                if (readBT.equals("Mobile")) {
-//                    return "Mobile";
-//                } else if (readBT.equals("AA") || readBT.equals("BB") || readBT.equals("CC") || readBT.equals("DD")) {
-//                    return "AA_BB_CC_DD";
-//                } else if (readBT.equals("EE")) {
-//                    return "EE";
+//                if (readBT != null) {
+//                    Intent intent;
+//                    if (readBT.equals("Mobile")) {
+//                        intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
+//                        intent.putExtra("trackingID", sampleInputData);
+//                        intent.putExtra("userphone", phoneNo);
+//                        startActivity(intent);
+//                    } else if (readBT.equals("AA") || readBT.equals("BB") || readBT.equals("CC") || readBT.equals("DD")) {
+//                        openCODwithDelay();
+//
+//                    } else if (readBT.equals("EE")) {
+//                        finish();
+//                        openSuccessActivityWithDelay();
+//
+//                    } else {
+//                        Log.d("LOGBT", readBT + "else");
+//                    }
 //                }
 //                try {
 //                    Thread.sleep(2000);
@@ -176,37 +150,88 @@ public class ReceiveParcel extends AppCompatActivity {
 //
 //            return null;
 //        }
+//        It looks like the issue might be related to the placement of your code and the condition checking inside the while loop. Your current implementation checks the conditions inside the loop, which might lead to multiple actions being triggered in a single loop iteration.
 //
-//        @Override
-//        protected void onPostExecute(String result) {
-//            getTracking();
-//                Log.d("LOGBT", readBT + "LOG " + result);
-//
-//            if (readBT != null) {
-//                Intent intent;
-//                if (readBT.equals("Mobile")) {
-//                    intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
-//                    intent.putExtra("trackingID", sampleInputData);
-//                    intent.putExtra("userphone", phoneNo);
-//                    startActivity(intent);
-//                } else if (readBT.equals("AA") || readBT.equals("BB") || readBT.equals("CC") || readBT.equals("DD")) {
-//                    openCODwithDelay();
-//
-//                } else if (readBT.equals("EE")) {
-//                    finish();
-//                    openSuccessActivityWithDelay();
-//
-//                } else {
-//                    // Handle other cases or show an error message
-//                    return;
-//                }
-//
-//            } else {
-//                // Handle the case when the AsyncTask was cancelled or no valid result was obtained
-//                Toast.makeText(ReceiveParcel.this, "Failed to read Bluetooth message", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//    }
+//                Here's a modified version of your code to address this issue:
+
+        private class BluetoothMessageTask extends AsyncTask<Void, Void, String> {
+
+            @Override
+            protected String doInBackground(Void... voids) {
+
+                // Perform the Bluetooth message reading in a loop until a condition is met
+                while (!isCancelled()) {
+                    readBT = getBluetoothMsg();
+                    Log.d("LOGBT", readBT + "LOG");
+
+                    if (readBT != null) {
+                        Intent intent = null;
+
+                        if (readBT.contains("Mobile")) {
+                            intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
+                            intent.putExtra("trackingID", sampleInputData);
+                            intent.putExtra("userphone", phoneNo);
+                        } else if (readBT.contains("AA") || readBT.contains("BB") || readBT.contains("CC") || readBT.contains("DD")) {
+                            openCODwithDelay();
+                        } else if (readBT.contains("EE")) {
+                            finish();
+                            openSuccessActivityWithDelay();
+                        } else {
+                            Log.d("LOGBT", readBT + "else");
+                        }
+
+                        // Outside the if-else block, start the activity if intent is not null
+                        if (intent != null) {
+                            startActivity(intent);
+                        }
+                    }
+
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                return null;
+            }
+        @Override
+        protected void onPostExecute(String result) {
+            getTracking();
+
+            if (readBT != null) {
+                Intent intent;
+                if (readBT.equals("Mobile")) {
+                    finish();
+
+                    intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
+                    intent.putExtra("trackingID", sampleInputData);
+                    intent.putExtra("userphone", phoneNo);
+                    startActivity(intent);
+                    cancel(true);
+
+                } else if (readBT.equals("AA") || readBT.equals("BB") || readBT.equals("CC") || readBT.equals("DD")) {
+                    finish();
+
+                    openCODwithDelay();
+                    cancel(true);
+
+                } else if (readBT.equals("EE")) {
+                    finish();
+                    openSuccessActivityWithDelay();
+                    cancel(true);
+
+
+                } else {
+                    Log.d("LOGBT", readBT + "else");
+                }
+
+            } else {
+                // Handle the case when the AsyncTask was cancelled or no valid result was obtained
+                Toast.makeText(ReceiveParcel.this, "Failed to read Bluetooth message", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     //WAIT FOR SENSOR TO OKAY AND PARCEL DROPPED
     //IF DROPPED NA AND SENSOR GOOD IDENTIFY PAYMENT METHOD
@@ -255,4 +280,24 @@ public class ReceiveParcel extends AppCompatActivity {
             }
         }, 10000);
     }
+
+    private void startOrCheckBluetoothTask() {
+        if (bluetoothMessageTask == null || bluetoothMessageTask.getStatus() == AsyncTask.Status.FINISHED) {
+            // Task is not running or has finished, create a new instance and execute it
+            bluetoothMessageTask = new BluetoothMessageTask();
+            bluetoothMessageTask.execute();
+        } else if (bluetoothMessageTask.getStatus() == AsyncTask.Status.RUNNING) {
+            // Task is already running
+            // You can choose to do nothing, or handle it based on your requirements
+        }
+    }
+
+    // Call this method to cancel the BluetoothMessageTask
+    private void cancelBluetoothTask() {
+        if (bluetoothMessageTask != null && bluetoothMessageTask.getStatus() == AsyncTask.Status.RUNNING) {
+            // Task is running, cancel it
+            bluetoothMessageTask.cancel(true);
+        }
+    }
+
 }

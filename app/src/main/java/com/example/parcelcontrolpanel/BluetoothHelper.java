@@ -165,6 +165,16 @@ public class BluetoothHelper {
             reconnectToDevice();
             connectedThread.write("A");
         }
+    } public void TESTtrigger() {
+
+        if (connectedThread != null) {
+            connectedThread.write("H");
+            Log.e("SEND COMMAND", "ARDUINO H");
+
+        } else {
+            reconnectToDevice();
+            connectedThread.write("A");
+        }
     }
 
     public void codComp2Trigger() {
