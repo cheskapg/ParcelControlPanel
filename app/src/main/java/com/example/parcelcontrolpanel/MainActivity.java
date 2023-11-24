@@ -3,6 +3,7 @@ package com.example.parcelcontrolpanel;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityManager;
+import android.app.ProgressDialog;
 import android.app.admin.DevicePolicyManager;
 import android.app.admin.SystemUpdatePolicy;
 import android.content.ComponentName;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     String readBT, phoneNo, compartmentStatus;
     BluetoothHelper bluetoothHelper; //bluetooth to receive check compartments
     private boolean shouldRunCheckCompartment = true;
-
+    private ProgressDialog progressDialog;
     Button Bluetooth, SMSButton, btclass, ExitApp, wifi;
 
     //    BluetoothHelper bluetoothHelper = new BluetoothHelper("HC-05", "00:22:12:00:3C:EA");
@@ -58,7 +59,10 @@ public class MainActivity extends AppCompatActivity {
         //reecently added for receiving sensor info from compartment
         bluetoothHelper = BluetoothHelper.getInstance(this, "HC-05", "00:22:12:00:3C:EA");
         String status = bluetoothHelper.getStatus();
-
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Preparing System...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 //        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
         if (!bluetoothHelper.isConnected()) {
             bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
@@ -71,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
+
                             if (shouldRunCheckCompartment) {
                                 Log.e("HANDLER", "checkcomp");
                                 checkCompartmentExisting();
@@ -345,6 +350,7 @@ public class MainActivity extends AppCompatActivity {
                         //1 is used in daabase but bluetooth can have many outomes like empty 1,2,3,4
 //                        compartmentStatus = "disable 1";
 //                        sendCompartmentStatus("sensor1");
+                        progressDialog.dismiss();
                         Log.e("RESPO1", response);
                         Log.e("readBT", readBT + "BLUTOT");
                         getBluetoothMsg();

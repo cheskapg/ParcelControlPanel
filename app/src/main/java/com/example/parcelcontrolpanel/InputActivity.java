@@ -131,11 +131,11 @@ public class InputActivity extends AppCompatActivity {
                 } else {
                     sampleInputData = inputTrackingET.getText().toString();
                     inputData = inputTrackingET.getText().toString();
+                    checktheParcel();
 
                     // Create an instance of CheckRequest and execute it with the tracking ID
-                    CheckRequest checkRequestTask = new CheckRequest();
-                    checkRequestTask.execute(inputData);
-
+//                    CheckRequest checkRequestTask = new CheckRequest();
+//                    checkRequestTask.execute(inputData);
                     loading = ProgressDialog.show(InputActivity.this, "Loading", "please wait", false, true);
                 }
                 // Create an instance of SendRequest and execute it with the input data
@@ -145,7 +145,128 @@ public class InputActivity extends AppCompatActivity {
         });
 
     }
+    public String getScanned(){
+        return sampleInputData;
+    }
 
+    public void checktheParcel() {
+        String url = String.format("https://script.google.com/macros/s/AKfycbxvxIv7Pp866ZrbnoT5bNXkRoggFBRq5s6mI02cnw4Gc0ZnRdnISkQl0vY0xH-2ph3o/exec?action=checkQRParcel&trackingId=%s", getScanned());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Handle the response (file URL)
+                        Log.i("Info", url);
+                        Toast.makeText(getApplicationContext(),
+                                "Checking Barcode", Toast.LENGTH_LONG).show();
+                        Log.i("Info", response);
+
+//                        Toast.makeText(getApplicationContext(), sampleScannedData, Toast.LENGTH_LONG).show();
+
+
+                        if (response.equals("Tracking ID exists: " + sampleInputData + " and payment method is Mobile Wallet")) {
+                            getPhoneNumber();
+
+                            // Tracking ID exists and payment method is Mobile Wallet
+                            bluetoothHelper.mobileTrigger();
+                            // unlock door and wait for mobile payment screen
+
+                            Intent intent = new Intent(InputActivity.this, ReceiveParcel.class);
+                            intent.putExtra("trackingID", sampleInputData);
+                            intent.putExtra("userphone", phoneNo);
+                            startActivity(intent);
+
+                            Toast.makeText(getApplicationContext(), "Mobile Payment Parcel", Toast.LENGTH_LONG).show();
+
+                        } else if (response.equals("Tracking ID exists: " + sampleInputData + " but payment method is not Mobile Wallet")) {
+                            getPhoneNumber();
+
+                            // Tracking ID exists but payment method is not Mobile Wallet
+                            //uncomment to enable bluetooth command
+                            bluetoothHelper.prepaidTrigger();
+                            Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
+                            moveToPlaceParcel.putExtra("userphone", phoneNo);
+
+                            moveToPlaceParcel.putExtra("trackingID", sampleInputData);
+                            startActivity(moveToPlaceParcel);
+                            String readMessage = bluetoothHelper.getReadMessage();
+                            Toast.makeText(InputActivity.this, "READ ARDUINO NOT mobile " + readMessage, Toast.LENGTH_SHORT).show();
+
+                        } else if (response.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 1")) {
+                            getPhoneNumber();
+
+                            // Tracking ID exists but payment method is COD
+                            bluetoothHelper.codComp1Trigger();
+                            Toast.makeText(InputActivity.this, "COMPARTMENT IS 1", Toast.LENGTH_SHORT).show();
+                            Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
+                            moveToPlaceParcel.putExtra("userphone", phoneNo);
+
+                            moveToPlaceParcel.putExtra("trackingID", sampleInputData);
+                            startActivity(moveToPlaceParcel);
+
+                        } else if (response.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 2")) {
+                            getPhoneNumber();
+
+                            bluetoothHelper.codComp2Trigger();
+                            Toast.makeText(InputActivity.this, "COMPARTMENT IS 2", Toast.LENGTH_SHORT).show();
+                            Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
+                            moveToPlaceParcel.putExtra("trackingID", sampleInputData);
+                            moveToPlaceParcel.putExtra("userphone", phoneNo);
+
+                            startActivity(moveToPlaceParcel);
+//                            getBluetoothMsg();
+                        }
+                        else if (response.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 3")) {
+                            getPhoneNumber();
+
+                            bluetoothHelper.codComp3Trigger();
+                            Toast.makeText(InputActivity.this, "COMPARTMENT IS 3", Toast.LENGTH_SHORT).show();
+                            Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
+                            moveToPlaceParcel.putExtra("trackingID", sampleInputData);
+                            moveToPlaceParcel.putExtra("userphone", phoneNo);
+
+                            startActivity(moveToPlaceParcel);
+//                            getBluetoothMsg();
+                        }
+                        else if (response.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 4")) {
+                            getPhoneNumber();
+
+                            bluetoothHelper.codComp4Trigger();
+                            Toast.makeText(InputActivity.this, "COMPARTMENT IS 4", Toast.LENGTH_SHORT).show();
+                            Intent moveToPlaceParcel = new Intent(InputActivity.this, ReceiveParcel.class);
+                            moveToPlaceParcel.putExtra("trackingID", sampleInputData);
+                            moveToPlaceParcel.putExtra("userphone", phoneNo);
+
+                            startActivity(moveToPlaceParcel);
+//                            getBluetoothMsg();
+                        }else if (response.equals("Tracking ID does not exist " + sampleInputData)) {
+
+                            // Tracking ID does not exist or error occurred
+                            Toast.makeText(getApplicationContext(), "PLEASE TRY AGAIN", Toast.LENGTH_LONG).show();
+                        }
+
+
+                        Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Handle the error
+                Toast.makeText(getApplicationContext(), "Error" + phoneNo, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+// Add the request to the RequestQueue
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(stringRequest);
+
+
+
+
+    }
     private String getTracking() {
         return sampleInputData;
     }

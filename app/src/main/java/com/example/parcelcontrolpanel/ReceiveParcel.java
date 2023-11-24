@@ -201,7 +201,9 @@ public class ReceiveParcel extends AppCompatActivity {
                     openSuccessActivityWithDelay();
                 } else if (result.contains("HOME")) {
                     finish();
+                    Toast.makeText(ReceiveParcel.this, "NO PARCEL DETECTED", Toast.LENGTH_SHORT).show();
                     intent = new Intent(ReceiveParcel.this, MainActivity.class);
+
                 }
                 else {
                     Log.d("LOGBT", readBT + "else");
