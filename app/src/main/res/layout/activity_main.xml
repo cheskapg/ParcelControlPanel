@@ -155,7 +155,7 @@
         android:layout_marginEnd="375dp"
         android:layout_marginBottom="44dp"
         android:text="Bluetooth"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/Bluetoothclass"
