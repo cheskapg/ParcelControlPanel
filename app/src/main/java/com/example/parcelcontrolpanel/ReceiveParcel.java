@@ -46,7 +46,7 @@ public class ReceiveParcel extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive_parcel);
         getTracking();
-
+        getParcelIntent();
         bluetoothHelper = BluetoothHelper.getInstance(context, "HC-05", "00:22:12:00:3C:EA");
 //        if (!bluetoothHelper.isConnected()) {
 //            bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
@@ -153,7 +153,15 @@ public class ReceiveParcel extends AppCompatActivity {
 //        It looks like the issue might be related to the placement of your code and the condition checking inside the while loop. Your current implementation checks the conditions inside the loop, which might lead to multiple actions being triggered in a single loop iteration.
 //
 //                Here's a modified version of your code to address this issue:
+public void getParcelIntent() {
+    Intent intent = getIntent();
+    phoneNo = intent.getStringExtra("userphone");
+//    trackingID = intent.getStringExtra("trackingID");
 
+//    Toast myToast = Toast.makeText(ViewParcelListItem.this, getParcel, Toast.LENGTH_LONG);
+//    myToast.show();
+
+}
     private class BluetoothMessageTask extends AsyncTask<Void, Void, String> {
 
         @Override

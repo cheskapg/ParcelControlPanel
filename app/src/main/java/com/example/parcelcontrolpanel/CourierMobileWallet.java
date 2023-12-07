@@ -31,7 +31,7 @@ public class CourierMobileWallet extends AppCompatActivity {
     RadioGroup rgMobileWallet;
     RadioButton rbGcash, rbMaya, rbOthers,mobilewalletRb;
     ImageView ivRequestButton, requesticon;
-    String mobileWalletType, trackingID;
+    String mobileWalletType, trackingID, phoneNo;
     Boolean othersBool;
     ProgressDialog loading;
     @Override
@@ -52,7 +52,8 @@ public class CourierMobileWallet extends AppCompatActivity {
         // key must be same which is sent by first activity
         Intent intent = getIntent();
         trackingID = intent.getStringExtra("trackingID");
-        Toast myToast = Toast.makeText(CourierMobileWallet.this, "trackingID"+trackingID, Toast.LENGTH_LONG);
+        phoneNo = intent.getStringExtra("userphone");
+        Toast myToast = Toast.makeText(CourierMobileWallet.this, "trackingID "+trackingID, Toast.LENGTH_LONG);
         myToast.show();
 
         ivRequestButton.setOnClickListener(new View.OnClickListener() {
@@ -189,7 +190,7 @@ public class CourierMobileWallet extends AppCompatActivity {
         if(othersBool){
             mobileWalletType = etOtherMobileWallet.getText().toString();
         }
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "https://script.google.com/macros/s/AKfycbxnqjTtN2cACGcN-6BN2-X4eaP3xj8wutLM1A5Z15kpN_MCI6Na9Lr6s_DJBpKNvoe6/exec?action=addCourierMobileWallet", new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "https://script.google.com/macros/s/AKfycbwQZlD4iHu53rUGN0lucE7TTutLyCESFkuk4uF4XrQKtsZp9fJC3SrGW6qcH92JM5uT/exec?action=addCourierMobileWallet", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 //                Intent intent = new Intent(getApplicationContext(), SuccessActivity.class);
@@ -197,6 +198,10 @@ public class CourierMobileWallet extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "REQUESTING",Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(CourierMobileWallet.this, WaitingForProofPay.class);
                 intent.putExtra("trackingID", trackingID);
+                intent.putExtra("userphone", phoneNo);
+                intent.putExtra("accountName", accountName);
+                intent.putExtra("accountNumber", accountNumber);
+                SMSHandler.sendSMSMessage(CourierMobileWallet.this, phoneNo, "ParcelPal SMS Notification: Parcel-" + trackingID + " Requesting " + mobileWalletType + " Mobile Payment for " + accountName + " with Account Number: " + accountNumber);
                 startActivity(intent);
             }
         }, new Response.ErrorListener() {

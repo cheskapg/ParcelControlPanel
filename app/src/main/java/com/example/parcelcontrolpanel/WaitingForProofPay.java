@@ -24,7 +24,7 @@ import com.android.volley.toolbox.Volley;
 
 public class WaitingForProofPay extends AppCompatActivity {
     ProgressDialog loading;
-    String fileUrl, trackingID;
+    String fileUrl, trackingID, phoneNo, accountName, accountNumber;
     ImageView imageProof;
     ImageView received, received2;
     private static final long DELAY_TIME = 5000; // 5 seconds
@@ -34,12 +34,14 @@ public class WaitingForProofPay extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waiting_for_proof_pay);
         Intent intent = getIntent();
-
+        phoneNo = intent.getStringExtra("userphone");
         trackingID = intent.getStringExtra("trackingID");
+        accountName = intent.getStringExtra("accountName");
+        accountNumber = intent.getStringExtra("accountNumber");
         Toast.makeText(getApplicationContext(), "WAITING FOR " + trackingID,Toast.LENGTH_LONG).show();
         imageProof = (ImageView) findViewById(R.id.imageProof);
         getPaymentImageUrl();
-        loading = ProgressDialog.show(WaitingForProofPay.this, "Loading", "please wait", false, true);
+        loading = ProgressDialog.show(WaitingForProofPay.this, "Requesting Proof of Payment ", "please wait", false, true);
         received = (ImageView) findViewById(R.id.receivedIcon);
         received2 = (ImageView) findViewById(R.id.bgReqMobile);
         received.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +59,7 @@ public class WaitingForProofPay extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 openSuccessActivityWithDelay();
-
+                SMSHandler.sendSMSMessage(WaitingForProofPay.this, phoneNo, "ParcelPal SMS Notification: Parcel-" + trackingID +" Mobile Payment for " + accountName + " with Account Number: " + accountNumber + "marked as received");
 
             }
         });
@@ -65,6 +67,26 @@ public class WaitingForProofPay extends AppCompatActivity {
 
     private String getTracking() {
         return trackingID;
+    }
+    public void receivedPaymentNotif() {
+
+        String url = String.format("https://script.google.com/macros/s/AKfycbwiNi2jfS5wHrC_Bv1bsRG01Gfuf0ZhrpcAjwNH0kQKGkojv35m8HArIh-GhnDfEyT2/exec?action=receivedPaymentNotif&trackingID=%s", getTracking());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(),"Error" + fileUrl, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(stringRequest);
     }
     public void getPaymentImageUrl() {
 
@@ -85,7 +107,7 @@ public class WaitingForProofPay extends AppCompatActivity {
 
                                     getPaymentImageUrl();
                                 }
-                            }, 1000); // Adjust the duration as needed
+                            }, 5000); // Adjust the duration as needed
                         } else {
                             imageProof.setVisibility(View.VISIBLE);
                             String imageUrl = fileUrl;
