@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -52,7 +53,10 @@ public class CourierMobileWallet extends AppCompatActivity {
         // key must be same which is sent by first activity
         Intent intent = getIntent();
         trackingID = intent.getStringExtra("trackingID");
-        phoneNo = intent.getStringExtra("userphone");
+        getParcelIntent();
+//        phoneNo = intent.getStringExtra("userphone");
+//        Log.i("PHONE", phoneNo + "courier");
+
         Toast myToast = Toast.makeText(CourierMobileWallet.this, "trackingID "+trackingID, Toast.LENGTH_LONG);
         myToast.show();
 
@@ -99,7 +103,7 @@ public class CourierMobileWallet extends AppCompatActivity {
 
 
                 }else{
-                    loading = ProgressDialog.show(CourierMobileWallet.this, "Loading", "please wait", false, true);
+
                     RequestMobilePayment();
 
                 }
@@ -182,7 +186,42 @@ public class CourierMobileWallet extends AppCompatActivity {
         });
 
     }
+
+    public String getTrackingID() {
+        return trackingID;
+    }
+
+    public void getParcelIntent() {
+
+        String url = String.format("https://script.google.com/macros/s/AKfycbw4a8z6clbdTthJcMCJRahBJE3DH7IBSyA1OO9qovz_uj9z3RBw_h3LBslwvgeLhHzL/exec?action=getPhoneNumberByTracking&trackingId=%s",             getTrackingID());
+        Log.e("StringUrl", url);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Handle the response (file URL)
+                        phoneNo = response;
+                        Toast.makeText(getApplicationContext(), "Phone:" + phoneNo, Toast.LENGTH_SHORT).show();
+
+
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Handle the error
+                Toast.makeText(getApplicationContext(), "Error" + phoneNo, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+// Add the request to the RequestQueue
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(stringRequest);
+
+    }
     private void RequestMobilePayment() {
+        loading = ProgressDialog.show(CourierMobileWallet.this, "Loading", "please wait", false, true);
         Toast myToast = Toast.makeText(CourierMobileWallet.this, "EXECUTING REQUEST "+trackingID, Toast.LENGTH_LONG);
         myToast.show();
         String accountName = etAccountName.getText().toString();
@@ -190,18 +229,21 @@ public class CourierMobileWallet extends AppCompatActivity {
         if(othersBool){
             mobileWalletType = etOtherMobileWallet.getText().toString();
         }
+        SMSHandler.sendSMSMessage(CourierMobileWallet.this, phoneNo, "ParcelPal SMS Notification: Parcel-" + trackingID + " Requesting " + mobileWalletType + " Mobile Payment for " + accountName + " with Account Number: " + accountNumber);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, "https://script.google.com/macros/s/AKfycbwQZlD4iHu53rUGN0lucE7TTutLyCESFkuk4uF4XrQKtsZp9fJC3SrGW6qcH92JM5uT/exec?action=addCourierMobileWallet", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 //                Intent intent = new Intent(getApplicationContext(), SuccessActivity.class);
 //                startActivity(intent);
+
+                loading.dismiss(); // recently added to dismiss loading
                 Toast.makeText(getApplicationContext(), "REQUESTING",Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(CourierMobileWallet.this, WaitingForProofPay.class);
                 intent.putExtra("trackingID", trackingID);
                 intent.putExtra("userphone", phoneNo);
                 intent.putExtra("accountName", accountName);
                 intent.putExtra("accountNumber", accountNumber);
-                SMSHandler.sendSMSMessage(CourierMobileWallet.this, phoneNo, "ParcelPal SMS Notification: Parcel-" + trackingID + " Requesting " + mobileWalletType + " Mobile Payment for " + accountName + " with Account Number: " + accountNumber);
+
                 startActivity(intent);
             }
         }, new Response.ErrorListener() {

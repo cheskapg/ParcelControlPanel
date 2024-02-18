@@ -282,7 +282,7 @@ public class InputActivity extends AppCompatActivity {
                         phoneNo = response;
                         Toast.makeText(getApplicationContext(), "Phone:" + phoneNo, Toast.LENGTH_SHORT).show();
                         SMSHandler.sendSMSMessage(InputActivity.this, phoneNo, "ParcelPal SMS Notification: Parcel-" + sampleInputData + " Scanned and Attempting Delivery");
-
+                        Log.e("PHONENOINPUT", response);
                         loading.dismiss();
 
 
@@ -361,7 +361,6 @@ public class InputActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), sampleInputData, Toast.LENGTH_LONG).show();
 
             if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is Mobile Wallet")) {
-                getPhoneNumber();
 
                 // Tracking ID exists and payment method is Mobile Wallet
                 bluetoothHelper.mobileTrigger();
@@ -377,7 +376,6 @@ public class InputActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Mobile Payment Parcel", Toast.LENGTH_LONG).show();
 
             } else if (result.equals("Tracking ID exists: " + sampleInputData + " but payment method is not Mobile Wallet")) {
-                getPhoneNumber();
                 loading.dismiss();
 
                 // Tracking ID exists but payment method is not Mobile Wallet
@@ -400,7 +398,6 @@ public class InputActivity extends AppCompatActivity {
 
             } else if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 1")) {
                 // Tracking ID exists but payment method is COD
-                getPhoneNumber();
                 loading.dismiss();
 
                 bluetoothHelper.codComp1Trigger();
@@ -411,7 +408,6 @@ public class InputActivity extends AppCompatActivity {
                 startActivity(moveToPlaceParcel);
 
             } else if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 2")) {
-                getPhoneNumber();
                 loading.dismiss();
 
                 bluetoothHelper.codComp2Trigger();
@@ -423,7 +419,6 @@ public class InputActivity extends AppCompatActivity {
                 startActivity(moveToPlaceParcel);
 
             } else if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 3")) {
-                getPhoneNumber();
                 loading.dismiss();
 
                 bluetoothHelper.codComp3Trigger();
@@ -435,7 +430,6 @@ public class InputActivity extends AppCompatActivity {
                 startActivity(moveToPlaceParcel);
 
             } else if (result.equals("Tracking ID exists: " + sampleInputData + " and payment method is COD 4")) {
-                getPhoneNumber();
                 loading.dismiss();
 
                 bluetoothHelper.codComp4Trigger();

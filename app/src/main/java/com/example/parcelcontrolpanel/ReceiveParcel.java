@@ -154,14 +154,42 @@ public class ReceiveParcel extends AppCompatActivity {
 //
 //                Here's a modified version of your code to address this issue:
 public void getParcelIntent() {
-    Intent intent = getIntent();
-    phoneNo = intent.getStringExtra("userphone");
+
+        String url = String.format("https://script.google.com/macros/s/AKfycbw4a8z6clbdTthJcMCJRahBJE3DH7IBSyA1OO9qovz_uj9z3RBw_h3LBslwvgeLhHzL/exec?action=getPhoneNumberByTracking&trackingId=%s",             getTracking());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Handle the response (file URL)
+                        phoneNo = response;
+                        Toast.makeText(getApplicationContext(), "Phone:" + phoneNo, Toast.LENGTH_SHORT).show();
+
+
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Handle the error
+                Toast.makeText(getApplicationContext(), "Error" + phoneNo, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+// Add the request to the RequestQueue
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(stringRequest);
+
+    }
+
+
+
 //    trackingID = intent.getStringExtra("trackingID");
 
 //    Toast myToast = Toast.makeText(ViewParcelListItem.this, getParcel, Toast.LENGTH_LONG);
 //    myToast.show();
 
-}
+
     private class BluetoothMessageTask extends AsyncTask<Void, Void, String> {
 
         @Override
@@ -193,14 +221,14 @@ public void getParcelIntent() {
 
         @Override
         protected void onPostExecute(String result) {
-            getTracking();
+//            getTracking();
 
             if (readBT != null) {
                 Intent intent = null;
 
                 if (result.contains("Mobile")) {
                     intent = new Intent(ReceiveParcel.this, CourierMobileWallet.class);
-                    intent.putExtra("trackingID", sampleInputData);
+                    intent.putExtra(    "trackingID", sampleInputData);
                     intent.putExtra("userphone", phoneNo);
                 } else if (result.contains("AA") || result.contains("BB") || result.contains("CC") || result.contains("DD")) {
                     openCODwithDelay();

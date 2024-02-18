@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Preparing System...");
         progressDialog.setCancelable(false);
-        progressDialog.show();
+//        progressDialog.show();
 //        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
         if (!bluetoothHelper.isConnected()) {
             bluetoothHelper.connectToDevice(new BluetoothHelper.ConnectCallback() {
@@ -350,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
                         //1 is used in daabase but bluetooth can have many outomes like empty 1,2,3,4
 //                        compartmentStatus = "disable 1";
 //                        sendCompartmentStatus("sensor1");
-                        progressDialog.dismiss();
+//                        progressDialog.dismiss();
                         Log.e("RESPO1", response);
                         Log.e("readBT", readBT + "BLUTOT");
                         getBluetoothMsg();
@@ -483,7 +483,7 @@ public class MainActivity extends AppCompatActivity {
                         } else if (response.equals("disable 2,disable 3,disable 4")) {
                             compartmentStatus = "disable 2,disable 3,disable 4";
                             Log.e("COMP", compartmentStatus);
-                            if( readBT.contains("empty2")) {
+                             if( readBT.contains("empty2")) {
                                 sendCompartmentStatus("sensor2");
                             }
                             if( readBT.contains("empty3")) {
