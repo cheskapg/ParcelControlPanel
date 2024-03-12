@@ -244,6 +244,7 @@ public class InputActivity extends AppCompatActivity {
 
                             // Tracking ID does not exist or error occurred
                             Toast.makeText(getApplicationContext(), "PLEASE TRY AGAIN", Toast.LENGTH_LONG).show();
+                            loading.dismiss();
                         }
 
 
